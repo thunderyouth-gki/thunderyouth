@@ -222,6 +222,77 @@
       cursor: pointer;
       margin-top: 1rem;
     }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 30px 20px;
+      border-radius: 20px;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+    }
+
+.modal-content h2 {
+  margin-top: 0;
+  color: #4D0FB1;
+}
+
+.modal-content input[type="email"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  width: 80%;
+  border-radius: 10px;
+  margin: 15px 0;
+  font-size: 1rem;
+}
+
+.modal-content button {
+  padding: 10px 20px;
+  background-color: #4D0FB1;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background-color: #3a0e8e;
+}
+
+    .logout-button {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  padding: 8px 14px;
+  background-color: #4D0FB1;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 1001;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.logout-button:hover {
+  background-color: #3a0e8e;
+}
+
   </style>
 </head>
 <body>
@@ -229,6 +300,15 @@
     <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
   </div>
 
+   <div id="emailModal" class="modal-overlay">
+  <div class="modal-content">
+    <h2>Welcome!</h2>
+    <p>Please enter your email to continue:</p>
+    <input type="email" id="emailInput" placeholder="you@example.com" />
+    <button onclick="saveEmail()">Submit</button>
+  </div>
+</div>
+  
 <section class="profile-container" style="position: relative;">
 
   <!-- VIEW MODE -->
@@ -590,6 +670,35 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "/"; // redirect to home if no email
   }
 });
+
+  function saveEmail() {
+      const input = document.getElementById("emailInput");
+      const email = input.value.trim();
+
+      if (email && email.includes("@")) {
+        localStorage.setItem("email", email);
+        document.getElementById("emailModal").style.display = "none";
+        document.getElementById("logoutBtn").style.display = "block";
+        fetchHistory(email);
+      } else {
+        alert("Please enter a valid email address.");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("email");
+      location.reload();
+    }
+
+    window.addEventListener("DOMContentLoaded", function () {
+      const savedEmail = localStorage.getItem("email");
+      if (savedEmail) {
+        document.getElementById("emailModal").style.display = "none";
+        document.getElementById("logoutBtn").style.display = "block";
+        fetchHistory(savedEmail);
+      }
+    });
+  
 </script>
 
 </body>
