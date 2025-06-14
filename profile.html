@@ -438,13 +438,15 @@ function fetchProfile(email) {
       document.getElementById("view-namaPanggilan").textContent = data[1];
       document.getElementById("view-jenisKelamin").textContent = data[2];
       document.getElementById("view-statusKeanggotaan").textContent = data[3];
-      document.getElementById("view-tanggalLahir").textContent = data[4];
+      document.getElementById("view-tanggalLahir").textContent = dateOnly;
 
       document.getElementById("edit-namaLengkap").value = data[0];
       document.getElementById("edit-namaPanggilan").value = data[1];
       document.getElementById("edit-jenisKelamin").value = data[2];
       document.getElementById("edit-statusKeanggotaan").value = data[3];
-      document.getElementById("edit-tanggalLahir").value = data[4];
+      const dateOnly = new Date(data[4]).toISOString().split("T")[0];
+      document.getElementById("edit-tanggalLahir").value = dateOnly;
+
 
       if (data[3] !== "Simpatisan") {
         document.getElementById("katekisasi-baptis").style.display = "none";
