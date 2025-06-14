@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home | Thunder Youth</title>
+  <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #F8F8F8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
+        width:100vw;
+      }
+      .header {
+        position: sticky;
+        width: 100%;
+        height: 30px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 20px;
+        background-color: transparent;
+        display: flex;
+        align-items: center;
+        z-index: 100;
+      }
+      .header img {
+        height: 25px;
+      }
+      .footer {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: #f8f8f8;
+        padding: 5px 0;
+        box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        border-radius: 20px 20px 0 0;
+        transition: transform 0.3s ease-in-out;
+        z-index: 1000;
+      }
+
+      .footer-item {
+        text-align: center;
+        cursor: pointer;
+      }
+
+      .footer-item img {
+        width: 30px;
+        height: 30px;
+        margin-top: 5px;
+      }
+
+      .footer-item span {
+        display: block;
+        font-size: 12px;
+        margin-top: 0px;
+      }
+
+      .footer.hide {
+        transform: translateY(100%);
+      }
+
+      .footer.show {
+        transform: translateY(0);
+      }
+
+      a {
+        text-decoration: none; /* Remove underline */
+        color: inherit; /* Keep the default text color */
+      }
+
+      a span {
+        color: inherit; /* Ensure the text color doesn't change */
+      }
+      
+      .wrapper {
+      position: relative;
+      width: 100%;
+      height: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      text-align: center;
+      margin-top: -50px;
+    }
+
+    .masked-slideshow {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      -webkit-mask-image: url('https://lh3.googleusercontent.com/d/1cOHc0rFmhaL7vpg8zAtzyddawijc5nRr');
+      -webkit-mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-image: url('https://lh3.googleusercontent.com/d/1cOHc0rFmhaL7vpg8zAtzyddawijc5nRr');
+      mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out;
+    }
+
+    .slide.active {
+      opacity: 1;
+    }
+
+    .purple-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      transform: translate(-50%, -50%);
+      background: url('https://lh3.googleusercontent.com/d/1cOHc0rFmhaL7vpg8zAtzyddawijc5nRr') no-repeat center;
+      background-size: contain;
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .overlay-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      z-index: 20;
+      width: 100%;
+    }
+
+    .overlay-text p {
+      font-size: 16px;
+      margin: 20px 0 0;
+      color: #F8F8F8;
+    }
+    
+    .overlay-text img {
+      align-content: center;
+      width: 5em;
+      height: 5em;
+      margin-bottom: 40px;
+    }
+
+    .about{
+      padding: 15px;
+      text-align: center;
+      background: #F8F8F8;
+      border-radius: 20px;
+      z-index: 20;
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    
+    .vertical-line {
+      border-left: 2px solid #000;
+      height: 100px;
+      margin: 0 auto
+    }
+    
+    .information {
+      width:100%;
+      height: auto;
+      background: #FFDA56;
+      padding: 40px 20px;
+      padding-bottom: 100px;
+      margin-top: -10px;
+      text-align: center;
+      z-index: 0;
+    }
+    
+    .contact-us {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
+      padding: 20px;
+      margin-top: 10px;
+      width: 100%;
+      flex-wrap: wrap;
+      overflow-x: hidden;
+    }
+
+    .contact-us .icon {
+      display: flex;
+      align-items: center;
+      width: 40px;
+      height: 40px;
+    }
+
+    .contact-us a {
+      color: #333;
+      font-size: 24px;
+      text-align: left;
+      float: left;
+    }
+
+    .map-container {
+      display: flex;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    .map-container iframe {
+      width: 80%;
+      max-width: 600px;
+      height: 220px;
+      margin-top: 10px;
+      border: 0;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .sunday-service {
+      padding: 15px;
+      background: #F8F8F8;
+      border-radius: 20px;
+      z-index: 20;
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: -20px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin-bottom: 40px;
+    }
+
+    .title-sunday-service {
+      text-align: center;
+    }
+
+  .event-sunday-service {
+    border-bottom: 1px solid #ccc;
+    padding: 12px 0;
+  }
+  .summary-sunday-service {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    font-weight: bold;
+    font-size: 24px;
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+  .subtitle-sunday-service {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 3px;
+    padding-left: 20px;
+  }
+.arrow-sunday-service {
+  width: 20px;
+  text-align: center;
+  transition: transform 0.3s ease;
+  padding-right: 30px;
+  transform: rotate(0deg);
+  transform-origin: center top; /* sets pivot point */
+}
+
+.arrow-sunday-service.rotated {
+  transform: rotate(90deg);
+}
+
+  .content-sunday-service {
+    max-height: 0;
+    height: auto;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+    font-weight: normal;
+    margin-top: 8px;
+    padding-left: 20px;
+  }
+  .content-sunday-service.open {
+    opacity: 1;
+  }
+    
+    .card {
+      width:250px;
+      height: 350px;
+      background-color: #DBCFEF;
+      border-radius: 20px;
+      text-align: center;
+      align-content: center;
+      margin-top: 20px;
+    }
+
+    
+    h1 {
+      font-size:32px;
+      color: #4D0FB1;
+      margin-bottom: 10px;
+    }
+    
+    h2 {
+      font-size: 20px;
+      color: #252424;
+      margin-bottom: 10px;
+    }
+    
+    h3 {
+      font-size: 16px;
+      color: #252424;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 14px;
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      color: #252424;
+      text-wrap: balance;
+    }
+
+    .wrapper-thunderport {
+      height: 100vh;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+    .arc-wrapper {
+      width: 100vw;
+      aspect-ratio: 1 / 1;
+      background: url("https://lh3.googleusercontent.com/d/1mKXMjp3FRJEBeF-5slEunHmWi1T0_N39") no-repeat center bottom;
+      background-size: 100% auto;
+      position: absolute;
+      z-index: 1;
+    }
+    .dot-wrapper {
+      position: absolute;
+      width: 100vw;
+      height: auto;
+      margin-top: -40px;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .dot {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background-color: #FDD835;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .content {
+      position: absolute;
+      top: 250px;
+      width: 100%;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      z-index: 3;
+      padding: 0 20px;
+      box-sizing: border-box;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+      user-select: text; /* allow selecting text inside */
+    }
+    .fade-in {
+      opacity: 0;
+    }
+    .description {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #252424;
+    }
+    .date {
+      margin-top: 5px;
+      font-size: 14px;
+      color: #252424;
+    }
+    .link-btn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      background-color: #FDD835;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+    }
+    .link-btn:hover {
+      background-color: #fbc02d;
+    }
+    .nav-btn {
+      position: absolute;
+      top: 70%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      z-index: 4;
+      padding: 10px;
+    }
+    .nav-left {
+      left: 10px;
+    }
+    .nav-right {
+      right: 10px;
+    }
+    .arrow-img {
+      width: 30px;
+      height: 30px;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    .nav-btn:hover .arrow-img {
+      opacity: 1;
+    }
+    .hidden {
+      display: none;
+    }
+    @media (max-width: 600px) {
+      .content {
+        font-size: 20px;
+      }
+      .description {
+        font-size: 16px;
+      }
+      .link-btn {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+    }
+
+    .thunderport-text {
+  position: absolute;
+  width: 100vw;
+  top: 60px;
+  text-align: center;
+  z-index: 10;
+  pointer-events: none;
+  user-select: none;
+}
+
+.big-text {
+  font-size: 32px;  /* bigger size */
+  font-weight: bold;
+  color: #f8f8f8;
+  margin-bottom: 4px;  /* small spacing below */
+}
+
+.small-text {
+  font-size: 20px;  /* smaller size */
+  font-weight: 400;
+  color: #f8f8f8;
+}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
+  </div>
+  
+  <div class="wrapper">
+    <div class="masked-slideshow" id="slideshow"></div>
+    <div class="purple-overlay"></div>
+    <div class="overlay-text">
+      <img src="https://lh3.googleusercontent.com/d/1ludWWFm6w2Rr8leLIk2n2_Nm4EuKaezL" alt="Logo">
+      <p><i>Sailing together in Faith</i> <br> <i>Guided by His Grace</i></p>
+    </div>
+  </div>
+
+  <section class="about">
+    <h1>Thunder Youth</h1>
+    <p>Welcome to Thunder Youth, the vibran youth community of GKI Guntur in beautiful Bandung! We are a place where young people come together to grow in faith, build genuine friendships, and live out God's love in everyday life.</p>
+    
+    <div class="vertical-line"></div>
+    
+    <h2 style="margin-top: 50px;">VISION</h2>
+    <p>To become God’s fellow companion among the youth.</p>
+
+    <h2>MISSION</h2>
+    <p>To build a community of youth strengthened by faith and love.</p>
+  </section>
+
+<section class="information">
+  <h1>Connect With Us</h1>
+  
+    <div class="contact-us">
+      <div class="icon">
+      <a href="https://www.instagram.com/thunderyouth.13/" target="_blank" title="Instagram">
+        <img src="https://cdn-icons-png.flaticon.com/512/1384/1384063.png" alt="Instagram Icon" width="40" height="40">
+      </a>
+      </div>
+      <div class="icon">
+      <a href="https://chat.whatsapp.com/HnwLObchlez4VxTJnIp7pS" target="_blank" title="Whatsapp">
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111728.png" alt="Whatsapp Icon" width="40" height="40">
+      </a>
+      </div>
+      <div class="icon">
+      <a href="https://www.youtube.com/@gkiguntur3814" target="_blank" title="YouTube">
+        <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube Icon" width="40" height="40">
+      </a>
+      </div>
+  </div>
+  <h1>Our Church</h1>
+  <h3>GKI Guntur<br>Jalan Guntur No.13, Bandung</h3>
+  
+  <div class="map-container">
+    <iframe 
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15842.828094517385!2d107.6222962976227!3d-6.925581826717491!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e7d4d54aece3%3A0x6c376128d1fe429!2sGereja%20Kristen%20Indonesia%20Guntur!5e0!3m2!1sen!2sid!4v1745668780661!5m2!1sen!2sid" 
+      allowfullscreen="" 
+      loading="lazy" 
+      referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+  </div>
+</section>
+
+<section class="sunday-service">
+  <div class=title-sunday-service>
+  <h1>Sunday Service</h1>
+  <h3>Every Sunday, 09.30 WIB</h3>
+  </div>
+  
+  <div class="event-sunday-service">
+  <div class="subtitle-sunday-service">First week of the month</div>
+  <div class="summary-sunday-service">
+    <div>BACK TO THE BIBLE</div>
+    <div class="arrow-sunday-service">&#9656;</div>
+  </div>
+  <div class="content-sunday-service">
+    Thunder Youth mau mengajak kamu untuk kembali membudayakan membaca Firman Tuhan dari Alkitab fisik.
+    Buat kamu yang minggu ini belum bawa Alkitab fisik, boleh pinjem ke usher di depan ya. Jangan lupa untuk bawa Alkitab bulan depan!
+    <br><br>
+    <strong>What To Prepare</strong>
+    <br>&#9656; Baca <strong>Chapter of the Week</strong> yang dibagikan di story instagram <a href="https://https://www.instagram.com/thunderyouth.13/">thunderyouth.13</a></li>
+    <br>&#9656; Bawa Alkitab TB 2 ke kebaktian minggu</li>
+  </div>
+</div>
+
+<div class="event-sunday-service">
+  <div class="subtitle-sunday-service">Second week of the month</div>
+  <div class="summary-sunday-service">
+    <div>SUNDAY SHARING</div>
+    <div class="arrow-sunday-service">&#9656;</div>
+  </div>
+  <div class="content-sunday-service">
+    Setiap orang pasti punya keluh kesah. Tapi jangan khawatir, selama kita berjalan bersama Tuhan Yesus semua perkara pasti bisa dihadapi.
+    Setelah mendengar Firman Tuhan nanti Thunders diajak untuk merenungkan bersama dan merefleksikan Firman-Nya dalam kehidupan kita.
+    <br> <br>
+    <strong>What To Prepare</strong>
+    <br>&#9656; Yuk gali lagi cerita menarik apa dalam hidupmu yang terjadi akhir-akhir ini
+  </div>
+</div>
+
+<div class="event-sunday-service">
+  <div class="subtitle-sunday-service">Third week of the month</div>
+  <div class="summary-sunday-service">
+    <div>THUNDER LOUNGE</div>
+    <div class="arrow-sunday-service">&#9656;</div>
+  </div>
+  <div class="content-sunday-service">
+    Saatnya ngopi bersama Thunder! Setelah kebaktian jangan langsung pulang ya! Mari berkumpul bersama di Thunder Lounge.
+    Ada kopi, ada snack, ada board game, kurang apa? kurang kamu!
+    <br> <br>
+    <strong>What To Prepare</strong>
+    <br>&#9656; Waktu kamu setelah kebaktian nanti!
+  </div>
+</div>
+
+<div class="event-sunday-service">
+  <div class="subtitle-sunday-service">Fourth week of the month</div>
+  <div class="summary-sunday-service">
+    <div>CELEBRATION WEEK</div>
+    <div class="arrow-sunday-service">&#9656;</div>
+  </div>
+  <div class="content-sunday-service">
+    A month full of blessings! Yuk kita flashback lagi satu bulan ini Tuhan udah ngasih apa aja buat kita.
+    Mari bagikan rasa syukur dengan menceritakannya di form yang disediakan. Jangan sungkan untuk berbagi kebahagiaanmu ya Thunders!
+    <br> <br>
+    <strong>What To Prepare</strong>
+    <br>&#9656; Nothing! just enjoy the feast!
+  </div>
+</div>
+</section>
+  
+<div class="footer" id="footer">
+    <div class="footer-item">
+      <img src="https://lh3.googleusercontent.com/d/1Ls9Ci-xvgXQZePWs-33468b0EUQz0pxd" 
+           data-default="https://lh3.googleusercontent.com/d/1M1axLb9BnoWun9iDPcAx_ZUID5ZlEl_m" 
+           data-active="https://lh3.googleusercontent.com/d/1Ls9Ci-xvgXQZePWs-33468b0EUQz0pxd" 
+           alt="Home">
+      <span>Home</span>
+    </div>
+    <div class="footer-item" onclick="toggleIcon(this)">
+      <a href='https://sites.google.com/view/thunderyouth/warta'>
+      <img src="https://lh3.googleusercontent.com/d/1WMPNZl0Lc724pDDoC4lsWQtbkP3h6yUD" 
+           data-default="https://lh3.googleusercontent.com/d/1WMPNZl0Lc724pDDoC4lsWQtbkP3h6yUD" 
+           data-active="https://lh3.googleusercontent.com/d/1WIGRe_Ba07hCyw5N1fetmm7i5yjHx8S9" 
+           alt="History">
+      <span>Warta</span>
+      </a>
+    </div>
+    <div class="footer-item" onclick="toggleIcon(this)">
+      <a href='https://sites.google.com/view/thunderyouth/history'>
+      <img src="https://lh3.googleusercontent.com/d/1MF2aumWkfIvGKqsg_P84G2iv8agK5nyy" 
+           data-default="https://lh3.googleusercontent.com/d/1MF2aumWkfIvGKqsg_P84G2iv8agK5nyy" 
+           data-active="https://lh3.googleusercontent.com/d/1LydGXt7w6IyiRWfP7Hdi8YfpBWBqxdHp" 
+           alt="History">
+      <span>History</span>
+      </a>
+    </div>
+    <div class="footer-item" onclick="toggleIcon(this)">
+      <a href='https://sites.google.com/view/thunderyouth/profile'>
+      <img src="https://lh3.googleusercontent.com/d/1M8uxpiXhKUmu2WMR6_iR1RraErskHuZ9" 
+           data-default="https://lh3.googleusercontent.com/d/1M8uxpiXhKUmu2WMR6_iR1RraErskHuZ9" 
+           data-active="https://lh3.googleusercontent.com/d/1Lt3K_ZqPYJUT2iv1mLyTBpvtuMuhxWOA" 
+           alt="Profile">
+      <span>Profile</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec?page=Home";
+
+    let data = [];
+
+    fetch(scriptURL)
+      .then(res => res.json())
+      .then(res => {
+        // Render slideshow
+        const slideshow = res.slideshow;
+        const slideshowContainer = document.getElementById("slideshow");
+        slideshowContainer.innerHTML = "";
+        slideshow.forEach((url, i) => {
+          const div = document.createElement("div");
+          div.className = "slide" + (i === 0 ? " active" : "");
+          div.style.backgroundImage = `url('${url}')`;
+          slideshowContainer.appendChild(div);
+        });
+
+        const slides = document.querySelectorAll('.slide');
+        let current = 0;
+        setInterval(() => {
+          slides[current].classList.remove('active');
+          current = (current + 1) % slides.length;
+          slides[current].classList.add('active');
+        }, 4000);
+
+        data = res.thunderport;
+        initUI();
+      })
+      .catch(err => console.error("Fetch failed", err));
+
+    // Expand/collapse sunday-service events
+    document.addEventListener("DOMContentLoaded", () => {
+      const events = document.querySelectorAll('.event-sunday-service');
+      events.forEach(event => {
+        const summary = event.querySelector('.summary-sunday-service');
+        const content = event.querySelector('.content-sunday-service');
+        const arrow = event.querySelector('.arrow-sunday-service');
+
+        summary.addEventListener('click', () => {
+          const isOpen = content.classList.contains('open');
+          events.forEach(ev => {
+            ev.querySelector('.content-sunday-service').classList.remove('open');
+            ev.querySelector('.content-sunday-service').style.maxHeight = null;
+            ev.querySelector('.arrow-sunday-service').classList.remove('rotated');
+          });
+          if (!isOpen) {
+            content.classList.add('open');
+            content.style.maxHeight = content.scrollHeight + 'px';
+            arrow.classList.add('rotated');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
