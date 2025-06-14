@@ -492,7 +492,7 @@ if (base64Image) {
   const fileInput = document.getElementById("profile-pic-upload");
   const file = fileInput.files[0];
 
-  resizeImage(file, 300, function(resizedBase64) {
+  resizeImage(file, 100, function(resizedBase64) {
     const form = document.createElement("form");
     form.method = "GET"; // use GET to avoid CORS
     form.action = API_BASE;
