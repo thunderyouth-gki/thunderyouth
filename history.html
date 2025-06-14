@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>History | Thunder Youth</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <style>
+  body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background-color: #f9f9f9;
+      min-height: 120vh;
+      overflow-x: hidden;
+    }
+
+    .header {
+      position: sticky;
+      width: 100%;
+      height: 30px; /* Ensures a consistent height */
+      padding-top: 10px;
+      padding-bottom: 10px;
+      padding-left: 20px;
+      background-color: #f8f8f8;
+      display: flex;
+      align-items: center;
+      overflow-x: hidden;
+    }
+    .header img {
+      height: 25px;
+    }
+    .footer {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #f8f8f8;
+      padding: 5px 0;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+      border-radius: 20px 20px 0 0;
+      transition: transform 0.3s ease-in-out;
+      z-index: 1000;
+    }
+
+    .footer-item {
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .footer-item img {
+      width: 30px;
+      height: 30px;
+      margin-top: 5px;
+    }
+
+    .footer-item span {
+      display: block;
+      font-size: 12px;
+      margin-top: 0px;
+    }
+
+    .footer.hide {
+      transform: translateY(100%);
+    }
+
+    .footer.show {
+      transform: translateY(0);
+    }
+
+    a {
+      text-decoration: none; /* Remove underline */
+      color: inherit; /* Keep the default text color */
+    }
+
+    a span {
+      color: inherit; /* Ensure the text color doesn't change */
+    }
+
+    .history-title{
+      text-align: left;
+      font-size: 6vw;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #4D0FB1;
+      padding-left: 20px;
+    }
+
+    .history-container {
+      width: 85%;
+      padding: 12px;
+      margin: 20px;
+      border-radius: 15px;
+      box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+      color: black;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;    
+    }
+
+    .attended { background-color: #FFDA56; }
+    .absent { background-color: #9E9E9E; color: white;}
+    .info { flex-grow: 1; }
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 50px;
+      background-color: #4D0FB1;
+      color: #F8F8F8;
+      cursor: pointer;
+    }
+    button[disabled] {
+      background-color: #ccc;
+      color: #666;
+      cursor: not-allowed;
+    }
+    </style>
+  </head>
+  <body>
+  <div class="header">
+    <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
+  </div>
+    
+    <div class="history-title">Event History</div>
+
+    <div class="footer" id="footer">
+    <div class="footer-item" onclick="toggleIcon(this)">
+      <a href='https://sites.google.com/view/thunderyouth/home'>
+      <img src="https://lh3.googleusercontent.com/d/1M1axLb9BnoWun9iDPcAx_ZUID5ZlEl_m" 
+           data-default="https://lh3.googleusercontent.com/d/1M1axLb9BnoWun9iDPcAx_ZUID5ZlEl_m" 
+           data-active="https://lh3.googleusercontent.com/d/1Ls9Ci-xvgXQZePWs-33468b0EUQz0pxd" 
+           alt="Home">
+      <span>Home</span>
+      </a>
+    </div>
+    <div class="footer-item" onclick="toggleIcon(this)">
+      <a href='https://sites.google.com/view/thunderyouth/warta'>
+      <img src="https://lh3.googleusercontent.com/d/1WMPNZl0Lc724pDDoC4lsWQtbkP3h6yUD" 
+           data-default="https://lh3.googleusercontent.com/d/1WMPNZl0Lc724pDDoC4lsWQtbkP3h6yUD" 
+           data-active="https://lh3.googleusercontent.com/d/1WIGRe_Ba07hCyw5N1fetmm7i5yjHx8S9" 
+           alt="History">
+      <span>Warta</span>
+      </a>
+    </div>
+    <div class="footer-item">
+      <img src="https://lh3.googleusercontent.com/d/1LydGXt7w6IyiRWfP7Hdi8YfpBWBqxdHp" 
+           data-default="https://lh3.googleusercontent.com/d/1MF2aumWkfIvGKqsg_P84G2iv8agK5nyy" 
+           data-active="https://lh3.googleusercontent.com/d/1LydGXt7w6IyiRWfP7Hdi8YfpBWBqxdHp" 
+           alt="History">
+      <span>History</span>
+    </div>
+    <div class="footer-item" onclick="toggleIcon(this)">
+      <a href='https://sites.google.com/view/thunderyouth/profile'>
+      <img src="https://lh3.googleusercontent.com/d/1M8uxpiXhKUmu2WMR6_iR1RraErskHuZ9" 
+           data-default="https://lh3.googleusercontent.com/d/1M8uxpiXhKUmu2WMR6_iR1RraErskHuZ9" 
+           data-active="https://lh3.googleusercontent.com/d/1Lt3K_ZqPYJUT2iv1mLyTBpvtuMuhxWOA" 
+           alt="Profile">
+      <span>Profile</span>
+      </a>
+    </div>
+  </div>
+
+    <script>
+      function handleRequestEvent(eventName, date, buttonId) {
+        const btn = document.getElementById(buttonId);
+        google.script.run
+          .withSuccessHandler(function() {
+            btn.textContent = 'Requested';
+            btn.disabled = true;
+          })
+          .withFailureHandler(function(error) {
+            console.error("Request failed:", error);
+          })
+          .requestEvent(eventName, date);
+      }
+
+        function toggleIcon(selectedElement) {
+    document.querySelectorAll('.footer-item').forEach(item => {
+      item.classList.remove('active');
+      const img = item.querySelector('img');
+      img.src = img.dataset.default;
+    });
+
+    selectedElement.classList.add('active');
+    const selectedImg = selectedElement.querySelector('img');
+    selectedImg.src = selectedImg.dataset.active;
+  }
+
+  let lastScrollTop = 0;
+  const footer = document.getElementById("footer");
+
+  window.addEventListener("scroll", function () {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (scrollTop > lastScrollTop) {
+      // Scrolling down → hide footer
+      footer.classList.remove("show");
+      footer.classList.add("hide");
+    } else {
+      // Scrolling up → show footer
+      footer.classList.remove("hide");
+      footer.classList.add("show");
+    }
+
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+  });
+
+  const email = localStorage.getItem("email"); // Or prompt the user for email
+  const API_BASE = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
+
+  if (!email) {
+    alert("Email not found. Please set your email.");
+  } else {
+    fetchHistory(email);
+  }
+
+  function fetchHistory(email) {
+    fetch(`${API_BASE}?page=History&email=${encodeURIComponent(email)}`)
+      .then(response => response.json())
+      .then(data => renderHistory(data))
+      .catch(err => console.error("Fetch error:", err));
+  }
+
+  function renderHistory(history) {
+    const container = document.querySelector("body");
+    const title = document.querySelector(".history-title");
+
+    if (!history || history.length === 0) {
+      const p = document.createElement("p");
+      p.textContent = "No history found.";
+      container.insertBefore(p, title.nextSibling);
+      return;
+    }
+
+    history.forEach((item, i) => {
+      const div = document.createElement("div");
+      div.className = `history-container ${item.attendance ? "attended" : "absent"}`;
+
+      const info = document.createElement("div");
+      info.className = "info";
+      info.innerHTML = `<strong>${item.eventName}</strong><br><span>${item.date}</span>`;
+
+      const buttonContainer = document.createElement("div");
+      if (item.eventName !== "Sunday Service") {
+        const button = document.createElement("button");
+        button.id = `btn_${i}`;
+        button.textContent = item.requestEvent ? "Requested" : "Request Event";
+        button.disabled = item.requestEvent;
+        button.onclick = () => handleRequestEvent(item.eventName, item.date, button.id);
+        buttonContainer.appendChild(button);
+      }
+
+      div.appendChild(info);
+      div.appendChild(buttonContainer);
+      container.insertBefore(div, document.getElementById("footer"));
+    });
+  }
+
+  function handleRequestEvent(eventName, date, buttonId) {
+    const btn = document.getElementById(buttonId);
+    const payload = {
+      eventName: eventName,
+      date: date,
+      email: email
+    };
+
+    fetch(`${API_BASE}?page=RequestEvent`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then(res => res.json())
+    .then(result => {
+      if (result.success) {
+        btn.textContent = "Requested";
+        btn.disabled = true;
+      } else {
+        alert("Failed to submit request.");
+      }
+    })
+    .catch(error => {
+      console.error("POST error:", error);
+      alert("Error sending request.");
+    });
+  }
+    </script>
+  </body>
+</html>
