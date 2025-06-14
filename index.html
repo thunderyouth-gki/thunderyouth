@@ -503,7 +503,7 @@
     <p>To build a community of youth strengthened by faith and love.</p>
   </section>
 
-<section class="information">
+<!-- <section class="information">
   <h1>Connect With Us</h1>
   
     <div class="contact-us">
@@ -534,7 +534,7 @@
       referrerpolicy="no-referrer-when-downgrade">
     </iframe>
   </div>
-</section>
+</section> -->
 
 <section class="sunday-service">
   <div class=title-sunday-service>
@@ -720,188 +720,184 @@
       });
     });
 
-    const dot = document.getElementById("dot");
-    const content = document.getElementById("content");
-    const titleEl = content.querySelector(".title");
-    const descEl = content.querySelector(".description");
-    const dateEl = content.querySelector(".date");
-    const linkBtn = content.querySelector(".link-btn");
-    const leftBtn = document.getElementById("leftBtn");
-    const rightBtn = document.getElementById("rightBtn");
-    const swipeArea = document.getElementById("swipe-area");
+let currentIndex = 0;
+const arcStart = 200;
+const arcEnd = 340;
 
-    let currentIndex = 0;
-    const arcStart = 200;
-    const arcEnd = 340;
+const dot = document.getElementById("dot");
+const content = document.getElementById("content");
+const titleEl = content.querySelector(".title");
+const descEl = content.querySelector(".description");
+const dateEl = content.querySelector(".date");
+const linkBtn = content.querySelector(".link-btn");
+const leftBtn = document.getElementById("leftBtn");
+const rightBtn = document.getElementById("rightBtn");
+const swipeArea = document.getElementById("swipe-area");
 
-    function initUI() {
-    function getCenterAndRadius() {
-      const width = window.innerWidth;
-      const radius = width / 2;
-      const x = width / 2;
-      const y = width;
-      return { x, y, radius };
-    }
+function getCenterAndRadius() {
+  const width = window.innerWidth;
+  const radius = width / 2;
+  const x = width / 2;
+  const y = width;
+  return { x, y, radius };
+}
 
-    function setDotPosition(index) {
-      if (data.length === 0) return;
-      const angleDeg = arcStart + ((arcEnd - arcStart) / (data.length - 1)) * index;
-      const angleRad = angleDeg * Math.PI / 180;
-      const { x: cx, y: cy, radius } = getCenterAndRadius();
-      const x = cx + radius * Math.cos(angleRad);
-      const y = cy + radius * Math.sin(angleRad);
-      dot.style.left = `${x - 15}px`;
-      dot.style.top = `${y - 15}px`;
-    }
+function setDotPosition(index) {
+  if (data.length === 0) return;
+  const angleDeg = arcStart + ((arcEnd - arcStart) / (data.length - 1)) * index;
+  const angleRad = angleDeg * Math.PI / 180;
+  const { x: cx, y: cy, radius } = getCenterAndRadius();
+  const x = cx + radius * Math.cos(angleRad);
+  const y = cy + radius * Math.sin(angleRad);
+  dot.style.left = `${x - 15}px`;
+  dot.style.top = `${y - 15}px`;
+}
 
-    function easeInOutQuad(t) {
-      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-    }
+function easeInOutQuad(t) {
+  return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+}
 
-    function animateArc(fromIndex, toIndex, callback) {
-      const duration = 400;
-      let start = null;
+function animateArc(fromIndex, toIndex, callback) {
+  const duration = 400;
+  let start = null;
 
-      function step(timestamp) {
-        if (!start) start = timestamp;
-        const progress = Math.min((timestamp - start) / duration, 1);
-        const eased = easeInOutQuad(progress);
-        const angleFrom = arcStart + ((arcEnd - arcStart) / (data.length - 1)) * fromIndex;
-        const angleTo = arcStart + ((arcEnd - arcStart) / (data.length - 1)) * toIndex;
-        const currentAngle = angleFrom + (angleTo - angleFrom) * eased;
+  function step(timestamp) {
+    if (!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / duration, 1);
+    const eased = easeInOutQuad(progress);
+    const angleFrom = arcStart + ((arcEnd - arcStart) / (data.length - 1)) * fromIndex;
+    const angleTo = arcStart + ((arcEnd - arcStart) / (data.length - 1)) * toIndex;
+    const currentAngle = angleFrom + (angleTo - angleFrom) * eased;
 
-        const angleRad = currentAngle * Math.PI / 180;
-        const { x: cx, y: cy, radius } = getCenterAndRadius();
-        const x = cx + radius * Math.cos(angleRad);
-        const y = cy + radius * Math.sin(angleRad);
-        dot.style.left = `${x - 15}px`;
-        dot.style.top = `${y - 15}px`;
+    const angleRad = currentAngle * Math.PI / 180;
+    const { x: cx, y: cy, radius } = getCenterAndRadius();
+    const x = cx + radius * Math.cos(angleRad);
+    const y = cy + radius * Math.sin(angleRad);
+    dot.style.left = `${x - 15}px`;
+    dot.style.top = `${y - 15}px`;
 
-        if (progress < 1) {
-          requestAnimationFrame(step);
-        } else if (callback) {
-          callback();
-        }
-      }
-
+    if (progress < 1) {
       requestAnimationFrame(step);
+    } else if (callback) {
+      callback();
     }
+  }
 
-    function updateUI(nextIndex) {
-      if (nextIndex < 0 || nextIndex >= data.length) return;
-      content.classList.add("fade-in");
-      animateArc(currentIndex, nextIndex, () => {
-        currentIndex = nextIndex;
-        const d = data[currentIndex];
-        titleEl.textContent = d.title;
-        descEl.textContent = d.description;
-        dateEl.textContent = d.date;
-        if (d.link && d.link.trim() !== "") {
-          linkBtn.href = d.link;
-          linkBtn.classList.remove("hidden");
-        } else {
-          linkBtn.href = "#";
-          linkBtn.classList.add("hidden");
-        }
-        updateButtons();
-        setTimeout(() => {
-          content.classList.remove("fade-in");
-        }, 50);
-      });
+  requestAnimationFrame(step);
+}
+
+function updateUI(nextIndex) {
+  if (nextIndex < 0 || nextIndex >= data.length) return;
+  content.classList.add("fade-in");
+  animateArc(currentIndex, nextIndex, () => {
+    currentIndex = nextIndex;
+    const d = data[currentIndex];
+    titleEl.textContent = d.title;
+    descEl.textContent = d.description;
+    dateEl.textContent = d.date;
+    if (d.link && d.link.trim() !== "") {
+      linkBtn.href = d.link;
+      linkBtn.classList.remove("hidden");
+    } else {
+      linkBtn.href = "#";
+      linkBtn.classList.add("hidden");
     }
+    updateButtons();
+    setTimeout(() => {
+      content.classList.remove("fade-in");
+    }, 50);
+  });
+}
 
-    function updateButtons() {
-      leftBtn.classList.toggle("hidden", currentIndex === 0);
-      rightBtn.classList.toggle("hidden", currentIndex === data.length - 1);
+function updateButtons() {
+  leftBtn.classList.toggle("hidden", currentIndex === 0);
+  rightBtn.classList.toggle("hidden", currentIndex === data.length - 1);
+}
+
+function initUI() {
+  if (data.length === 0) return;
+  setDotPosition(currentIndex);
+  const d = data[currentIndex];
+  titleEl.textContent = d.title;
+  descEl.textContent = d.description;
+  dateEl.textContent = d.date;
+  if (d.link && d.link.trim() !== "") {
+    linkBtn.href = d.link;
+    linkBtn.classList.remove("hidden");
+  } else {
+    linkBtn.href = "#";
+    linkBtn.classList.add("hidden");
+  }
+  updateButtons();
+}
+
+// Event listeners
+window.addEventListener("resize", () => setDotPosition(currentIndex));
+window.addEventListener("DOMContentLoaded", initUI);
+
+leftBtn.addEventListener("click", () => {
+  if (currentIndex > 0) updateUI(currentIndex - 1);
+});
+
+rightBtn.addEventListener("click", () => {
+  if (currentIndex < data.length - 1) updateUI(currentIndex + 1);
+});
+
+// Swipe support
+let touchStartX = null;
+let touchStartY = null;
+let touchEndX = null;
+let touchEndY = null;
+
+swipeArea.addEventListener("touchstart", (e) => {
+  if (e.touches.length === 1) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }
+});
+
+swipeArea.addEventListener("touchmove", (e) => {
+  if (!touchStartX) return;
+  const moveX = e.touches[0].clientX;
+  const moveY = e.touches[0].clientY;
+  const dx = moveX - touchStartX;
+  const dy = moveY - touchStartY;
+  if (Math.abs(dx) > Math.abs(dy)) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+swipeArea.addEventListener("touchend", (e) => {
+  if (touchStartX === null) return;
+
+  touchEndX = e.changedTouches[0].clientX;
+  touchEndY = e.changedTouches[0].clientY;
+
+  const dx = touchEndX - touchStartX;
+  const dy = touchEndY - touchStartY;
+
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
+    if (dx > 0 && currentIndex > 0) {
+      updateUI(currentIndex - 1);
+    } else if (dx < 0 && currentIndex < data.length - 1) {
+      updateUI(currentIndex + 1);
     }
+  }
 
+  touchStartX = null;
+  touchStartY = null;
+  touchEndX = null;
+  touchEndY = null;
+});
 
-      if (data.length === 0) return;
-      setDotPosition(currentIndex);
-      const d = data[currentIndex];
-      titleEl.textContent = d.title;
-      descEl.textContent = d.description;
-      dateEl.textContent = d.date;
-      if (d.link && d.link.trim() !== "") {
-        linkBtn.href = d.link;
-        linkBtn.classList.remove("hidden");
-      } else {
-        linkBtn.href = "#";
-        linkBtn.classList.add("hidden");
-      }
-      updateButtons();
-    }
-
-    window.addEventListener("resize", () => setDotPosition(currentIndex));
-    window.addEventListener("DOMContentLoaded", initUI);
-
-    leftBtn.addEventListener("click", () => {
-      if (currentIndex > 0) updateUI(currentIndex - 1);
-    });
-
-    rightBtn.addEventListener("click", () => {
-      if (currentIndex < data.length - 1) updateUI(currentIndex + 1);
-    });
-
-    // Swipe support with improved logic
-    let touchStartX = null;
-    let touchStartY = null;
-    let touchEndX = null;
-    let touchEndY = null;
-
-    swipeArea.addEventListener("touchstart", (e) => {
-      if (e.touches.length === 1) {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-      }
-    });
-
-    swipeArea.addEventListener("touchmove", (e) => {
-      // Prevent vertical scrolling only if horizontal swipe is detected early
-      if (!touchStartX) return;
-      const moveX = e.touches[0].clientX;
-      const moveY = e.touches[0].clientY;
-      const dx = moveX - touchStartX;
-      const dy = moveY - touchStartY;
-
-      // If mostly horizontal movement, prevent vertical scroll
-      if (Math.abs(dx) > Math.abs(dy)) {
-        e.preventDefault();
-      }
-    }, { passive: false });
-
-    swipeArea.addEventListener("touchend", (e) => {
-      if (touchStartX === null) return;
-
-      touchEndX = e.changedTouches[0].clientX;
-      touchEndY = e.changedTouches[0].clientY;
-
-      const dx = touchEndX - touchStartX;
-      const dy = touchEndY - touchStartY;
-
-      // Only consider horizontal swipes where horizontal distance is > vertical distance and threshold > 30px
-      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
-        if (dx > 0 && currentIndex > 0) {
-          updateUI(currentIndex - 1);
-        } else if (dx < 0 && currentIndex < data.length - 1) {
-          updateUI(currentIndex + 1);
-        }
-      }
-
-      touchStartX = null;
-      touchStartY = null;
-      touchEndX = null;
-      touchEndY = null;
-    });
-
-    // Keyboard navigation for accessibility
-    swipeArea.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowLeft" && currentIndex > 0) {
-        updateUI(currentIndex - 1);
-      } else if (e.key === "ArrowRight" && currentIndex < data.length - 1) {
-        updateUI(currentIndex + 1);
-      }
-    });
+// Keyboard navigation
+swipeArea.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowLeft" && currentIndex > 0) {
+    updateUI(currentIndex - 1);
+  } else if (e.key === "ArrowRight" && currentIndex < data.length - 1) {
+    updateUI(currentIndex + 1);
+  }
+});
   </script>
 </body>
 </html>
