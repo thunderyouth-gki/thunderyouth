@@ -342,10 +342,9 @@
         } else {
           alert("Failed to submit request.");
         }
-      })
-      .catch(error => {
-        console.error("POST error:", error);
-        alert("Error sending request.");
+      }).catch(error => {
+          console.error("POST error:", error);
+          alert("Error sending request: " + error.message);
       });
     }
 
