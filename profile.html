@@ -300,6 +300,8 @@
     <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
   </div>
 
+  <button id="logoutBtn" class="logout-button" onclick="logout()" style="display: none;">Logout</button>
+
    <div id="emailModal" class="modal-overlay">
   <div class="modal-content">
     <h2>Welcome!</h2>
@@ -695,7 +697,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (savedEmail) {
         document.getElementById("emailModal").style.display = "none";
         document.getElementById("logoutBtn").style.display = "block";
-        fetchHistory(savedEmail);
+        fetchProfile(savedEmail);
       }
     });
   
