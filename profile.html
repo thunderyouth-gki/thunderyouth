@@ -456,6 +456,28 @@ function fetchProfile(email) {
     .catch(err => console.error("Failed to fetch profile:", err));
 }
 
+function resizeImage(file, maxWidth = 300, callback) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement("canvas");
+      const scale = maxWidth / img.width;
+      canvas.width = maxWidth;
+      canvas.height = img.height * scale;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      const resizedBase64 = canvas.toDataURL(file.type, 0.6).split(",")[1]; // Compress to 60%
+      callback(resizedBase64);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+
 function saveProfileChanges() {
   const email = localStorage.getItem("email");
   if (!email) return alert("Email belum ditemukan.");
@@ -466,32 +488,31 @@ function saveProfileChanges() {
   const statusKeanggotaan = document.getElementById("edit-statusKeanggotaan").value;
   const tanggalLahir = document.getElementById("edit-tanggalLahir").value;
 
-  if (base64Image) {
-const form = new URLSearchParams();
-form.append("page", "UploadFile");
-form.append("email", email);
-form.append("filename", filename);
-form.append("mimeType", mimeType);
-form.append("base64Data", base64Image);
+if (base64Image) {
+  const fileInput = document.getElementById("profile-pic-upload");
+  const file = fileInput.files[0];
 
-fetch(API_BASE, {
-  method: "POST",
-  body: form
-})
-.then(res => res.text())
-.then(url => {
-  // success: set the new image in view & edit mode
-  document.getElementById("profile-pic-display").src = url;
-  document.getElementById("edit-profile-pic-preview").src = url;
-  base64Image = "";
+  resizeImage(file, 300, function(resizedBase64) {
+    const uploadUrl = `${API_BASE}?page=UploadFile` +
+      `&email=${encodeURIComponent(email)}` +
+      `&filename=${encodeURIComponent(file.name)}` +
+      `&mimeType=${encodeURIComponent(file.type)}` +
+      `&base64Data=${encodeURIComponent(resizedBase64)}`;
 
-  // continue with updating other profile info
-  updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
-})
-.catch(err => {
-  alert("Gagal upload gambar");
-  console.error("Upload failed:", err);
-});
+    fetch(uploadUrl)
+      .then(res => res.text())
+      .then(imageUrl => {
+        document.getElementById("profile-pic-display").src = imageUrl;
+        document.getElementById("edit-profile-pic-preview").src = imageUrl;
+        base64Image = "";
+
+        updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
+      })
+      .catch(err => {
+        alert("Gagal upload gambar.");
+        console.error("Upload failed:", err);
+      });
+  });
 } else {
     updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
   }
