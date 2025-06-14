@@ -246,159 +246,136 @@
   </div>
 
     <script>
-      function handleRequestEvent(eventName, date, buttonId) {
-        const btn = document.getElementById(buttonId);
-        google.script.run
-          .withSuccessHandler(function() {
-            btn.textContent = 'Requested';
-            btn.disabled = true;
-          })
-          .withFailureHandler(function(error) {
-            console.error("Request failed:", error);
-          })
-          .requestEvent(eventName, date);
-      }
+    const API_BASE = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
 
-        function toggleIcon(selectedElement) {
-    document.querySelectorAll('.footer-item').forEach(item => {
-      item.classList.remove('active');
-      const img = item.querySelector('img');
-      img.src = img.dataset.default;
-    });
+    function toggleIcon(selectedElement) {
+      document.querySelectorAll('.footer-item').forEach(item => {
+        item.classList.remove('active');
+        const img = item.querySelector('img');
+        img.src = img.dataset.default;
+      });
 
-    selectedElement.classList.add('active');
-    const selectedImg = selectedElement.querySelector('img');
-    selectedImg.src = selectedImg.dataset.active;
-  }
-
-  let lastScrollTop = 0;
-  const footer = document.getElementById("footer");
-
-  window.addEventListener("scroll", function () {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-    if (scrollTop > lastScrollTop) {
-      // Scrolling down → hide footer
-      footer.classList.remove("show");
-      footer.classList.add("hide");
-    } else {
-      // Scrolling up → show footer
-      footer.classList.remove("hide");
-      footer.classList.add("show");
+      selectedElement.classList.add('active');
+      const selectedImg = selectedElement.querySelector('img');
+      selectedImg.src = selectedImg.dataset.active;
     }
 
-    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-  });
+    let lastScrollTop = 0;
+    const footer = document.getElementById("footer");
 
-  const email = localStorage.getItem("email"); // Or prompt the user for email
-  const API_BASE = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
-
-  if (!email) {
-    alert("Email not found. Please set your email.");
-  } else {
-    fetchHistory(email);
-  }
-
-  function fetchHistory(email) {
-    fetch(`${API_BASE}?page=History&email=${encodeURIComponent(email)}`)
-      .then(response => response.json())
-      .then(data => renderHistory(data))
-      .catch(err => console.error("Fetch error:", err));
-  }
-
-  function renderHistory(history) {
-    const container = document.querySelector("body");
-    const title = document.querySelector(".history-title");
-
-    if (!history || history.length === 0) {
-      const p = document.createElement("p");
-      p.textContent = "No history found.";
-      container.insertBefore(p, title.nextSibling);
-      return;
-    }
-
-    history.forEach((item, i) => {
-      const div = document.createElement("div");
-      div.className = `history-container ${item.attendance ? "attended" : "absent"}`;
-
-      const info = document.createElement("div");
-      info.className = "info";
-      info.innerHTML = `<strong>${item.eventName}</strong><br><span>${item.date}</span>`;
-
-      const buttonContainer = document.createElement("div");
-      if (item.eventName !== "Sunday Service") {
-        const button = document.createElement("button");
-        button.id = `btn_${i}`;
-        button.textContent = item.requestEvent ? "Requested" : "Request Event";
-        button.disabled = item.requestEvent;
-        button.onclick = () => handleRequestEvent(item.eventName, item.date, button.id);
-        buttonContainer.appendChild(button);
-      }
-
-      div.appendChild(info);
-      div.appendChild(buttonContainer);
-      container.insertBefore(div, document.getElementById("footer"));
-    });
-  }
-
-  function handleRequestEvent(eventName, date, buttonId) {
-    const btn = document.getElementById(buttonId);
-    const payload = {
-      eventName: eventName,
-      date: date,
-      email: email
-    };
-
-    fetch(`${API_BASE}?page=RequestEvent`, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-    .then(res => res.json())
-    .then(result => {
-      if (result.success) {
-        btn.textContent = "Requested";
-        btn.disabled = true;
+    window.addEventListener("scroll", function () {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      if (scrollTop > lastScrollTop) {
+        footer.classList.remove("show");
+        footer.classList.add("hide");
       } else {
-        alert("Failed to submit request.");
+        footer.classList.remove("hide");
+        footer.classList.add("show");
       }
-    })
-    .catch(error => {
-      console.error("POST error:", error);
-      alert("Error sending request.");
+      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
     });
-  }
 
-function saveEmail() {
-  const input = document.getElementById("emailInput");
-  const email = input.value.trim();
+    function fetchHistory(email) {
+      fetch(`${API_BASE}?page=History&email=${encodeURIComponent(email)}`)
+        .then(response => response.json())
+        .then(data => renderHistory(data))
+        .catch(err => console.error("Fetch error:", err));
+    }
 
-  if (email && email.includes("@")) {
-    localStorage.setItem("email", email);
-    document.getElementById("emailModal").style.display = "none";
-    document.getElementById("logoutBtn").style.display = "block";
-    fetchHistory(email); // Your function to load data
-  } else {
-    alert("Please enter a valid email address.");
-  }
-}
+    function renderHistory(history) {
+      const container = document.querySelector("body");
+      const title = document.querySelector(".history-title");
 
-function logout() {
-  localStorage.removeItem("email");
-  location.reload();
-}
+      if (!history || history.length === 0) {
+        const p = document.createElement("p");
+        p.textContent = "No history found.";
+        container.insertBefore(p, title.nextSibling);
+        return;
+      }
 
-window.addEventListener("DOMContentLoaded", function () {
-  const savedEmail = localStorage.getItem("email");
-  if (savedEmail) {
-    document.getElementById("emailModal").style.display = "none";
-    document.getElementById("logoutBtn").style.display = "block";
-    fetchHistory(savedEmail); // Your function to load data
-  }
-});
+      history.forEach((item, i) => {
+        const div = document.createElement("div");
+        div.className = `history-container ${item.attendance ? "attended" : "absent"}`;
 
+        const info = document.createElement("div");
+        info.className = "info";
+        info.innerHTML = `<strong>${item.eventName}</strong><br><span>${item.date}</span>`;
+
+        const buttonContainer = document.createElement("div");
+        if (item.eventName !== "Sunday Service") {
+          const button = document.createElement("button");
+          button.id = `btn_${i}`;
+          button.textContent = item.requestEvent ? "Requested" : "Request Event";
+          button.disabled = item.requestEvent;
+          button.onclick = () => handleRequestEvent(item.eventName, item.date, button.id);
+          buttonContainer.appendChild(button);
+        }
+
+        div.appendChild(info);
+        div.appendChild(buttonContainer);
+        container.insertBefore(div, document.getElementById("footer"));
+      });
+    }
+
+    function handleRequestEvent(eventName, date, buttonId) {
+      const btn = document.getElementById(buttonId);
+      const email = localStorage.getItem("email");
+
+      const payload = {
+        eventName: eventName,
+        date: date,
+        email: email
+      };
+
+      fetch(`${API_BASE}?page=RequestEvent`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(res => res.json())
+      .then(result => {
+        if (result.success) {
+          btn.textContent = "Requested";
+          btn.disabled = true;
+        } else {
+          alert("Failed to submit request.");
+        }
+      })
+      .catch(error => {
+        console.error("POST error:", error);
+        alert("Error sending request.");
+      });
+    }
+
+    function saveEmail() {
+      const input = document.getElementById("emailInput");
+      const email = input.value.trim();
+
+      if (email && email.includes("@")) {
+        localStorage.setItem("email", email);
+        document.getElementById("emailModal").style.display = "none";
+        document.getElementById("logoutBtn").style.display = "block";
+        fetchHistory(email);
+      } else {
+        alert("Please enter a valid email address.");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("email");
+      location.reload();
+    }
+
+    window.addEventListener("DOMContentLoaded", function () {
+      const savedEmail = localStorage.getItem("email");
+      if (savedEmail) {
+        document.getElementById("emailModal").style.display = "none";
+        document.getElementById("logoutBtn").style.display = "block";
+        fetchHistory(savedEmail);
+      }
+    });    
     </script>
   </body>
 </html>
