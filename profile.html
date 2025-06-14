@@ -493,25 +493,47 @@ if (base64Image) {
   const file = fileInput.files[0];
 
   resizeImage(file, 300, function(resizedBase64) {
-    const uploadUrl = `${API_BASE}?page=UploadFile` +
-      `&email=${encodeURIComponent(email)}` +
-      `&filename=${encodeURIComponent(file.name)}` +
-      `&mimeType=${encodeURIComponent(file.type)}` +
-      `&base64Data=${encodeURIComponent(resizedBase64)}`;
+    const form = document.createElement("form");
+    form.method = "GET"; // use GET to avoid CORS
+    form.action = API_BASE;
+    form.target = "uploadIframe"; // will point to a hidden iframe
 
-    fetch(uploadUrl)
-      .then(res => res.text())
-      .then(imageUrl => {
-        document.getElementById("profile-pic-display").src = imageUrl;
-        document.getElementById("edit-profile-pic-preview").src = imageUrl;
-        base64Image = "";
+    const params = {
+      page: "UploadFile",
+      email: email,
+      filename: file.name,
+      mimeType: file.type,
+      base64Data: resizedBase64
+    };
 
-        updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
-      })
-      .catch(err => {
-        alert("Gagal upload gambar.");
-        console.error("Upload failed:", err);
-      });
+    for (const key in params) {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = params[key];
+      form.appendChild(input);
+    }
+
+    // Hidden iframe for submission target
+    let iframe = document.getElementById("uploadIframe");
+    if (!iframe) {
+      iframe = document.createElement("iframe");
+      iframe.name = "uploadIframe";
+      iframe.id = "uploadIframe";
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+    }
+
+    // Success trigger after load
+    iframe.onload = function () {
+      // Refresh profile image or just alert success
+      base64Image = "";
+      updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
+    };
+
+    document.body.appendChild(form);
+    form.submit();
+    form.remove(); // cleanup
   });
 } else {
     updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
