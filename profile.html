@@ -664,15 +664,6 @@ function handleClick(type, url) {
     .catch(err => console.error("Error submitting:", err));
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const email = localStorage.getItem("email");
-  if (email) {
-    fetchProfile(email);
-  } else {
-    window.location.href = "/"; // redirect to home if no email
-  }
-});
-
   function saveEmail() {
       const input = document.getElementById("emailInput");
       const email = input.value.trim();
