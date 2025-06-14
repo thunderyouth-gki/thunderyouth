@@ -467,33 +467,31 @@ function saveProfileChanges() {
   const tanggalLahir = document.getElementById("edit-tanggalLahir").value;
 
   if (base64Image) {
-  const payload = {
-    page: "UploadFile",
-    email: email,
-    filename: filename,
-    mimeType: mimeType,
-    base64Data: base64Image
-  };
+const form = new URLSearchParams();
+form.append("page", "UploadFile");
+form.append("email", email);
+form.append("filename", filename);
+form.append("mimeType", mimeType);
+form.append("base64Data", base64Image);
 
-  fetch(API_BASE, {
-    method: "POST",
-    body: JSON.stringify(payload),
-    headers: {
-      "Content-Type": "application/json"
-    }
-  })
-    .then(res => res.text())
-    .then(imageUrl => {
-      document.getElementById("profile-pic-display").src = imageUrl;
-      document.getElementById("edit-profile-pic-preview").src = imageUrl;
-      base64Image = "";
+fetch(API_BASE, {
+  method: "POST",
+  body: form
+})
+.then(res => res.text())
+.then(url => {
+  // success: set the new image in view & edit mode
+  document.getElementById("profile-pic-display").src = url;
+  document.getElementById("edit-profile-pic-preview").src = url;
+  base64Image = "";
 
-      updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
-    })
-    .catch(err => {
-      alert("Gagal upload gambar.");
-      console.error(err);
-    });
+  // continue with updating other profile info
+  updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
+})
+.catch(err => {
+  alert("Gagal upload gambar");
+  console.error("Upload failed:", err);
+});
 } else {
     updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
   }
