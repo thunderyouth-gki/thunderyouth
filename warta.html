@@ -707,9 +707,6 @@ if (localEmail) {
   document.getElementById("logoutBtn").style.display = "block";
 }
 
-// Proceed with fetches using `email`
-fetchProfile(email);
-
   function fetchProfile(email) {
     fetch(`${scriptBaseUrl}?page=GetProfile&email=${email}`)
       .then(res => res.json())
@@ -720,11 +717,7 @@ fetchProfile(email);
   }
 
   window.addEventListener("DOMContentLoaded", function () {
-    const savedEmail = localStorage.getItem("email");
-    if (savedEmail) {
-      document.getElementById("logoutBtn").style.display = "block";
-      fetchProfile(savedEmail);
-    }
+    fetchProfile(email);
     fetchEvents();
     fetchBanners();
   });
