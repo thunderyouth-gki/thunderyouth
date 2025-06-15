@@ -714,7 +714,7 @@ fetchProfile(email);
     fetch(`${scriptBaseUrl}?page=GetProfile&email=${email}`)
       .then(res => res.json())
       .then(profile => {
-        document.querySelector(".attendance-static-text").innerText = `Hi ${profile[1]}!`;
+        document.querySelector(".banner-title").innerText = `Hi ${profile[1]}!`;
       })
       .catch(err => console.error("Error fetching profile:", err));
   }
@@ -722,7 +722,6 @@ fetchProfile(email);
   window.addEventListener("DOMContentLoaded", function () {
     const savedEmail = localStorage.getItem("email");
     if (savedEmail) {
-      document.getElementById("emailModal").style.display = "none";
       document.getElementById("logoutBtn").style.display = "block";
       fetchProfile(savedEmail);
     }
