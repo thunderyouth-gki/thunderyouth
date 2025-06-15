@@ -732,7 +732,8 @@
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script>
+<script>
+  const scriptBaseUrl = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
 
   function toggleIcon(selectedElement) {
     document.querySelectorAll('.footer-item').forEach(item => {
@@ -751,158 +752,160 @@
 
   window.addEventListener("scroll", function () {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
     if (scrollTop > lastScrollTop) {
-      // Scrolling down → hide footer
       footer.classList.remove("show");
       footer.classList.add("hide");
     } else {
-      // Scrolling up → show footer
       footer.classList.remove("hide");
       footer.classList.add("show");
     }
-
     lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
   });
 
-
-function saveEmail() {
-      const input = document.getElementById("emailInput");
-      const email = input.value.trim();
-
-      if (email && email.includes("@")) {
-        localStorage.setItem("email", email);
-        document.getElementById("emailModal").style.display = "none";
-        document.getElementById("logoutBtn").style.display = "block";
-        fetchProfile(email);
-      } else {
-        alert("Please enter a valid email address.");
-      }
+  function saveEmail() {
+    const input = document.getElementById("emailInput");
+    const email = input.value.trim();
+    if (email && email.includes("@")) {
+      localStorage.setItem("email", email);
+      document.getElementById("emailModal").style.display = "none";
+      document.getElementById("logoutBtn").style.display = "block";
+      fetchProfile(email);
+    } else {
+      alert("Please enter a valid email address.");
     }
+  }
 
-    function logout() {
-      localStorage.removeItem("email");
-      location.reload();
+  function logout() {
+    localStorage.removeItem("email");
+    location.reload();
+  }
+
+  function fetchProfile(email) {
+    fetch(`${scriptBaseUrl}?page=GetProfile&email=${email}`)
+      .then(res => res.json())
+      .then(profile => {
+        document.querySelector(".attendance-static-text").innerText = `Hi ${profile[1]}!`;
+      })
+      .catch(err => console.error("Error fetching profile:", err));
+  }
+
+  window.addEventListener("DOMContentLoaded", function () {
+    const savedEmail = localStorage.getItem("email");
+    if (savedEmail) {
+      document.getElementById("emailModal").style.display = "none";
+      document.getElementById("logoutBtn").style.display = "block";
+      fetchProfile(savedEmail);
     }
+    fetchEvents();
+    fetchBanners();
+  });
 
-    window.addEventListener("DOMContentLoaded", function () {
-      const savedEmail = localStorage.getItem("email");
-      if (savedEmail) {
-        document.getElementById("emailModal").style.display = "none";
-        document.getElementById("logoutBtn").style.display = "block";
-        fetchProfile(savedEmail);
-      }
-    });    
+  function fetchEvents() {
+    fetch(`${scriptBaseUrl}?page=EventsList`)
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("upcoming-events");
+        const events = data.events || [];
 
-const email = localStorage.getItem("email");
-      
- if (email) {
-  fetch(`https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec?page=GetProfile&email=${email}`)
-    .then(res => res.json())
-    .then(profile => {
-      document.querySelector(".attendance-static-text").innerText = `Hi ${profile[1]}!`; // index 1 = namaPanggilan
-    });
-}
+        if (events.length === 0 || !events.some(e => e.eventName && e.date && e.date !== "Invalid Date")) {
+          container.style.display = "none";
+          return;
+        }
 
-// 2. Replace Upcoming Events
-fetch("https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec?page=EventsList")
-  .then(res => res.json())
-  .then(data => {
-    const container = document.getElementById("upcoming-events");
-    const events = data.events || [];
+        events.forEach(event => {
+          if (!event.eventName || !event.date || event.date === "Invalid Date") return;
 
-    if (events.length === 0 || !events.some(e => e.eventName && e.date && e.date !== "Invalid Date")) {
-      container.style.display = "none";
-      return;
-    }
+          const wrapper = document.createElement(event.linkRegistration ? "a" : "div");
+          wrapper.className = "event-card-wrapper" + (event.linkRegistration ? "" : " disabled");
+          if (event.linkRegistration) {
+            wrapper.href = event.linkRegistration;
+            wrapper.target = "_blank";
+          }
 
-    events.forEach(event => {
-      if (!event.eventName || !event.date || event.date === "Invalid Date") return;
-
-      const wrapper = document.createElement(event.linkRegistration ? "a" : "div");
-      wrapper.className = "event-card-wrapper" + (event.linkRegistration ? "" : " disabled");
-      if (event.linkRegistration) {
-        wrapper.href = event.linkRegistration;
-        wrapper.target = "_blank";
-      }
-
-      wrapper.innerHTML = `
-        <div class="event-card">
-          <div class="event-date">
-            <div class="event-daymonth">${event.date.toUpperCase()}</div>
-            <div class="event-time">${event.time || ""}</div>
-          </div>
-          <div class="separator"></div>
-          <div class="event-details">
-            ${event.tagKegiatan ? `<span class="event-tag">${event.tagKegiatan}</span>` : ""}
-            <div class="event-title">${event.eventName}</div>
-            <div class="event-meta">
-              <img src="https://cdn-icons-png.flaticon.com/512/684/684809.png" alt="Location">
-              ${event.location || ""}${event.fee ? " | HTM: " + event.fee : ""}
+          wrapper.innerHTML = `
+            <div class="event-card">
+              <div class="event-date">
+                <div class="event-daymonth">${event.date.toUpperCase()}</div>
+                <div class="event-time">${event.time || ""}</div>
+              </div>
+              <div class="separator"></div>
+              <div class="event-details">
+                ${event.tagKegiatan ? `<span class="event-tag">${event.tagKegiatan}</span>` : ""}
+                <div class="event-title">${event.eventName}</div>
+                <div class="event-meta">
+                  <img src="https://cdn-icons-png.flaticon.com/512/684/684809.png" alt="Location">
+                  ${event.location || ""}${event.fee ? " | HTM: " + event.fee : ""}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      `;
-      container.appendChild(wrapper);
-    });
+          `;
+          container.appendChild(wrapper);
+        });
+      })
+      .catch(err => console.error("Error fetching events:", err));
+  }
+
+  function fetchBanners() {
+    fetch(`${scriptBaseUrl}?page=Banner`)
+      .then(res => res.json())
+      .then(banners => {
+        const wrapper = document.getElementById("bannerWrapper");
+        banners.forEach((banner, i) => {
+          const slide = document.createElement("div");
+          slide.className = "swiper-slide";
+          if (banner.directUrl) {
+            slide.innerHTML = `
+              <a href="${banner.directUrl}" target="_blank">
+                <img src="${banner.bannerAsset}" alt="Banner ${i + 1}">
+              </a>
+            `;
+          } else {
+            slide.innerHTML = `<img src="${banner.bannerAsset}" alt="Banner ${i + 1}">`;
+          }
+          wrapper.appendChild(slide);
+        });
+
+        new Swiper('.swiper', {
+          direction: 'horizontal',
+          loop: true,
+          autoplay: {
+            delay: 10000,
+            disableOnInteraction: false
+          },
+          slidesPerView: 1,
+          spaceBetween: 20,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true
+          }
+        });
+      })
+      .catch(err => console.error("Error fetching banners:", err));
+  }
+
+  document.getElementById('textForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const text = document.getElementById('longText').value.trim();
+    const email = localStorage.getItem("email");
+
+    if (!email) return alert("Email not found.");
+    if (!text) return alert("Prayer cannot be empty.");
+
+    fetch(`${scriptBaseUrl}?page=DoaSyafaat&text=${encodeURIComponent(text)}&email=${encodeURIComponent(email)}`)
+      .then(res => {
+        if (res.ok) {
+          document.getElementById('textForm').reset();
+          alert("Prayer submitted.");
+        } else {
+          alert("Submission failed.");
+        }
+      })
+      .catch(err => {
+        console.error("Error submitting prayer:", err);
+        alert("Error submitting prayer.");
+      });
   });
-
-// 3. Replace Banner Section
-fetch("https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec?page=Banner")
-  .then(res => res.json())
-  .then(banners => {
-    const wrapper = document.querySelector(".swiper-wrapper");
-    banners.forEach((banner, i) => {
-      const slide = document.createElement("div");
-      slide.className = "swiper-slide";
-      if (banner.directUrl) {
-        slide.innerHTML = `
-          <a href="${banner.directUrl}" target="_blank">
-            <img src="${banner.bannerAsset}" alt="Banner ${i + 1}">
-          </a>
-        `;
-      } else {
-        slide.innerHTML = `<img src="${banner.bannerAsset}" alt="Banner ${i + 1}">`;
-      }
-      wrapper.appendChild(slide);
-    });
-
-    // Initialize Swiper after loading banners
-    new Swiper('.swiper', {
-      direction: 'horizontal',
-      loop: true,
-      autoplay: {
-        delay: 10000,
-        disableOnInteraction: false
-      },
-      slidesPerView: 1,
-      spaceBetween: 20,
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true
-      }
-    });
-  });
-
-// 4. Replace google.script.run.doaSyafaat
-document.getElementById('textForm').addEventListener('submit', function (e) {
-  e.preventDefault();
-  const text = document.getElementById('longText').value;
-  const email = localStorage.getItem("email");
-
-  if (!email) return alert("Email not found.");
-
-  fetch(`https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec?page=DoaSyafaat&text=${encodeURIComponent(text)}&email=${encodeURIComponent(email)}`)
-    .then(res => {
-      if (res.ok) {
-        document.getElementById('textForm').reset();
-        alert("Prayer submitted.");
-      } else {
-        alert("Submission failed.");
-      }
-    })
-    .catch(err => alert("Error submitting prayer."));
-});
 </script>
+
 </body>
 </html>
