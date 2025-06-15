@@ -734,6 +734,9 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
   const scriptBaseUrl = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
+  const urlParams = new URLSearchParams(window.location.search);
+  const eventParam = urlParams.get("event") || "Sunday Service";
+
 
   function toggleIcon(selectedElement) {
     document.querySelectorAll('.footer-item').forEach(item => {
