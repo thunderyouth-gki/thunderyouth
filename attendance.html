@@ -621,32 +621,12 @@
   background-color: #3a0e8e;
 }
 
-    .logout-button {
-  position: absolute;
-  top: -10px;
-  right: 0px;
-  padding: 8px 14px;
-  background-color: #4D0FB1;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  font-size: 14px;
-  cursor: pointer;
-  z-index: 1001;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.logout-button:hover {
-  background-color: #3a0e8e;
-}
     </style>
 </head>
 <body>
   <div class="header">
     <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
   </div>
-
-<button id="logoutBtn" class="logout-button" onclick="logout()" style="display: none;">Logout</button>
     
     <div id="emailModal" class="modal-overlay">
   <div class="modal-content">
@@ -771,17 +751,11 @@
     if (email && email.includes("@")) {
       localStorage.setItem("email", email);
       document.getElementById("emailModal").style.display = "none";
-      document.getElementById("logoutBtn").style.display = "block";
       fetchProfile(email);
       fetchLandingPageMessage(email, eventParam);
     } else {
       alert("Please enter a valid email address.");
     }
-  }
-
-  function logout() {
-    localStorage.removeItem("email");
-    location.reload();
   }
 
   function fetchProfile(email) {
@@ -797,7 +771,6 @@
     const savedEmail = localStorage.getItem("email");
     if (savedEmail) {
       document.getElementById("emailModal").style.display = "none";
-      document.getElementById("logoutBtn").style.display = "block";
       fetchProfile(savedEmail);
       fetchLandingPageMessage(savedEmail, eventParam);
     }
