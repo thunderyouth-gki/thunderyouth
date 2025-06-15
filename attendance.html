@@ -565,16 +565,97 @@
       .shrink-up {
         animation: shrinkUp 0.5s ease-in-out forwards;
       }
+
+   .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 30px 20px;
+      border-radius: 20px;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+    }
+
+.modal-content h2 {
+  margin-top: 0;
+  color: #4D0FB1;
+}
+
+.modal-content input[type="email"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  width: 80%;
+  border-radius: 10px;
+  margin: 15px 0;
+  font-size: 1rem;
+}
+
+.modal-content button {
+  padding: 10px 20px;
+  background-color: #4D0FB1;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background-color: #3a0e8e;
+}
+
+    .logout-button {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  padding: 8px 14px;
+  background-color: #4D0FB1;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 1001;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.logout-button:hover {
+  background-color: #3a0e8e;
+}
     </style>
 </head>
 <body>
-  <!--- <div class="header">
+  <div class="header">
     <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
-  </div> -->
+  </div>
+
+<button id="logoutBtn" class="logout-button" onclick="logout()" style="display: none;">Logout</button>
+    
+    <div id="emailModal" class="modal-overlay">
+  <div class="modal-content">
+    <h2>Welcome!</h2>
+    <p>Please enter your email to continue:</p>
+    <input type="email" id="emailInput" placeholder="you@example.com" />
+    <button onclick="saveEmail()">Submit</button>
+  </div>
+</div>
   
   <section class="attendance-container" id="attendance">
     <div class="attendance-left">
-      <div class="attendance-static-text">Hi <?= namaPanggilan?>!</div>
+      <div class="attendance-static-text" id="namaPanggilan">Hi there!</div>
       <div class="attendance-dynamic-text" id="dynamicText"><?= landingPageMessage ?></div>
     </div>
     <div class="attendance-right">
@@ -582,60 +663,22 @@
     </div>
   </section>
 
-  <section class="form-container" id="registration">
-    <div class="form-title">Your First Time?</div>
-    <div class="form-description">We don't recognize your email:( Please fill in the form below so we can remember you next time!</div>
+<section class="event-container" id="upcoming-events">
+  <div class="upcoming-events-title">Upcoming Events</div>
+  <!-- JavaScript will populate event cards here -->
+</section>
 
-    <label for="nama">Nama Lengkap</label>
-    <input type="text" id="nama" required>
-
-    <label>Gender</label>
-    <div class="form-radio-group">
-      <input type="radio" id="laki-laki" name="gender" value="Laki-laki" required>
-      <label for="laki-laki">Laki-laki</label>
-      <input type="radio" id="perempuan" name="gender" value="Perempuan" required>
-      <label for="perempuan">Perempuan</label>
-    </div>
-
-    <label>Status Keanggotaan Gereja</label>
-    <div class="form-radio-group">
-      <input type="radio" id="jemaat" name="status" value="Jemaat" required>
-      <label for="jemaat">Jemaat</label>
-      <input type="radio" id="simpatisan" name="status" value="Simpatisan" required>
-      <label for="simpatisan">Simpatisan</label>
-    </div>
-
-    <label for="tanggal-lahir">Tanggal Lahir</label>
-    <input type="date" id="tanggal-lahir" required>
-
-    <button onclick="submitData()">Kirim</button>
-    <p id="response"></p>
-  </section>
-
- <section class="event-container" id="upcoming-events">
-    <div class="upcoming-events-title">Upcoming Events</div>
-  </section>
 
 <section class=banner-container id="banner">
 <div class="banner-title">What's on Thunder</div>
 </section>
 <div class="swiper">
-      <div class="swiper-wrapper">
-        <? for (var i = 0; i < banner.length; i++) { ?>
-          <div class="swiper-slide">
-            <? if (banner[i].directUrl) { ?>
-              <a href="<?= banner[i].directUrl ?>" target="_blank">
-                <img src="<?= banner[i].bannerAsset ?>" alt="Banner <?= i+1 ?>">
-              </a>
-            <? } else { ?>
-              <img src="<?= banner[i].bannerAsset ?>" alt="Banner <?= i+1 ?>">
-            <? } ?>
-          </div>
-        <? } ?>
-      </div>
-    </div>
+  <div class="swiper-wrapper" id="bannerWrapper">
+    <!-- Filled by JS -->
+  </div>
+  <div class="swiper-pagination"></div>
+</div>
 <div class="swiper-pagination"></div>
-
 
   <section class="doa-syafaat-container">
     <div class="doa-syafaat-title">Prayer Tree</div>
@@ -646,9 +689,10 @@
       </form>
   </section>
 
+
   <div class="footer" id="footer">
     <div class="footer-item" onclick="toggleIcon(this)">
-    <a href='<?= urlHome ?>'>
+    <a href='https://thunderyouth.gkiguntur.com/'>
       <img src="https://lh3.googleusercontent.com/d/1M1axLb9BnoWun9iDPcAx_ZUID5ZlEl_m" 
            data-default="https://lh3.googleusercontent.com/d/1M1axLb9BnoWun9iDPcAx_ZUID5ZlEl_m" 
            data-active="https://lh3.googleusercontent.com/d/1Ls9Ci-xvgXQZePWs-33468b0EUQz0pxd" 
@@ -664,7 +708,7 @@
       <span>Warta</span>
     </div>
     <div class="footer-item" onclick="toggleIcon(this)">
-      <a href='<?= urlHistory ?>'>
+      <a href='https://thunderyouth.gkiguntur.com/history'>
       <img src="https://lh3.googleusercontent.com/d/1MF2aumWkfIvGKqsg_P84G2iv8agK5nyy" 
            data-default="https://lh3.googleusercontent.com/d/1MF2aumWkfIvGKqsg_P84G2iv8agK5nyy" 
            data-active="https://lh3.googleusercontent.com/d/1LydGXt7w6IyiRWfP7Hdi8YfpBWBqxdHp" 
@@ -673,7 +717,7 @@
       </a>
     </div>
     <div class="footer-item" onclick="toggleIcon(this)">
-      <a href='<?= urlProfile ?>'>
+      <a href='https://thunderyouth.gkiguntur.com/profile'>
       <img src="https://lh3.googleusercontent.com/d/1M8uxpiXhKUmu2WMR6_iR1RraErskHuZ9" 
            data-default="https://lh3.googleusercontent.com/d/1M8uxpiXhKUmu2WMR6_iR1RraErskHuZ9" 
            data-active="https://lh3.googleusercontent.com/d/1Lt3K_ZqPYJUT2iv1mLyTBpvtuMuhxWOA" 
@@ -685,17 +729,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
-    document.getElementById('textForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const text = document.getElementById('longText').value;
-        //const isAnonymous = document.getElementById('anonymousCheckbox').checked;
-        const isAnonymous = false;
-
-        google.script.run.withSuccessHandler(function () {
-          document.getElementById('textForm').reset();
-        }).doaSyafaat({ text: text, anonymous: isAnonymous });
-      });
 
   function toggleIcon(selectedElement) {
     document.querySelectorAll('.footer-item').forEach(item => {
@@ -727,123 +760,145 @@
 
     lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
   });
-  
-    function submitData() {
-        var nama = document.getElementById('nama').value;
-        var gender = document.querySelector('input[name="gender"]:checked')?.value;
-        var status = document.querySelector('input[name="status"]:checked')?.value;
-        var tanggalLahir = document.getElementById('tanggal-lahir').value; 
 
-        if (!nama || !gender || !status || !tanggalLahir) {
-            document.getElementById('response').innerText = "Please fill in all required fields";
-            return;
-        }
 
-        var formData = { nama, gender, status, tanggalLahir };
+function saveEmail() {
+      const input = document.getElementById("emailInput");
+      const email = input.value.trim();
 
-        google.script.run
-            .withSuccessHandler(function(response) {
-                document.getElementById('response').innerText = response;
-                document.getElementById('nama').value = ""; // Reset form fields
-                document.querySelectorAll('input[name="gender"]').forEach(el => el.checked = false);
-                document.querySelectorAll('input[name="status"]').forEach(el => el.checked = false);
-                document.getElementById('tanggal-lahir').value = "";
-
-                // Hide the form container after successful submission
-            var formContainer = document.getElementById('registration')
-            formContainer.classList.add("shrink-up"); // Apply swipe animation
-                
-                setTimeout(() => {
-                    formContainer.style.display = "none"; // Hide after animation
-                }, 500);
-            
-            })  
-            
-            .withFailureHandler(function(error) {
-                document.getElementById('response').innerText = "Terjadi kesalahan: " + error.message;
-            })
-            .submitForm(formData);
+      if (email && email.includes("@")) {
+        localStorage.setItem("email", email);
+        document.getElementById("emailModal").style.display = "none";
+        document.getElementById("logoutBtn").style.display = "block";
+        fetchHistory(email);
+      } else {
+        alert("Please enter a valid email address.");
+      }
     }
 
+    function logout() {
+      localStorage.removeItem("email");
+      location.reload();
+    }
 
-      document.addEventListener("DOMContentLoaded", function () {
-          var hasntRegister = <?= hasntRegistered ?> === "true"; // Convert string to boolean
-          
-          console.log(hasntRegister)
-          if (!hasntRegister) {
-              document.getElementById("registration").style.display = "none";
-          }
+    window.addEventListener("DOMContentLoaded", function () {
+      const savedEmail = localStorage.getItem("email");
+      if (savedEmail) {
+        document.getElementById("emailModal").style.display = "none";
+        document.getElementById("logoutBtn").style.display = "block";
+        fetchHistory(savedEmail);
+      }
+    });    
 
-          var weeklyThunder = <?= eventName ?> === "Sunday Service";
+const email = localStorage.getItem("email");
+      
+ if (email) {
+  fetch(`https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec?page=GetProfile&email=${email}`)
+    .then(res => res.json())
+    .then(profile => {
+      document.querySelector(".attendance-static-text").innerText = `Hi ${profile[1]}!`; // index 1 = namaPanggilan
+    });
+}
 
-          if (!weeklyThunder) {
-            document.getElementById("sunday-service").style.display = "none";
-          }
-      });
-
-      new Swiper('.swiper', {
-  direction: 'horizontal',
-  loop: true,
-  autoplay: {
-    delay: 10000,
-    disableOnInteraction: false
-  },
-  slidesPerView: 1,
-  spaceBetween: 20,
-  pagination: {
-    el: '.swiper-pagination',
-    clickable: true, // users can click the bullets to change banners
-  }
-});
-
-      const API_BASE = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec?page=EventsList";
+// 2. Replace Upcoming Events
+fetch("https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec?page=EventsList")
+  .then(res => res.json())
+  .then(data => {
     const container = document.getElementById("upcoming-events");
+    const events = data.events || [];
 
-    fetch(API_BASE)
-      .then(res => res.json())
-      .then(data => {
-        const events = data.events || [];
-        const validEvents = events.filter(event =>
-          event.eventName && event.date && event.date !== "Invalid Date"
-        );
+    if (events.length === 0 || !events.some(e => e.eventName && e.date && e.date !== "Invalid Date")) {
+      container.style.display = "none";
+      return;
+    }
 
-        if (validEvents.length === 0) {
-          container.style.display = "none";
-          return;
-        }
+    events.forEach(event => {
+      if (!event.eventName || !event.date || event.date === "Invalid Date") return;
 
-        validEvents.forEach(event => {
-          const wrapper = document.createElement(event.linkRegistration ? "a" : "div");
-          wrapper.className = "event-card-wrapper" + (event.linkRegistration ? "" : " disabled");
-          if (event.linkRegistration) {
-            wrapper.href = event.linkRegistration;
-            wrapper.target = "_blank";
-          }
+      const wrapper = document.createElement(event.linkRegistration ? "a" : "div");
+      wrapper.className = "event-card-wrapper" + (event.linkRegistration ? "" : " disabled");
+      if (event.linkRegistration) {
+        wrapper.href = event.linkRegistration;
+        wrapper.target = "_blank";
+      }
 
-          wrapper.innerHTML = `
-            <div class="event-card">
-              <div class="event-date">
-                <div class="event-daymonth">${event.date.toUpperCase()}</div>
-                <div class="event-time">${event.time || ""}</div>
-              </div>
-              <div class="separator"></div>
-              <div class="event-details">
-                ${event.tagKegiatan ? `<span class="event-tag">${event.tagKegiatan}</span>` : ""}
-                <div class="event-title">${event.eventName}</div>
-                <div class="event-meta">
-                  <img src="https://cdn-icons-png.flaticon.com/512/684/684809.png" alt="Location">
-                  ${event.location || ""}${event.fee ? " | HTM: " + event.fee : ""}
-                </div>
-              </div>
+      wrapper.innerHTML = `
+        <div class="event-card">
+          <div class="event-date">
+            <div class="event-daymonth">${event.date.toUpperCase()}</div>
+            <div class="event-time">${event.time || ""}</div>
+          </div>
+          <div class="separator"></div>
+          <div class="event-details">
+            ${event.tagKegiatan ? `<span class="event-tag">${event.tagKegiatan}</span>` : ""}
+            <div class="event-title">${event.eventName}</div>
+            <div class="event-meta">
+              <img src="https://cdn-icons-png.flaticon.com/512/684/684809.png" alt="Location">
+              ${event.location || ""}${event.fee ? " | HTM: " + event.fee : ""}
             </div>
-          `;
-          container.appendChild(wrapper);
-        });
-      })
-      .catch(error => {
-        console.error("Error fetching events:", error);
-        container.style.display = "none";
-      });
+          </div>
+        </div>
+      `;
+      container.appendChild(wrapper);
+    });
+  });
+
+// 3. Replace Banner Section
+fetch("https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec?page=Banner")
+  .then(res => res.json())
+  .then(banners => {
+    const wrapper = document.querySelector(".swiper-wrapper");
+    banners.forEach((banner, i) => {
+      const slide = document.createElement("div");
+      slide.className = "swiper-slide";
+      if (banner.directUrl) {
+        slide.innerHTML = `
+          <a href="${banner.directUrl}" target="_blank">
+            <img src="${banner.bannerAsset}" alt="Banner ${i + 1}">
+          </a>
+        `;
+      } else {
+        slide.innerHTML = `<img src="${banner.bannerAsset}" alt="Banner ${i + 1}">`;
+      }
+      wrapper.appendChild(slide);
+    });
+
+    // Initialize Swiper after loading banners
+    new Swiper('.swiper', {
+      direction: 'horizontal',
+      loop: true,
+      autoplay: {
+        delay: 10000,
+        disableOnInteraction: false
+      },
+      slidesPerView: 1,
+      spaceBetween: 20,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true
+      }
+    });
+  });
+
+// 4. Replace google.script.run.doaSyafaat
+document.getElementById('textForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  const text = document.getElementById('longText').value;
+  const email = localStorage.getItem("email");
+
+  if (!email) return alert("Email not found.");
+
+  fetch(`https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec?page=DoaSyafaat&text=${encodeURIComponent(text)}&email=${encodeURIComponent(email)}`)
+    .then(res => {
+      if (res.ok) {
+        document.getElementById('textForm').reset();
+        alert("Prayer submitted.");
+      } else {
+        alert("Submission failed.");
+      }
+    })
+    .catch(err => alert("Error submitting prayer."));
+});
 </script>
 </body>
 </html>
