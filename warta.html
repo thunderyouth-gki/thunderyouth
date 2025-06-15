@@ -237,6 +237,7 @@
         width: 100%;
         height: auto;
         margin-top: 40px;
+        overflow-x:hidden;
       }
 
       .banner-title{
@@ -259,7 +260,7 @@
       }
       .swiper-wrapper {
         display: flex; /* required for horizontal layout */
-        overflow: hidden;
+        box-sizing: border-box;
       }
       .swiper-slide {
         flex-shrink: 0;
