@@ -660,7 +660,7 @@
   <section class="attendance-container" id="attendance">
     <div class="attendance-left">
       <div class="attendance-static-text" id="namaPanggilan">Hi Thunder!</div>
-      <div class="attendance-dynamic-text" id="dynamicText"><?= landingPageMessage ?></div>
+      <div class="attendance-dynamic-text" id="dynamicText"></div>
     </div>
     <div class="attendance-right">
       <img src="https://lh3.googleusercontent.com/d/1AEO_fiy7DittttDd1r9TQWE31Xm8FrcQ" alt="Illustration">
@@ -770,6 +770,7 @@
       document.getElementById("emailModal").style.display = "none";
       document.getElementById("logoutBtn").style.display = "block";
       fetchProfile(email);
+      fetchLandingPageMessage(email, eventParam);
     } else {
       alert("Please enter a valid email address.");
     }
@@ -795,6 +796,7 @@
       document.getElementById("emailModal").style.display = "none";
       document.getElementById("logoutBtn").style.display = "block";
       fetchProfile(savedEmail);
+      fetchLandingPageMessage(savedEmail, eventParam);
     }
     fetchEvents();
     fetchBanners();
@@ -905,6 +907,19 @@
         alert("Error submitting prayer.");
       });
   });
+
+    function fetchLandingPageMessage(email, eventName) {
+  fetch(`${scriptBaseUrl}?page=Attendance&event=${encodeURIComponent(eventName)}&email=${encodeURIComponent(email)}`)
+    .then(res => res.json())
+    .then(data => {
+      const message = data.landingPageMessage || "Welcome!";
+      document.getElementById("dynamicText").textContent = message;
+    })
+    .catch(err => {
+      console.error("Failed to fetch landing page message:", err);
+    });
+}
+
 </script>
 
 </body>
