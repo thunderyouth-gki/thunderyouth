@@ -26,6 +26,7 @@
         width: 100%;
         height: 30px; /* Ensures a consistent height */
         padding-top: 10px;
+        margin-top: 10px;
         padding-bottom: 10px;
         padding-left: 20px;
         background-color: #f8f8f8;
@@ -289,7 +290,7 @@
         background: rgba(0, 0, 0, 0.2);
         display: inline-block;
         border-radius: 50%;
-        margin: 0 5px;
+        margin: 10px 5px;
         opacity: 1;
         transition: background 0.3s ease;
       }
@@ -773,7 +774,7 @@ function saveEmail() {
         localStorage.setItem("email", email);
         document.getElementById("emailModal").style.display = "none";
         document.getElementById("logoutBtn").style.display = "block";
-        fetchHistory(email);
+        fetchProfile(email);
       } else {
         alert("Please enter a valid email address.");
       }
@@ -810,10 +811,10 @@ fetch("https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpB
     const container = document.getElementById("upcoming-events");
     const events = data.events || [];
 
-    if (events.length === 0 || !events.some(e => e.eventName && e.date && e.date !== "Invalid Date")) {
-      container.style.display = "none";
-      return;
-    }
+    //if (events.length === 0 || !events.some(e => e.eventName && e.date && e.date !== "Invalid Date")) {
+    //  container.style.display = "none";
+    //  return;
+    //}
 
     events.forEach(event => {
       if (!event.eventName || !event.date || event.date === "Invalid Date") return;
