@@ -302,7 +302,6 @@
       .doa-syafaat-container{
         width: 100%;
         height: auto;
-        padding: 20px;
         margin-top: 40px;
         padding: 20px;
       }
@@ -570,24 +569,6 @@
         animation: shrinkUp 0.5s ease-in-out forwards;
       }
 
-    .logout-button {
-  position: absolute;
-  top: -10px;
-  right: 0px;
-  padding: 8px 14px;
-  background-color: #4D0FB1;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  font-size: 14px;
-  cursor: pointer;
-  z-index: 1001;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.logout-button:hover {
-  background-color: #3a0e8e;
-}
     </style>
 </head>
 <body>
@@ -595,7 +576,6 @@
     <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
   </div>
 
-<button id="logoutBtn" class="logout-button" onclick="logout()" style="display: none;">Logout</button>
 
 <section class=banner-container id="banner">
 <div class="banner-title" id="namaPanggilan">Hi Thunder!</div>
@@ -691,21 +671,12 @@
     lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
   });
 
-function logout() {
-  localStorage.removeItem("email");
-  location.reload();
-}
 
 const urlParams = new URLSearchParams(window.location.search);
 const eventParam = urlParams.get("event") || "Sunday Service";
 
 const localEmail = localStorage.getItem("email");
 const email = localEmail || "thunderyouth.gki@gmail.com";
-
-// Show logout button if using local email
-if (localEmail) {
-  document.getElementById("logoutBtn").style.display = "block";
-}
 
   function fetchProfile(email) {
     fetch(`${scriptBaseUrl}?page=GetProfile&email=${email}`)
