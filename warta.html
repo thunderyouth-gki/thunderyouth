@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance | Thunder Youth</title>
+    <style>
+        * {
+          box-sizing: border-box;
+        }
+      body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #F8F8F8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .header {
+        position: sticky;
+        width: 100%;
+        height: 30px; /* Ensures a consistent height */
+        padding-top: 10px;
+        margin-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 20px;
+        background-color: #f8f8f8;
+        display: flex;
+        align-items: center;
+      }
+      .header img {
+        height: 25px;
+      }
+      .footer {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: #f8f8f8;
+        padding: 5px 0;
+        box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        border-radius: 20px 20px 0 0;
+        transition: transform 0.3s ease-in-out;
+        z-index: 1000;
+      }
+
+      .footer-item {
+        text-align: center;
+        cursor: pointer;
+      }
+
+      .footer-item img {
+        width: 30px;
+        height: 30px;
+        margin-top: 5px;
+      }
+
+      .footer-item span {
+        display: block;
+        font-size: 12px;
+        margin-top: 0px;
+      }
+
+      .footer.hide {
+        transform: translateY(100%);
+      }
+
+      .footer.show {
+        transform: translateY(0);
+      }
+
+      a {
+        text-decoration: none; /* Remove underline */
+        color: inherit; /* Keep the default text color */
+      }
+
+      a span {
+        color: inherit; /* Ensure the text color doesn't change */
+      }
+
+      @keyframes panUp {
+        from {
+          transform: translateY(250px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .attendance-container {
+        margin-top: 20px;
+        width: 100%;
+        height: 100%;
+        color: #4D0FB1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .attendance-left {
+        width: 100%;
+        justify-content: space-between;
+        text-align: center;
+      }
+      .attendance-static-text {
+        font-weight: bold;
+        font-size: 6vw;
+        white-space: nowrap;
+        margin-bottom: 2.5%;
+        animation: panUp 0.5s ease-out forwards;
+      }
+      .attendance-dynamic-text {
+        font-size: 7vw;
+        line-height: 100%;
+        text-wrap: balance;
+        display: block;
+        margin-bottom: 5%;
+        animation: panUp 0.7s ease-out forwards;
+      }
+      .attendance-button-upcoming-events {
+        font-weight: bold;
+        background: #4D0FB1;
+        color: #F8F8F8;
+        padding: 12px 24px;
+        border-radius: 20px;
+        text-decoration: none;
+        display: inline-block;
+        margin-bottom: 5%;
+        animation: panUp 0.9s ease-out forwards;
+      }
+      .attendance-right img {
+        width: 80%; /* Ensures it takes the full width of the container */
+        height: auto; /* Keeps aspect ratio */
+        object-fit: contain; /* Ensures the whole image is visible */
+        padding-left: 10%;
+         animation: panUp 0.7s ease-out forwards;
+      }
+
+      .form-container {
+        width: 80%;
+        border-radius: 20px;
+        background: #FFDA56;
+        padding: 20px;
+        animation: panUp 0.9s ease-out forwards;
+        margin-top: 40px
+      }
+      .form-title {
+        text-align: left;
+        font-size: 36px;
+        font-weight: 600;
+        margin: 20px;
+        margin-bottom: 5px;
+        color: #4D0FB1;
+      }   
+      .form-description{
+        text-align: justify;
+        font-size: 12px;
+        margin: 20px;
+        margin-top:0px;
+        color: #252424;
+      }
+      label {
+        font-weight: 100px;
+        font-size: 14px;
+        display: block;
+        margin-top: 10px;
+        margin-left: 20px;
+        margin-right: 20px;
+      }
+      input {
+        width: calc(100% - 60px);
+        padding: 8px;
+        margin: 20px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        border-radius: 5px;
+        border: none;
+        display: block;
+        }
+      .form-radio-group {
+        display: flex;
+        justify-content: space-between;
+        margin-left: 20px;
+        margin-right: 20px;
+      }
+      .form-radio-group label {
+        flex: 1;
+        text-align: center;
+        padding: 8px;
+        border: 0px solid #A687D8;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+        font-size: 14px;
+        background-color: #F8F8F8;
+        color: #252424;
+        margin: 3px;
+      }
+      .form-radio-group input {
+        display: none;
+      }
+      .form-radio-group input:checked + label {
+        background-color: #4D0FB1;
+        color: #F8F8F8;
+      }
+      button {
+        background-color: #4D0FB1;
+        color: #F8F8F8;
+        border: none;
+        padding: 8px;
+        margin-top: 20px;
+        margin-right: 20px;
+        float: right;;
+        width: 25%;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      button:hover {
+        background-color: #A687D8;
+      }
+
+      input, select {
+      background-color: #FFFFFF;
+      }
+
+      .banner-container{
+        width: 100%;
+        height: auto;
+        margin-top: 40px;
+      }
+
+      .banner-title{
+        font-size: 6vw;
+        font-weight: bold;
+        text-align: left;
+        color: #4D0FB1;
+        padding-left: 20px;
+      }
+
+      .swiper {
+        width: 90%;
+        height: auto;
+        margin-top: 20px;
+        margin-bottom: 30px;
+      }
+      .swiper-wrapper {
+        display: flex; /* required for horizontal layout */
+      }
+      .swiper-slide {
+        flex-shrink: 0;
+        width: 90%;
+        height: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: transparent;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin: 0px;
+        overflow: hidden;
+      }
+      .swiper-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* key property to fully fill the container */
+        display: block;
+      }
+
+      .swiper-pagination {
+        position: relative;
+        text-align: center;
+        top: 10px;
+        width: 100%;
+        z-index: 10;
+      }
+
+      .swiper-pagination-bullet {
+        width: 8px;
+        height: 8px;
+        background: rgba(0, 0, 0, 0.2);
+        display: inline-block;
+        border-radius: 50%;
+        margin: 0px 5px;
+        opacity: 1;
+        transition: background 0.3s ease;
+      }
+
+      .swiper-pagination-bullet-active {
+        background: rgba(0, 0, 0, 0.7); /* darker circle */
+      }
+
+      .doa-syafaat-container{
+        width: 100%;
+        height: auto;
+        padding: 20px;
+        margin-top: 40px;
+        padding: 20px;
+      }
+
+      .doa-syafaat-title{
+        text-align: left;
+        font-size: 6vw;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #4D0FB1;
+        padding-left: 20px;
+      }
+      
+      textarea {
+        width: 90%;
+        height: 300px;
+        padding: 12px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        resize: vertical;
+        box-sizing: border-box;
+        margin-left: 20px;
+        margin-top: -20px;
+      }
+
+      .event-container {
+        width: 90%;
+        max-width: 1000px;
+        margin: 20px auto;
+        margin-top: 40px;
+      }
+
+      .upcoming-events-title {
+        text-align: left;
+        font-size: 6vw;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #4D0FB1;
+      }
+
+      .event-card {
+        display: flex;
+        align-items: center;
+        background: white;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 10px;
+        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+        flex-direction: row;
+        text-align: center;
+      }
+        
+      .separator {
+        width: 1px;
+        height: 50px;
+        background-color: #ddd;
+        margin: 8px;
+        margin-left : 3px;
+      }
+
+      .event-date {
+        font-weight: 600;
+        width: 25%;
+        text-align: center;
+      }
+
+      .event-daymonth {
+        font-size: 4vw;
+        line-height: 1.2;
+      }
+
+      .event-time {
+        font-size: 4vw;
+        font-weight: 400;
+        color: #666;
+        text-transform: uppercase;
+      }
+
+      .event-details {
+        width: 100%;
+        text-align: left;
+        padding-left: 3px ;
+      }
+
+      .event-title {
+        font-size: 4.5vw;
+        font-weight: 600;
+      }
+
+      .event-meta {
+        font-size: 3.5vw;
+        color: #252424;
+        margin-top: 2px;
+      }
+
+      .event-tag {
+        font-size: 3.5vw;
+        color: #252424;
+        background-color: #FFE178;
+        border-radius: 10px;
+        width: auto;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+
+      .event-location {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        margin-top: 8px;
+        width: 5%;
+        float: left;
+      }
+
+      .event-meta img {
+        width: 3vw;
+        height: 3vw;
+      }
+
+      .event-location span {
+        font-size: 14px;
+        color: #444;
+        padding-left:1% ;
+        text-align : left;
+      }
+
+      .event-card-wrapper.disabled {
+        pointer-events: none;
+      }
+
+      @media (orientation: landscape) {
+        .header {
+          padding: 20px;
+        }
+        .header img {
+          height: 40px;
+        }
+        .attendance-container {
+          height: 90%;
+          flex-direction: row;
+          display: flex;
+          justify-content: center;
+          align-items:center;
+        }
+        .attendance-left{
+          width: 50%;
+          align-content: left;
+          padding-left; 10%
+        }
+        .attendance-right{
+          width : 40%;
+          justify-content: center;
+          padding-left: auto;
+          padding-right: auto;
+        }
+        .attendance-static-text {
+          font-size: 4vw;
+          white-space: normal;
+          text-align: left;
+          margin-bottom: 1.5%;
+          padding-left: 2vw;
+        }
+        .attendance-dynamic-text {
+          font-size: 6vw;
+          text-wrap: balance;
+          line-height: 100%;
+          margin-bottom : 2.5%;
+          text-align: left;
+          padding-left: 2vw;
+        }
+        .attendance-right img {
+          height: auto;
+          width: 80%;
+          min-width: 300px;
+          align-content: center;
+          padding-right: 2vw;
+        }
+        .attendance-button-upcoming-events {
+          float: left;
+          margin-left: 2vw;
+        }
+        .event-container {
+          width: 95%;
+          max-width: 1500px;
+          margin: 20px auto;
+        }
+        .event-card {
+          flex-direction: row;
+          text-align: left;
+          align-items: center;
+        }
+        .event-date {
+          width: 20%;
+        }
+        .event-details {
+          width: 60%;
+          text-align: left;
+        }
+        .event-title{
+          font-size: 20px;
+        }
+        .event-meta{
+          font-size: 16px;
+        }
+        .event-meta img{
+          width: 12px;
+          height: 12px;
+        }
+        .event-location {
+          width: 20%;
+          justify-content: flex-start;
+        }    
+        .separator {
+          width: 1px; /* Vertical separator on wide screens */
+          height: 50px;
+          margin: 0 12px;
+        }
+      }
+      
+      @keyframes swipeRight {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 1;
+        }
+      }
+
+      .swipe-out {
+        animation: swipeRight 0.5s ease-in-out forwards;
+      }
+        
+      @keyframes shrinkOut {
+        from {
+          transform: scale(1);
+          opacity: 1;
+        }
+        to {
+          transform: scale(0);
+          opacity: 1;
+        }
+      }
+
+      .shrink-out {
+        animation: shrinkOut 0.5s ease-in-out forwards;
+      }
+
+      @keyframes shrinkUp {
+        from {
+          transform: scaleY(1);
+          transform-origin: top;
+          opacity: 1;
+        }
+        to {
+          transform: scaleY(0);
+          transform-origin: top;
+          opacity: 1;
+        }
+      }
+
+      .shrink-up {
+        animation: shrinkUp 0.5s ease-in-out forwards;
+      }
+
+    .logout-button {
+  position: absolute;
+  top: -10px;
+  right: 0px;
+  padding: 8px 14px;
+  background-color: #4D0FB1;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 1001;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.logout-button:hover {
+  background-color: #3a0e8e;
+}
+    </style>
+</head>
+<body>
+  <div class="header">
+    <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
+  </div>
+
+<button id="logoutBtn" class="logout-button" onclick="logout()" style="display: none;">Logout</button>
+
+<section class=banner-container id="banner">
+<div class="banner-title" id="namaPanggilan">Hi Thunder!</div>
+</section>
+<div class="swiper">
+  <div class="swiper-wrapper" id="bannerWrapper">
+    <!-- Filled by JS -->
+  </div>
+  <div class="swiper-pagination"></div>
+</div>
+<div class="swiper-pagination"></div>
+
+<section class="event-container" id="upcoming-events">
+  <div class="upcoming-events-title">Upcoming Events</div>
+  <!-- JavaScript will populate event cards here -->
+</section>
+
+  <section class="doa-syafaat-container">
+    <div class="doa-syafaat-title">Prayer Tree</div>
+    <form id="textForm">
+      <label for="longText" class=form-description>We invite you to write down your prayer requests—whether it's for yourself, your loved ones, or anything that weighs on your heart. Your prayer will be lifted up together during the intercessory prayer in our Sunday service. Let us stand with you in prayer.</label><br>
+      <textarea id="longText" name="longText" placeholder="Type your prayer here..."></textarea>
+        <button type="submit">Submit</button>
+      </form>
+  </section>
+
+
+  <div class="footer" id="footer">
+    <div class="footer-item" onclick="toggleIcon(this)">
+    <a href='https://thunderyouth.gkiguntur.com/'>
+      <img src="https://lh3.googleusercontent.com/d/1M1axLb9BnoWun9iDPcAx_ZUID5ZlEl_m" 
+           data-default="https://lh3.googleusercontent.com/d/1M1axLb9BnoWun9iDPcAx_ZUID5ZlEl_m" 
+           data-active="https://lh3.googleusercontent.com/d/1Ls9Ci-xvgXQZePWs-33468b0EUQz0pxd" 
+           alt="Home">
+      <span>Home</span>
+    </a>
+    </div>
+    <div class="footer-item">
+      <img src="https://lh3.googleusercontent.com/d/1WIGRe_Ba07hCyw5N1fetmm7i5yjHx8S9" 
+           data-default="https://lh3.googleusercontent.com/d/1WMPNZl0Lc724pDDoC4lsWQtbkP3h6yUD" 
+           data-active="https://lh3.googleusercontent.com/d/1WIGRe_Ba07hCyw5N1fetmm7i5yjHx8S9" 
+           alt="History">
+      <span>Warta</span>
+    </div>
+    <div class="footer-item" onclick="toggleIcon(this)">
+      <a href='https://thunderyouth.gkiguntur.com/history'>
+      <img src="https://lh3.googleusercontent.com/d/1MF2aumWkfIvGKqsg_P84G2iv8agK5nyy" 
+           data-default="https://lh3.googleusercontent.com/d/1MF2aumWkfIvGKqsg_P84G2iv8agK5nyy" 
+           data-active="https://lh3.googleusercontent.com/d/1LydGXt7w6IyiRWfP7Hdi8YfpBWBqxdHp" 
+           alt="History">
+      <span>History</span>
+      </a>
+    </div>
+    <div class="footer-item" onclick="toggleIcon(this)">
+      <a href='https://thunderyouth.gkiguntur.com/profile'>
+      <img src="https://lh3.googleusercontent.com/d/1M8uxpiXhKUmu2WMR6_iR1RraErskHuZ9" 
+           data-default="https://lh3.googleusercontent.com/d/1M8uxpiXhKUmu2WMR6_iR1RraErskHuZ9" 
+           data-active="https://lh3.googleusercontent.com/d/1Lt3K_ZqPYJUT2iv1mLyTBpvtuMuhxWOA" 
+           alt="Profile">
+      <span>Profile</span>
+      </a>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  const scriptBaseUrl = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
+
+  function toggleIcon(selectedElement) {
+    document.querySelectorAll('.footer-item').forEach(item => {
+      item.classList.remove('active');
+      const img = item.querySelector('img');
+      img.src = img.dataset.default;
+    });
+
+    selectedElement.classList.add('active');
+    const selectedImg = selectedElement.querySelector('img');
+    selectedImg.src = selectedImg.dataset.active;
+  }
+
+  let lastScrollTop = 0;
+  const footer = document.getElementById("footer");
+
+  window.addEventListener("scroll", function () {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    if (scrollTop > lastScrollTop) {
+      footer.classList.remove("show");
+      footer.classList.add("hide");
+    } else {
+      footer.classList.remove("hide");
+      footer.classList.add("show");
+    }
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+  });
+
+function logout() {
+  localStorage.removeItem("email");
+  location.reload();
+}
+
+const urlParams = new URLSearchParams(window.location.search);
+const eventParam = urlParams.get("event") || "Sunday Service";
+
+const localEmail = localStorage.getItem("email");
+const email = localEmail || "thunderyouth.gki@gmail.com";
+
+// Show logout button if using local email
+if (localEmail) {
+  document.getElementById("logoutBtn").style.display = "block";
+}
+
+// Proceed with fetches using `email`
+fetchProfile(email);
+
+  function fetchProfile(email) {
+    fetch(`${scriptBaseUrl}?page=GetProfile&email=${email}`)
+      .then(res => res.json())
+      .then(profile => {
+        document.querySelector(".attendance-static-text").innerText = `Hi ${profile[1]}!`;
+      })
+      .catch(err => console.error("Error fetching profile:", err));
+  }
+
+  window.addEventListener("DOMContentLoaded", function () {
+    const savedEmail = localStorage.getItem("email");
+    if (savedEmail) {
+      document.getElementById("emailModal").style.display = "none";
+      document.getElementById("logoutBtn").style.display = "block";
+      fetchProfile(savedEmail);
+    }
+    fetchEvents();
+    fetchBanners();
+  });
+
+  function fetchEvents() {
+    fetch(`${scriptBaseUrl}?page=EventsList`)
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("upcoming-events");
+        const events = data.events || [];
+
+        if (events.length === 0 || !events.some(e => e.eventName && e.date && e.date !== "Invalid Date")) {
+          container.style.display = "none";
+          return;
+        }
+
+        events.forEach(event => {
+          if (!event.eventName || !event.date || event.date === "Invalid Date") return;
+
+          const wrapper = document.createElement(event.linkRegistration ? "a" : "div");
+          wrapper.className = "event-card-wrapper" + (event.linkRegistration ? "" : " disabled");
+          if (event.linkRegistration) {
+            wrapper.href = event.linkRegistration;
+            wrapper.target = "_blank";
+          }
+
+          wrapper.innerHTML = `
+            <div class="event-card">
+              <div class="event-date">
+                <div class="event-daymonth">${event.date.toUpperCase()}</div>
+                <div class="event-time">${event.time || ""}</div>
+              </div>
+              <div class="separator"></div>
+              <div class="event-details">
+                ${event.tagKegiatan ? `<span class="event-tag">${event.tagKegiatan}</span>` : ""}
+                <div class="event-title">${event.eventName}</div>
+                <div class="event-meta">
+                  <img src="https://cdn-icons-png.flaticon.com/512/684/684809.png" alt="Location">
+                  ${event.location || ""}${event.fee ? " | HTM: " + event.fee : ""}
+                </div>
+              </div>
+            </div>
+          `;
+          container.appendChild(wrapper);
+        });
+      })
+      .catch(err => console.error("Error fetching events:", err));
+  }
+
+  function fetchBanners() {
+    fetch(`${scriptBaseUrl}?page=Banner`)
+      .then(res => res.json())
+      .then(banners => {
+        const wrapper = document.getElementById("bannerWrapper");
+        banners.forEach((banner, i) => {
+          const slide = document.createElement("div");
+          slide.className = "swiper-slide";
+          if (banner.directUrl) {
+            slide.innerHTML = `
+              <a href="${banner.directUrl}" target="_blank">
+                <img src="${banner.bannerAsset}" alt="Banner ${i + 1}">
+              </a>
+            `;
+          } else {
+            slide.innerHTML = `<img src="${banner.bannerAsset}" alt="Banner ${i + 1}">`;
+          }
+          wrapper.appendChild(slide);
+        });
+
+        new Swiper('.swiper', {
+          direction: 'horizontal',
+          loop: true,
+          autoplay: {
+            delay: 10000,
+            disableOnInteraction: false
+          },
+          slidesPerView: 1,
+          spaceBetween: 20,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true
+          }
+        });
+      })
+      .catch(err => console.error("Error fetching banners:", err));
+  }
+
+  document.getElementById('textForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const text = document.getElementById('longText').value.trim();
+
+    if (!email) return alert("Email not found.");
+    if (!text) return alert("Prayer cannot be empty.");
+
+    fetch(`${scriptBaseUrl}?page=DoaSyafaat&text=${encodeURIComponent(text)}&email=${encodeURIComponent(email)}`)
+      .then(res => {
+        if (res.ok) {
+          document.getElementById('textForm').reset();
+          alert("Prayer submitted.");
+        } else {
+          alert("Submission failed.");
+        }
+      })
+      .catch(err => {
+        console.error("Error submitting prayer:", err);
+        alert("Error submitting prayer.");
+      });
+  });
+}
+
+</script>
+
+</body>
+</html>
