@@ -532,6 +532,32 @@
       .shrink-up {
         animation: shrinkUp 0.5s ease-in-out forwards;
       }
+            #loadingOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: #DBCFEF;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    #loadingOverlay img {
+      width: 100px;
+      height: auto;
+    }
+
+    #loadingText {
+      margin-top: 16px;
+      font-family: 'Poppins', sans-serif;
+      color: #4D0FB1;
+      font-size: 12px;
+      text-align: center;
+      padding: 0 20px;
+      text-wrap: balance;
+    }
 
     </style>
 </head>
@@ -539,6 +565,11 @@
   <div class="header">
     <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
   </div>
+
+    <div class=loadingOverlay id="loadingOverlay">
+  <img src="https://media.giphy.com/media/SsTcO55LJDBsI/giphy.gif" alt="Loading...">
+  <div class="loadingText" id="loadingText"></div>
+</div>
 
 
 <section class=banner-container id="banner">
