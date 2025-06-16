@@ -327,11 +327,6 @@
     <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
   </div>
 
-  <div class=loadingOverlay id="loadingOverlay">
-  <img src="https://media.giphy.com/media/SsTcO55LJDBsI/giphy.gif" alt="Loading...">
-  <div class="loadingText" id="loadingText"></div>
-</div>
-
   <button id="logoutBtn" class="logout-button" onclick="logout()" style="display: none;">Logout</button>
 
    <div id="emailModal" class="modal-overlay">
@@ -695,29 +690,6 @@ function handleClick(type, url) {
     })
     .catch(err => console.error("Error submitting:", err));
 }
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-  async function showLoadingAndFetch(email) {
-  const wittyQuotes = [
-    "Lagi loading... profil kamu lagi dirapihin 🧹",
-    "Sebentar ya, lagi ditata biar kece dulu ✨",
-    "Data kamu lagi dijemput dari server 😎",
-    "Sabar, profil yang sabar disayang sistem 🤖",
-    "Muat dulu ah, siapa tau kamu makin kece hari ini 🚀"
-  ];
-  document.getElementById("loadingText").textContent =
-    wittyQuotes[Math.floor(Math.random() * wittyQuotes.length)];
-  document.getElementById("loadingOverlay").style.display = "flex";
-
-  const fetchPromise = fetchProfile(email);
-  const delayPromise = delay(2000);
-
-  await Promise.all([fetchPromise, delayPromise]);
-
-  document.getElementById("loadingOverlay").style.display = "none";
-}
-
 
   function saveEmail() {
       const input = document.getElementById("emailInput");
@@ -728,8 +700,6 @@ function delay(ms) {
         document.getElementById("emailModal").style.display = "none";
         document.getElementById("logoutBtn").style.display = "block";
         fetchHistory(email);
-
-        showLoadingAndFetch(email); 
       } else {
         alert("Please enter a valid email address.");
       }
@@ -747,7 +717,6 @@ function delay(ms) {
         document.getElementById("logoutBtn").style.display = "block";
         fetchProfile(savedEmail);
       }
-      showLoadingAndFetch(savedEmail);
     });
   
 </script>
