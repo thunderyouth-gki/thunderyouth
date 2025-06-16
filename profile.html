@@ -695,6 +695,29 @@ function handleClick(type, url) {
     })
     .catch(err => console.error("Error submitting:", err));
 }
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+  async function showLoadingAndFetch(email) {
+  const wittyQuotes = [
+    "Lagi loading... profil kamu lagi dirapihin 🧹",
+    "Sebentar ya, lagi ditata biar kece dulu ✨",
+    "Data kamu lagi dijemput dari server 😎",
+    "Sabar, profil yang sabar disayang sistem 🤖",
+    "Muat dulu ah, siapa tau kamu makin kece hari ini 🚀"
+  ];
+  document.getElementById("loadingText").textContent =
+    wittyQuotes[Math.floor(Math.random() * wittyQuotes.length)];
+  document.getElementById("loadingOverlay").style.display = "flex";
+
+  const fetchPromise = fetchProfile(email);
+  const delayPromise = delay(2000);
+
+  await Promise.all([fetchPromise, delayPromise]);
+
+  document.getElementById("loadingOverlay").style.display = "none";
+}
+
 
   function saveEmail() {
       const input = document.getElementById("emailInput");
@@ -705,6 +728,8 @@ function handleClick(type, url) {
         document.getElementById("emailModal").style.display = "none";
         document.getElementById("logoutBtn").style.display = "block";
         fetchHistory(email);
+
+        showLoadingAndFetch(email); 
       } else {
         alert("Please enter a valid email address.");
       }
@@ -722,6 +747,7 @@ function handleClick(type, url) {
         document.getElementById("logoutBtn").style.display = "block";
         fetchProfile(savedEmail);
       }
+      showLoadingAndFetch(savedEmail);
     });
   
 </script>
