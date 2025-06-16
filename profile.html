@@ -25,6 +25,7 @@
       background-color: #f8f8f8;
       display: flex;
       align-items: center;
+      
     }
     .header img {
       height: 25px;
@@ -292,6 +293,32 @@
 .logout-button:hover {
   background-color: #3a0e8e;
 }
+        #loadingOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: #DBCFEF;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    #loadingOverlay img {
+      width: 100px;
+      height: auto;
+    }
+
+    #loadingText {
+      margin-top: 16px;
+      font-family: 'Poppins', sans-serif;
+      color: #4D0FB1;
+      font-size: 12px;
+      text-align: center;
+      padding: 0 20px;
+      text-wrap: balance;
+    }
 
   </style>
 </head>
@@ -299,6 +326,11 @@
   <div class="header">
     <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
   </div>
+
+  <div class=loadingOverlay id="loadingOverlay">
+  <img src="https://media.giphy.com/media/SsTcO55LJDBsI/giphy.gif" alt="Loading...">
+  <div class="loadingText" id="loadingText"></div>
+</div>
 
   <button id="logoutBtn" class="logout-button" onclick="logout()" style="display: none;">Logout</button>
 
