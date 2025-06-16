@@ -237,7 +237,8 @@
         width: 100%;
         height: auto;
         margin-top: 40px;
-        overflow-x:hidden;
+        overflow: hidden;
+        box-sizing: border-box;
       }
 
       .banner-title{
@@ -261,10 +262,11 @@
       .swiper-wrapper {
         display: flex; /* required for horizontal layout */
         box-sizing: border-box;
+        width:90%;
       }
       .swiper-slide {
         flex-shrink: 0;
-        width: 90%;
+        width: 100%;
         height: auto;
         display: flex;
         justify-content: center;
@@ -273,7 +275,6 @@
         border-radius: 10px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         margin: 0px;
-        overflow: hidden;
       }
       .swiper-slide img {
         width: 100%;
@@ -764,6 +765,7 @@ const email = localEmail || "thunderyouth.gki@gmail.com";
         });
 
         new Swiper('.swiper', {
+          slidesPerView: 1,
           direction: 'horizontal',
           loop: true,
           autoplay: {
