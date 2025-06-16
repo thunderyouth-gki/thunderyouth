@@ -32,6 +32,7 @@
         background-color: #f8f8f8;
         display: flex;
         align-items: center;
+        z-score:1000;
       }
       .header img {
         height: 25px;
@@ -621,12 +622,42 @@
   background-color: #3a0e8e;
 }
 
+    #loadingOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: #DBCFEF;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    #loadingOverlay img {
+      width: 100px;
+      height: auto;
+    }
+
+    #loadingText {
+      margin-top: 16px;
+      font-family: 'Poppins', sans-serif;
+      color: #4D0FB1;
+      font-size: 12px;
+      text-align: center;
+      padding: 0 20px;
+      text-wrap: balance;
+    }
     </style>
 </head>
 <body>
   <div class="header">
     <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
   </div>
+  <div id="loadingOverlay">
+  <img src="https://media.giphy.com/media/SsTcO55LJDBsI/giphy.gif" alt="Loading...">
+  <div id="loadingText"></div>
+</div>  
     
     <div id="emailModal" class="modal-overlay">
   <div class="modal-content">
@@ -766,7 +797,20 @@
       .catch(err => console.error("Error fetching profile:", err));
   }
 
-  window.addEventListener("DOMContentLoaded", function () {
+/*  window.addEventListener("DOMContentLoaded", function () {
+      
+    const wittyQuotes = [
+    "Lagi loading... sabar ya kak, berkat Tuhan juga kadang turun pelan-pelan",
+    "Loading dulu kak, Tuhan aja butuh 6 hari buat nyiptain dunia",
+    "Tenang, semua yang baik datang pada waktunya… termasuk halaman ini",
+    "Lagi diproses kak, kayak Tuhan lagi proses hati kita",
+    "Mohon bersabar, ini bukan sekadar loading… ini latihan iman"
+  ];
+
+  // Pick one randomly
+  const randomQuote = wittyQuotes[Math.floor(Math.random() * wittyQuotes.length)];
+  document.getElementById("loadingText").textContent = randomQuote;
+
     const savedEmail = localStorage.getItem("email");
     if (savedEmail) {
       document.getElementById("emailModal").style.display = "none";
@@ -775,7 +819,44 @@
     }
     fetchEvents();
     fetchBanners();
-  });
+  }); */
+
+    window.addEventListener("DOMContentLoaded", async function () {
+  // Show random witty quote
+  const wittyQuotes = [
+    "Lagi loading... sabar ya kak, berkat Tuhan juga kadang turun pelan-pelan ☁️✨",
+    "Tenang, semua yang baik datang pada waktunya… termasuk halaman ini 🙌",
+    "Lagi diproses kak, kayak Tuhan lagi proses hati kita 😌✨",
+    "Doa udah dikirim... sekarang kita tunggu server-nya bilang ‘Amin’ 🙏",
+    "Mohon bersabar, ini bukan sekadar loading… ini latihan iman 💡"
+  ];
+  const randomQuote = wittyQuotes[Math.floor(Math.random() * wittyQuotes.length)];
+  document.getElementById("loadingText").textContent = randomQuote;
+
+  const savedEmail = localStorage.getItem("email");
+
+  const tasks = [];
+
+  if (savedEmail) {
+    document.getElementById("emailModal").style.display = "none";
+
+    // These should return Promises
+    tasks.push(fetchProfile(savedEmail));
+    tasks.push(fetchLandingPageMessage(savedEmail, eventParam));
+  }
+
+  // These should also return Promises
+  tasks.push(fetchEvents());
+  tasks.push(fetchBanners());
+
+  // Wait for all to finish
+  await Promise.all(tasks);
+
+  // Then remove loading screen
+  document.getElementById("loadingOverlay").style.display = "none";
+  document.getElementById("content").style.display = "block";
+});
+
 
   function fetchEvents() {
     fetch(`${scriptBaseUrl}?page=EventsList`)
