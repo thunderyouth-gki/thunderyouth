@@ -244,7 +244,6 @@
       .swiper-pagination {
         position: relative;
         text-align: center;
-        top: 10px;
         width: 100%;
         z-index: 10;
       }
@@ -565,6 +564,10 @@
   <div class="header">
     <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
   </div>
+      <div id=loadingOverlay>
+    <img src="https://github.com/thunderyouth-gki/thunderyouth/blob/main/sailing%20cross.gif?raw=true" alt="Loading..." style="width: 100px;">
+  <div id="loadingText"></div>
+</div>
 
 <section class=banner-container id="banner">
 <div class="banner-title" id="namaPanggilan">Hi Thunder!</div>
@@ -675,12 +678,6 @@ const email = localEmail || "thunderyouth.gki@gmail.com";
       .catch(err => console.error("Error fetching profile:", err));
   }
 
-  window.addEventListener("DOMContentLoaded", function () {
-    fetchProfile(email);
-    fetchEvents();
-    fetchBanners();
-  });
-
   function fetchEvents() {
     fetch(`${scriptBaseUrl}?page=EventsList`)
       .then(res => res.json())
@@ -786,6 +783,36 @@ const email = localEmail || "thunderyouth.gki@gmail.com";
         alert("Error submitting prayer.");
       });
   });
+
+      window.addEventListener("DOMContentLoaded", function () {
+    // ===== Witty Loading Text =====
+    const wittyQuotes = [
+      "Lagi loading... sabar ya kak, berkat Tuhan juga kadang turun pelan-pelan ☁️✨",
+      "Tenang, semua yang baik datang pada waktunya… termasuk halaman ini 🙌",
+      "Lagi diproses kak, kayak Tuhan lagi proses hati kita 😌✨",
+      "Mohon bersabar, ini bukan sekadar loading… ini latihan iman 💡"
+    ];
+    const loadingText = document.getElementById("loadingText");
+    if (loadingText) {
+      loadingText.textContent = wittyQuotes[Math.floor(Math.random() * wittyQuotes.length)];
+    }
+
+    // ===== Email & Redirect Logic =====
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventParam = urlParams.get("event") || "Sunday Service";
+    const localEmail = localStorage.getItem("email");
+    const email = localEmail || "thunderyouth.gki@gmail.com";
+
+    // ===== Loading Overlay Logic =====
+    const overlay = document.getElementById("loadingOverlay");
+    let fetchDone = 0;
+    let timeDone = false;
+
+    function hideOverlayIfReady() {
+      if (fetchDone >= 3 && timeDone && overlay) {
+        overlay.style.display = "none";
+      }
+    }
 
 
 </script>
