@@ -99,24 +99,16 @@
         fetchHistory(email);
 
         const redirect = getRedirectPage();
-        window.location.href = redirect + ".html";
+        window.location.href = redirect;
       } else {
         alert("Please enter a valid email address.");
       }
     }
 
-
-    function fetchHistory(email) {
-      console.log("Fetching history for:", email);
-    }
-
     window.onload = function () {
       const savedEmail = localStorage.getItem("email");
       if (savedEmail) {
-        document.getElementById("emailModal").style.display = "none";
-        document.getElementById("logoutBtn").style.display = "block";
-        fetchHistory(savedEmail);
-
+        
         const redirect = getRedirectPage();
         window.location.href = redirect;
       }
