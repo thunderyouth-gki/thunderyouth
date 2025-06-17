@@ -7,6 +7,9 @@
   <title>Profile | Thunder Youth</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
   <style>
+    * {
+          box-sizing: border-box;
+        }
     body {
       font-family: 'Poppins', sans-serif;
       margin: 0;
@@ -281,7 +284,7 @@
   <div id="loadingText"></div>
 </div>
   
-  <button id="logoutBtn" class="logout-button" onclick="logout()" style="display: none;">Logout</button>
+  <button id="logoutBtn" class="logout-button" onclick="logout()">Logout</button>
   
 <section class="profile-container" style="position: relative;">
 
@@ -635,10 +638,21 @@ function handleClick(type, url) {
     })
     .catch(err => console.error("Error submitting:", err));
 }
-
 window.addEventListener("DOMContentLoaded", function () {
   const savedEmail = localStorage.getItem("email");
   const overlay = document.getElementById("loadingOverlay");
+
+  // Show a random witty quote
+  const wittyQuotes = [
+    "Lagi loading... sabar ya kak, berkat Tuhan juga kadang turun pelan-pelan ☁️✨",
+    "Tenang, semua yang baik datang pada waktunya… termasuk halaman ini 🙌",
+    "Lagi diproses kak, kayak Tuhan lagi proses hati kita 😌✨",
+    "Mohon bersabar, ini bukan sekadar loading… ini latihan iman 💡"
+  ];
+  const loadingText = document.getElementById("loadingText");
+  if (loadingText) {
+    loadingText.textContent = wittyQuotes[Math.floor(Math.random() * wittyQuotes.length)];
+  }
 
   if (!savedEmail) {
     window.location.href = "https://thunderyouth.gkiguntur.com/login?redirect=profile";
@@ -648,43 +662,55 @@ window.addEventListener("DOMContentLoaded", function () {
   let fetchDone = false;
   let delayDone = false;
 
-  fetchProfile(savedEmail);
+  // Delayed removal of overlay
   setTimeout(() => {
     delayDone = true;
     if (fetchDone && overlay) overlay.style.display = "none";
   }, 2000);
 
-  // Override fetchProfile to notify when done
-  const originalFetch = fetchProfile;
-  fetchProfile = function(email) {
-    originalFetch(email);
-    // Monkey-patch only for this page load — use observer if needed
-    const checkDone = () => {
+  // Modified fetchProfile to hook into this logic
+  fetch(`${API_BASE}?page=GetProfile&email=${encodeURIComponent(savedEmail)}`)
+    .then(res => res.json())
+    .then(data => {
+      if (!Array.isArray(data)) return;
+
+      document.getElementById("profile-pic-display").src = data[5];
+      document.getElementById("edit-profile-pic-preview").src = data[5];
+
+      document.getElementById("view-namaLengkap").textContent = data[0];
+      document.getElementById("view-namaPanggilan").textContent = data[1];
+      document.getElementById("view-jenisKelamin").textContent = data[2];
+      document.getElementById("view-statusKeanggotaan").textContent = data[3];
+      const options = { day: 'numeric', month: 'long', year: 'numeric' };
+      document.getElementById("view-tanggalLahir").textContent = new Date(data[4]).toLocaleDateString('id-ID', options);
+
+      document.getElementById("edit-namaLengkap").value = data[0];
+      document.getElementById("edit-namaPanggilan").value = data[1];
+      document.getElementById("edit-jenisKelamin").value = data[2];
+      document.getElementById("edit-statusKeanggotaan").value = data[3];
+      const dateOnly = new Date(data[4]).toISOString().split("T")[0];
+      document.getElementById("edit-tanggalLahir").value = dateOnly;
+
+      if (data[3] !== "Simpatisan") {
+        document.getElementById("katekisasi-baptis").style.display = "none";
+      }
+
       fetchDone = true;
       if (delayDone && overlay) overlay.style.display = "none";
-    };
-    // Wrap the original with a wait
-    fetch(`${API_BASE}?page=GetProfile&email=${encodeURIComponent(email)}`)
-      .then(res => res.json())
-      .then(data => {
-        if (!Array.isArray(data)) return;
-        // fill in profile (optional if you rely on originalFetch)
-        checkDone();
-      })
-      .catch(err => {
-        console.error("Failed to fetch profile:", err);
-        checkDone();
-      });
-  };
-
-  fetchProfile(savedEmail); // trigger patched version
+    })
+    .catch(err => {
+      console.error("Failed to fetch profile:", err);
+      fetchDone = true;
+      if (delayDone && overlay) overlay.style.display = "none";
+    });
 });
 
-// Updated logout
+// Updated logout function
 function logout() {
   localStorage.removeItem("email");
   window.location.href = "https://thunderyouth.gkiguntur.com/login?redirect=profile";
 }
+
 
   
 </script>
