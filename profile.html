@@ -224,57 +224,6 @@
       margin-top: 1rem;
     }
 
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.65);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-    }
-
-    .modal-content {
-      background-color: white;
-      padding: 30px 20px;
-      border-radius: 20px;
-      width: 80%;
-      max-width: 400px;
-      text-align: center;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
-    }
-
-.modal-content h2 {
-  margin-top: 0;
-  color: #4D0FB1;
-}
-
-.modal-content input[type="email"] {
-  padding: 10px;
-  border: 1px solid #ccc;
-  width: 80%;
-  border-radius: 10px;
-  margin: 15px 0;
-  font-size: 1rem;
-}
-
-.modal-content button {
-  padding: 10px 20px;
-  background-color: #4D0FB1;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.modal-content button:hover {
-  background-color: #3a0e8e;
-}
-
     .logout-button {
   position: absolute;
   top: 15px;
@@ -327,16 +276,12 @@
     <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
   </div>
 
-  <button id="logoutBtn" class="logout-button" onclick="logout()" style="display: none;">Logout</button>
-
-   <div id="emailModal" class="modal-overlay">
-  <div class="modal-content">
-    <h2>Welcome!</h2>
-    <p>Please enter your email to continue:</p>
-    <input type="email" id="emailInput" placeholder="you@example.com" />
-    <button onclick="saveEmail()">Submit</button>
-  </div>
+    <div id=loadingOverlay>
+    <img src="https://github.com/thunderyouth-gki/thunderyouth/blob/main/sailing%20cross.gif?raw=true" alt="Loading..." style="width: 100px;">
+  <div id="loadingText"></div>
 </div>
+  
+  <button id="logoutBtn" class="logout-button" onclick="logout()" style="display: none;">Logout</button>
   
 <section class="profile-container" style="position: relative;">
 
@@ -691,33 +636,56 @@ function handleClick(type, url) {
     .catch(err => console.error("Error submitting:", err));
 }
 
-  function saveEmail() {
-      const input = document.getElementById("emailInput");
-      const email = input.value.trim();
+window.addEventListener("DOMContentLoaded", function () {
+  const savedEmail = localStorage.getItem("email");
+  const overlay = document.getElementById("loadingOverlay");
 
-      if (email && email.includes("@")) {
-        localStorage.setItem("email", email);
-        document.getElementById("emailModal").style.display = "none";
-        document.getElementById("logoutBtn").style.display = "block";
-        fetchHistory(email);
-      } else {
-        alert("Please enter a valid email address.");
-      }
-    }
+  if (!savedEmail) {
+    window.location.href = "https://thunderyouth.gkiguntur.com/login?redirect=profile";
+    return;
+  }
 
-    function logout() {
-      localStorage.removeItem("email");
-      location.reload();
-    }
+  let fetchDone = false;
+  let delayDone = false;
 
-    window.addEventListener("DOMContentLoaded", function () {
-      const savedEmail = localStorage.getItem("email");
-      if (savedEmail) {
-        document.getElementById("emailModal").style.display = "none";
-        document.getElementById("logoutBtn").style.display = "block";
-        fetchProfile(savedEmail);
-      }
-    });
+  fetchProfile(savedEmail);
+  setTimeout(() => {
+    delayDone = true;
+    if (fetchDone && overlay) overlay.style.display = "none";
+  }, 2000);
+
+  // Override fetchProfile to notify when done
+  const originalFetch = fetchProfile;
+  fetchProfile = function(email) {
+    originalFetch(email);
+    // Monkey-patch only for this page load — use observer if needed
+    const checkDone = () => {
+      fetchDone = true;
+      if (delayDone && overlay) overlay.style.display = "none";
+    };
+    // Wrap the original with a wait
+    fetch(`${API_BASE}?page=GetProfile&email=${encodeURIComponent(email)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!Array.isArray(data)) return;
+        // fill in profile (optional if you rely on originalFetch)
+        checkDone();
+      })
+      .catch(err => {
+        console.error("Failed to fetch profile:", err);
+        checkDone();
+      });
+  };
+
+  fetchProfile(savedEmail); // trigger patched version
+});
+
+// Updated logout
+function logout() {
+  localStorage.removeItem("email");
+  window.location.href = "https://thunderyouth.gkiguntur.com/login?redirect=profile";
+}
+
   
 </script>
 
