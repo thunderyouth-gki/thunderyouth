@@ -96,7 +96,6 @@
 
       if (email && email.includes("@")) {
         localStorage.setItem("email", email);
-        fetchHistory(email);
 
         const redirect = getRedirectPage();
         window.location.href = redirect;
