@@ -117,57 +117,7 @@
       cursor: not-allowed;
     }
 
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.65);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-    }
-
-    .modal-content {
-      background-color: white;
-      padding: 30px 20px;
-      border-radius: 20px;
-      width: 80%;
-      max-width: 400px;
-      text-align: center;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
-    }
-
-.modal-content h2 {
-  margin-top: 0;
-  color: #4D0FB1;
-}
-
-.modal-content input[type="email"] {
-  padding: 10px;
-  border: 1px solid #ccc;
-  width: 80%;
-  border-radius: 10px;
-  margin: 15px 0;
-  font-size: 1rem;
-}
-
-.modal-content button {
-  padding: 10px 20px;
-  background-color: #4D0FB1;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.modal-content button:hover {
-  background-color: #3a0e8e;
-}
-        #loadingOverlay {
+    #loadingOverlay {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
@@ -201,18 +151,13 @@
   <div class="header">
     <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
   </div>
+
+  <div id=loadingOverlay>
+    <img src="https://media.giphy.com/media/SsTcO55LJDBsI/giphy.gif" alt="Loading..." style="width: 100px;">
+  <div id="loadingText"></div>
+</div>
     
     <div class="history-title">Event History</div>
-
-    <div id="emailModal" class="modal-overlay">
-  <div class="modal-content">
-    <h2>Welcome!</h2>
-    <p>Please enter your email to continue:</p>
-    <input type="email" id="emailInput" placeholder="you@example.com" />
-    <button onclick="saveEmail()">Submit</button>
-  </div>
-</div>
-
 
     <div class="footer" id="footer">
     <div class="footer-item" onclick="toggleIcon(this)">
@@ -252,6 +197,10 @@
   </div>
 
     <script>
+
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
     const API_BASE = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
 
@@ -361,13 +310,45 @@ function handleRequestEvent(eventName, date, buttonId) {
       }
     }
 
-    window.addEventListener("DOMContentLoaded", function () {
-      const savedEmail = localStorage.getItem("email");
-      if (savedEmail) {
-        document.getElementById("emailModal").style.display = "none";
-        fetchHistory(savedEmail);
-      }
-    });    
+window.addEventListener("DOMContentLoaded", async function () {
+  const wittyQuotes = [
+    "Lagi loading... sabar ya kak, berkat Tuhan juga kadang turun pelan-pelan ☁️✨",
+    "Tenang, semua yang baik datang pada waktunya… termasuk halaman ini 🙌",
+    "Lagi diproses kak, kayak Tuhan lagi proses hati kita 😌✨",
+    "Doa udah dikirim... sekarang kita tunggu server-nya bilang ‘Amin’ 🙏",
+    "Mohon bersabar, ini bukan sekadar loading… ini latihan iman 💡"
+  ];
+  document.getElementById("loadingText").textContent =
+    wittyQuotes[Math.floor(Math.random() * wittyQuotes.length)];
+
+  const savedEmail = localStorage.getItem("email");
+  const loadTasks = [];
+
+  if (savedEmail) {
+    document.getElementById("emailModal").style.display = "none";
+    loadTasks.push(new Promise(resolve => {
+      fetch(`${API_BASE}?page=History&email=${encodeURIComponent(savedEmail)}`)
+        .then(response => response.json())
+        .then(data => {
+          renderHistory(data);
+          resolve();
+        })
+        .catch(err => {
+          console.error("Fetch error:", err);
+          resolve(); // still resolve so loading won't hang
+        });
+    }));
+  }
+
+  loadTasks.push(delay(2000)); // enforce min loading time
+
+  await Promise.all(loadTasks);
+
+  // Hide loading and show content
+  const overlay = document.getElementById("loadingOverlay");
+  if (overlay) overlay.style.display = "none";
+});
+
     </script>
   </body>
 </html>
