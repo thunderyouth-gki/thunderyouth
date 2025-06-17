@@ -635,6 +635,11 @@
 <script>
   const scriptBaseUrl = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
 
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
   function toggleIcon(selectedElement) {
     document.querySelectorAll('.footer-item').forEach(item => {
       item.classList.remove('active');
@@ -652,181 +657,160 @@
 
   window.addEventListener("scroll", function () {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    footer.classList.toggle("show", scrollTop <= lastScrollTop);
-    footer.classList.toggle("hide", scrollTop > lastScrollTop);
+    if (scrollTop > lastScrollTop) {
+      footer.classList.remove("show");
+      footer.classList.add("hide");
+    } else {
+      footer.classList.remove("hide");
+      footer.classList.add("show");
+    }
     lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
   });
 
-  window.addEventListener("DOMContentLoaded", function () {
-    // ===== Witty Loading Text =====
-    const wittyQuotes = [
-      "Lagi loading... sabar ya kak, berkat Tuhan juga kadang turun pelan-pelan ☁️✨",
-      "Tenang, semua yang baik datang pada waktunya… termasuk halaman ini 🙌",
-      "Lagi diproses kak, kayak Tuhan lagi proses hati kita 😌✨",
-      "Mohon bersabar, ini bukan sekadar loading… ini latihan iman 💡"
-    ];
-    const loadingText = document.getElementById("loadingText");
-    if (loadingText) {
-      loadingText.textContent = wittyQuotes[Math.floor(Math.random() * wittyQuotes.length)];
-    }
 
-    // ===== Email & Redirect Logic =====
-    const urlParams = new URLSearchParams(window.location.search);
-    const eventParam = urlParams.get("event") || "Sunday Service";
-    const localEmail = localStorage.getItem("email");
-    const email = localEmail || "thunderyouth.gki@gmail.com";
+const urlParams = new URLSearchParams(window.location.search);
+const eventParam = urlParams.get("event") || "Sunday Service";
 
-    // ===== Loading Overlay Logic =====
-    const overlay = document.getElementById("loadingOverlay");
-    let fetchDone = 0;
-    let timeDone = false;
 
-    function hideOverlayIfReady() {
-      if (fetchDone >= 3 && timeDone && overlay) {
-        overlay.style.display = "none";
-      }
-    }
+  function fetchProfile(email) {
+    return fetch(`${scriptBaseUrl}?page=GetProfile&email=${email}`)
+      .then(res => res.json())
+      .then(profile => {
+        document.querySelector(".banner-title").innerText = `Hi ${profile[1]}!`;
+      })
+      .catch(err => console.error("Error fetching profile:", err));
+  }
 
-    // ===== Fetch Profile =====
-    function fetchProfile(email) {
-      fetch(`${scriptBaseUrl}?page=GetProfile&email=${email}`)
-        .then(res => res.json())
-        .then(profile => {
-          document.querySelector(".banner-title").innerText = `Hi ${profile[1]}!`;
-        })
-        .catch(err => console.error("Error fetching profile:", err))
-        .finally(() => {
-          fetchDone++;
-          hideOverlayIfReady();
-        });
-    }
+  function fetchEvents() {
+    return fetch(`${scriptBaseUrl}?page=EventsList`)
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("upcoming-events");
+        const events = data.events || [];
 
-    // ===== Fetch Events =====
-    function fetchEvents() {
-      fetch(`${scriptBaseUrl}?page=EventsList`)
-        .then(res => res.json())
-        .then(data => {
-          const container = document.getElementById("upcoming-events");
-          const events = data.events || [];
+        if (events.length === 0 || !events.some(e => e.eventName && e.date && e.date !== "Invalid Date")) {
+          container.style.display = "none";
+          return;
+        }
 
-          if (events.length === 0 || !events.some(e => e.eventName && e.date && e.date !== "Invalid Date")) {
-            container.style.display = "none";
-            return;
+        events.forEach(event => {
+          if (!event.eventName || !event.date || event.date === "Invalid Date") return;
+
+          const wrapper = document.createElement(event.linkRegistration ? "a" : "div");
+          wrapper.className = "event-card-wrapper" + (event.linkRegistration ? "" : " disabled");
+          if (event.linkRegistration) {
+            wrapper.href = event.linkRegistration;
+            wrapper.target = "_blank";
           }
 
-          events.forEach(event => {
-            if (!event.eventName || !event.date || event.date === "Invalid Date") return;
-
-            const wrapper = document.createElement(event.linkRegistration ? "a" : "div");
-            wrapper.className = "event-card-wrapper" + (event.linkRegistration ? "" : " disabled");
-            if (event.linkRegistration) {
-              wrapper.href = event.linkRegistration;
-              wrapper.target = "_blank";
-            }
-
-            wrapper.innerHTML = `
-              <div class="event-card">
-                <div class="event-date">
-                  <div class="event-daymonth">${event.date.toUpperCase()}</div>
-                  <div class="event-time">${event.time || ""}</div>
-                </div>
-                <div class="separator"></div>
-                <div class="event-details">
-                  ${event.tagKegiatan ? `<span class="event-tag">${event.tagKegiatan}</span>` : ""}
-                  <div class="event-title">${event.eventName}</div>
-                  <div class="event-meta">
-                    <img src="https://cdn-icons-png.flaticon.com/512/684/684809.png" alt="Location">
-                    ${event.location || ""}${event.fee ? " | HTM: " + event.fee : ""}
-                  </div>
+          wrapper.innerHTML = `
+            <div class="event-card">
+              <div class="event-date">
+                <div class="event-daymonth">${event.date.toUpperCase()}</div>
+                <div class="event-time">${event.time || ""}</div>
+              </div>
+              <div class="separator"></div>
+              <div class="event-details">
+                ${event.tagKegiatan ? `<span class="event-tag">${event.tagKegiatan}</span>` : ""}
+                <div class="event-title">${event.eventName}</div>
+                <div class="event-meta">
+                  <img src="https://cdn-icons-png.flaticon.com/512/684/684809.png" alt="Location">
+                  ${event.location || ""}${event.fee ? " | HTM: " + event.fee : ""}
                 </div>
               </div>
+            </div>
+          `;
+          container.appendChild(wrapper);
+        });
+      })
+      .catch(err => console.error("Error fetching events:", err));
+  }
+
+  function fetchBanners() {
+    return fetch(`${scriptBaseUrl}?page=Banner`)
+      .then(res => res.json())
+      .then(banners => {
+        const wrapper = document.getElementById("bannerWrapper");
+        banners.forEach((banner, i) => {
+          const slide = document.createElement("div");
+          slide.className = "swiper-slide";
+          if (banner.directUrl) {
+            slide.innerHTML = `
+              <a href="${banner.directUrl}" target="_blank">
+                <img src="${banner.bannerAsset}" alt="Banner ${i + 1}">
+              </a>
             `;
-            container.appendChild(wrapper);
-          });
-        })
-        .catch(err => console.error("Error fetching events:", err))
-        .finally(() => {
-          fetchDone++;
-          hideOverlayIfReady();
-        });
-    }
-
-    // ===== Fetch Banners =====
-    function fetchBanners() {
-      fetch(`${scriptBaseUrl}?page=Banner`)
-        .then(res => res.json())
-        .then(banners => {
-          const wrapper = document.getElementById("bannerWrapper");
-          banners.forEach((banner, i) => {
-            const slide = document.createElement("div");
-            slide.className = "swiper-slide";
-            if (banner.directUrl) {
-              slide.innerHTML = `
-                <a href="${banner.directUrl}" target="_blank">
-                  <img src="${banner.bannerAsset}" alt="Banner ${i + 1}">
-                </a>
-              `;
-            } else {
-              slide.innerHTML = `<img src="${banner.bannerAsset}" alt="Banner ${i + 1}">`;
-            }
-            wrapper.appendChild(slide);
-          });
-
-          new Swiper('.swiper', {
-            slidesPerView: 1,
-            direction: 'horizontal',
-            loop: true,
-            autoplay: {
-              delay: 10000,
-              disableOnInteraction: false
-            },
-            spaceBetween: 20,
-            pagination: {
-              el: '.swiper-pagination',
-              clickable: true
-            }
-          });
-        })
-        .catch(err => console.error("Error fetching banners:", err))
-        .finally(() => {
-          fetchDone++;
-          hideOverlayIfReady();
-        });
-    }
-
-    // ===== Submit Form =====
-    document.getElementById('textForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const text = document.getElementById('longText').value.trim();
-
-      if (!text) return alert("Prayer cannot be empty.");
-
-      fetch(`${scriptBaseUrl}?page=DoaSyafaat&text=${encodeURIComponent(text)}&email=${encodeURIComponent(email)}`)
-        .then(res => {
-          if (res.ok) {
-            document.getElementById('textForm').reset();
-            alert("Prayer submitted.");
           } else {
-            alert("Submission failed.");
+            slide.innerHTML = `<img src="${banner.bannerAsset}" alt="Banner ${i + 1}">`;
           }
-        })
-        .catch(err => {
-          console.error("Error submitting prayer:", err);
-          alert("Error submitting prayer.");
+          wrapper.appendChild(slide);
         });
-    });
 
-    // ===== Run All Fetches + Delay
-    fetchProfile(email);
-    fetchEvents();
-    fetchBanners();
+        new Swiper('.swiper', {
+          slidesPerView: 1,
+          direction: 'horizontal',
+          loop: true,
+          autoplay: {
+            delay: 10000,
+            disableOnInteraction: false
+          },
+          slidesPerView: 1,
+          spaceBetween: 20,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true
+          }
+        });
+      })
+      .catch(err => console.error("Error fetching banners:", err));
+  }
 
-    setTimeout(() => {
-      timeDone = true;
-      hideOverlayIfReady();
-    }, 2000);
+  document.getElementById('textForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const text = document.getElementById('longText').value.trim();
+
+    if (!email) return alert("Email not found.");
+    if (!text) return alert("Prayer cannot be empty.");
+
+    fetch(`${scriptBaseUrl}?page=DoaSyafaat&text=${encodeURIComponent(text)}&email=${encodeURIComponent(email)}`)
+      .then(res => {
+        if (res.ok) {
+          document.getElementById('textForm').reset();
+          alert("Prayer submitted.");
+        } else {
+          alert("Submission failed.");
+        }
+      })
+      .catch(err => {
+        console.error("Error submitting prayer:", err);
+        alert("Error submitting prayer.");
+      });
   });
-</script>
+
+window.addEventListener("DOMContentLoaded", async function () {
+  const wittyQuotes = [
+    "Lagi loading... sabar ya kak, berkat Tuhan juga kadang turun pelan-pelan ☁️✨",
+    "Tenang, semua yang baik datang pada waktunya… termasuk halaman ini 🙌",
+    "Lagi diproses kak, kayak Tuhan lagi proses hati kita 😌✨",
+    "Mohon bersabar, ini bukan sekadar loading… ini latihan iman 💡"
+  ];
+  document.getElementById("loadingText").textContent =
+    wittyQuotes[Math.floor(Math.random() * wittyQuotes.length)];
+
+  const savedEmail = localStorage.getItem("email");
+  const email = savedEmail || "thunderyouth.gki@gmail.com";
+
+  await Promise.all([
+    fetchProfile(email),
+    fetchEvents(),
+    fetchBanners(),
+    delay(2000)
+  ]);
+
+  const overlay = document.getElementById("loadingOverlay");
+  if (overlay) overlay.style.display = "none";
+});
+
 
 </body>
 </html>
