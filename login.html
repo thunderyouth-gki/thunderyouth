@@ -110,9 +110,12 @@
   <script>
     function getRedirectPage() {
       const params = new URLSearchParams(window.location.search);
-      return params.get("redirect") || "profile";
+      const redirectParam = params.get("redirect");
+      return redirectParam ? decodeURIComponent(redirectParam) : "profile";
     }
 
+
+    
     function saveEmail() {
       const input = document.getElementById("emailInput");
       const email = input.value.trim();
