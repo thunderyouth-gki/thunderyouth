@@ -861,7 +861,7 @@ window.addEventListener("DOMContentLoaded", async function () {
   const eventName = urlParams.get("event") || "Sunday Service";
 
   if (!email) {
-    window.location.href = "https://thunderyouth.gkiguntur.com/login?redirect=attendance";
+    window.location.href = "https://thunderyouth.gkiguntur.com/login?redirect=attendance?event=" + encodeURIComponent(eventName);
     return;
   }
 
