@@ -609,13 +609,17 @@ function updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKe
   fetch(url)
     .then(res => res.json())
     .then(data => {
+      document.getElementById("loading-spinner").style.display = "none"; // Hide spinner
       if (data.success) {
         toggleEdit(false);
       } else {
         alert("Gagal menyimpan data.");
       }
     })
-    .catch(err => console.error("Failed to save profile:", err));
+    .catch(err => {
+      console.error("Failed to save profile:", err);
+      document.getElementById("loading-spinner").style.display = "none"; // Hide spinner
+    });
 }
 
 function handleClick(type, url) {
