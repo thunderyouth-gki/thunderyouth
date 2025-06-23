@@ -540,60 +540,59 @@ function saveProfileChanges() {
   const email = localStorage.getItem("email");
   if (!email) return alert("Email belum ditemukan.");
 
+  document.getElementById("loading-spinner").style.display = "block"; // Show spinner
+
   const namaLengkap = document.getElementById("edit-namaLengkap").value;
   const namaPanggilan = document.getElementById("edit-namaPanggilan").value;
   const jenisKelamin = document.getElementById("edit-jenisKelamin").value;
   const statusKeanggotaan = document.getElementById("edit-statusKeanggotaan").value;
   const tanggalLahir = document.getElementById("edit-tanggalLahir").value;
 
-if (base64Image) {
-  const fileInput = document.getElementById("profile-pic-upload");
-  const file = fileInput.files[0];
+  if (base64Image) {
+    const fileInput = document.getElementById("profile-pic-upload");
+    const file = fileInput.files[0];
 
-  resizeImage(file, 50, function(resizedBase64) {
-    const form = document.createElement("form");
-    form.method = "GET"; // use GET to avoid CORS
-    form.action = API_BASE;
-    form.target = "uploadIframe"; // will point to a hidden iframe
+    resizeImage(file, 50, function(resizedBase64) {
+      const form = document.createElement("form");
+      form.method = "GET";
+      form.action = API_BASE;
+      form.target = "uploadIframe";
 
-    const params = {
-      page: "UploadFile",
-      email: email,
-      filename: file.name,
-      mimeType: file.type,
-      base64Data: resizedBase64
-    };
+      const params = {
+        page: "UploadFile",
+        email: email,
+        filename: file.name,
+        mimeType: file.type,
+        base64Data: resizedBase64
+      };
 
-    for (const key in params) {
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = key;
-      input.value = params[key];
-      form.appendChild(input);
-    }
+      for (const key in params) {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = params[key];
+        form.appendChild(input);
+      }
 
-    // Hidden iframe for submission target
-    let iframe = document.getElementById("uploadIframe");
-    if (!iframe) {
-      iframe = document.createElement("iframe");
-      iframe.name = "uploadIframe";
-      iframe.id = "uploadIframe";
-      iframe.style.display = "none";
-      document.body.appendChild(iframe);
-    }
+      let iframe = document.getElementById("uploadIframe");
+      if (!iframe) {
+        iframe = document.createElement("iframe");
+        iframe.name = "uploadIframe";
+        iframe.id = "uploadIframe";
+        iframe.style.display = "none";
+        document.body.appendChild(iframe);
+      }
 
-    // Success trigger after load
-    iframe.onload = function () {
-      // Refresh profile image or just alert success
-      base64Image = "";
-      updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
-    };
+      iframe.onload = function () {
+        base64Image = "";
+        updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
+      };
 
-    document.body.appendChild(form);
-    form.submit();
-    form.remove(); // cleanup
-  });
-} else {
+      document.body.appendChild(form);
+      form.submit();
+      form.remove();
+    });
+  } else {
     updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
   }
 }
