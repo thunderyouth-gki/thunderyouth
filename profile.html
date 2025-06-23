@@ -514,28 +514,6 @@ function fetchProfile(email) {
     .catch(err => console.error("Failed to fetch profile:", err));
 }
 
-function resizeImage(file, maxWidth = 300, callback) {
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const img = new Image();
-    img.onload = function() {
-      const canvas = document.createElement("canvas");
-      const scale = maxWidth / img.width;
-      canvas.width = maxWidth;
-      canvas.height = img.height * scale;
-
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      const resizedBase64 = canvas.toDataURL(file.type, 0.6).split(",")[1]; // Compress to 60%
-      callback(resizedBase64);
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-
 function saveProfileChanges() {
   const email = localStorage.getItem("email");
   if (!email) return alert("Email belum ditemukan.");
@@ -552,45 +530,44 @@ function saveProfileChanges() {
     const fileInput = document.getElementById("profile-pic-upload");
     const file = fileInput.files[0];
 
-    resizeImage(file, 50, function(resizedBase64) {
-      const form = document.createElement("form");
-      form.method = "GET";
-      form.action = API_BASE;
-      form.target = "uploadIframe";
+const form = document.createElement("form");
+form.method = "GET";
+form.action = API_BASE;
+form.target = "uploadIframe";
 
-      const params = {
-        page: "UploadFile",
-        email: email,
-        filename: file.name,
-        mimeType: file.type,
-        base64Data: resizedBase64
-      };
+const params = {
+  page: "UploadFile",
+  email: email,
+  filename: file.name,
+  mimeType: file.type,
+  base64Data: base64Image  // ✅ use directly without resize
+};
 
-      for (const key in params) {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = key;
-        input.value = params[key];
-        form.appendChild(input);
-      }
+for (const key in params) {
+  const input = document.createElement("input");
+  input.type = "hidden";
+  input.name = key;
+  input.value = params[key];
+  form.appendChild(input);
+}
 
-      let iframe = document.getElementById("uploadIframe");
-      if (!iframe) {
-        iframe = document.createElement("iframe");
-        iframe.name = "uploadIframe";
-        iframe.id = "uploadIframe";
-        iframe.style.display = "none";
-        document.body.appendChild(iframe);
-      }
+let iframe = document.getElementById("uploadIframe");
+if (!iframe) {
+  iframe = document.createElement("iframe");
+  iframe.name = "uploadIframe";
+  iframe.id = "uploadIframe";
+  iframe.style.display = "none";
+  document.body.appendChild(iframe);
+}
 
-      iframe.onload = function () {
-        base64Image = "";
-        updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
-      };
+iframe.onload = function () {
+  base64Image = "";
+  updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
+};
 
-      document.body.appendChild(form);
-      form.submit();
-      form.remove();
+document.body.appendChild(form);
+form.submit();
+form.remove();
     });
   } else {
     updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
