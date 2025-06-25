@@ -207,6 +207,44 @@ function fetchTalents() {
       });
     });
 }
+
+    function fetchMinistries(code, targetId) {
+  console.log(`Fetching ministries for code(s): ${code} into container: ${targetId}`);
+  
+  const container = document.getElementById(targetId);
+  container.innerHTML = ""; // Clear previous results first
+
+  fetch(`${baseurl}?page=GetPelayanan&code=${code}`)
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return res.json();
+    })
+    .then(data => {
+      console.log('Received ministries:', data);
+
+      if (!Array.isArray(data) || data.length === 0) {
+        container.innerHTML = "<p>No ministries found.</p>";
+        return;
+      }
+
+      data.forEach(min => {
+        const card = document.createElement('div');
+        card.className = 'ministry-card';
+        card.innerHTML = `
+          <img src="${min.iconUrl}" alt="${min.name}" />
+          <div>${min.name}</div>
+        `;
+        card.onclick = () => showModal(min);
+        container.appendChild(card);
+      });
+    })
+    .catch(err => {
+      console.error("Fetch error:", err);
+      container.innerHTML = "<p>Error loading ministries.</p>";
+    });
+}
+
+    
 function submitTalents() {
   const chosen = Array.from(selectedTalents);
 
@@ -227,11 +265,13 @@ function submitTalents() {
 
   // Fetch ministries based on selected and unselected talents
   if (selectedIds.length > 0) {
-    fetchMinistries(selectedIds.join(','), 'suggested');
+    const selectedParam = encodeURIComponent(selectedIds.join(','));
+    fetchMinistries(selectedParam, 'suggested');
   }
 
   if (unselectedIds.length > 0) {
-    fetchMinistries(unselectedIds.join(','), 'others');
+    const unselectedParam = encodeURIComponent(unselectedIds.join(','));
+    fetchMinistries(unselectedParam, 'others');
   }
 }
     function showModal(min) {
