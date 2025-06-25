@@ -109,17 +109,11 @@
   </div>
 
   <script>
-   async function getRedirectPage() {
+async function getRedirectPage() {
   const params = new URLSearchParams(window.location.search);
   const redirectParam = params.get("redirect");
   const baseurl = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
   const email = localStorage.getItem("email");
-
-  if (!email) {
-    // Email should already be set at this point
-    window.location.href = "https://thunderyouth.gkiguntur.com/login?redirect=pelayanan";
-    return;
-  }
 
   if (redirectParam === "pelayanan") {
     try {
@@ -127,20 +121,24 @@
       const data = await res.json();
 
       if (data.length === 0 || data[0] === "-") {
-        window.location.href = "https://thunderyouth.gkiguntur.com/profile?redirect=pelayanan";
+        return "https://thunderyouth.gkiguntur.com/profile?redirect=pelayanan";
       } else {
-        window.location.href = "https://thunderyouth.gkiguntur.com/pelayanan";
+        return "https://thunderyouth.gkiguntur.com/pelayanan";
       }
     } catch (err) {
       console.error("Profile fetch error:", err);
-      // Optional fallback
-      window.location.href = "https://thunderyouth.gkiguntur.com/profile?redirect=pelayanan";
+      return "https://thunderyouth.gkiguntur.com/profile?redirect=pelayanan";
     }
-  } else {
-    // Other redirect values (or none)
-    const destination = redirectParam ? decodeURIComponent(redirectParam) : "profile";
-    window.location.href = `https://thunderyouth.gkiguntur.com/${destination}`;
   }
+
+  // ✅ Handle all other cases properly
+  if (redirectParam) {
+    const destination = decodeURIComponent(redirectParam);
+    return `https://thunderyouth.gkiguntur.com/${destination}`;
+  }
+
+  // ✅ Fallback (when there's no redirect param at all)
+  return "https://thunderyouth.gkiguntur.com/profile";
 }
     
    async function saveEmail() {
