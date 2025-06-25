@@ -176,28 +176,30 @@
 
     const selectedTalents = new Set();
 
-    function fetchTalents() {
-      fetch(`${baseurl}?page=GetTalents`)
-        .then(res => res.json())
-        .then(data => {
-          const container = document.getElementById('talents');
-          data.forEach(talent => {
-            const btn = document.createElement('button');
-            btn.className = 'talent-button';
-            btn.innerText = capitalize(talent);
-            btn.onclick = () => {
-              btn.classList.toggle('selected');
-              if (selectedTalents.has(talent)) {
-                selectedTalents.delete(talent);
-              } else {
-                selectedTalents.add(talent);
-              }
-            };
-            container.appendChild(btn);
-          });
-        });
-    }
+function fetchTalents() {
+  fetch(`${baseurl}?page=GetTalents`)
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById('talents');
+      data.forEach(talent => {
+        const btn = document.createElement('button');
+        btn.className = 'talent-button';
+        btn.innerText = capitalize(talent.nama); // Use `nama` from object
 
+        btn.onclick = () => {
+          btn.classList.toggle('selected');
+          const exists = Array.from(selectedTalents).find(t => t.id === talent.id);
+          if (exists) {
+            selectedTalents.delete(exists);
+          } else {
+            selectedTalents.add(talent);
+          }
+        };
+
+        container.appendChild(btn);
+      });
+    });
+}
     function fetchMinistries(code, targetId) {
       fetch(`${baseurl}?page=GetPelayanan&code=${code}`)
         .then(res => res.json())
