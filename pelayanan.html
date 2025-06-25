@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Talenta & Pelayanan</title>
+  <title>Pelayanan | Thunder Youth</title>
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -143,16 +143,23 @@
 </head>
 <body>
 
+  <!-- Talent Section -->
+<div id="talent-section">
   <h1>Kamu merasa memiliki talenta apa?</h1>
   <p class="subtitle">Kamu boleh pilih lebih dari satu</p>
   <div id="talents" class="talent-container"></div>
   <button class="submit-button" onclick="submitTalents()">Submit</button>
+</div>
 
+<!-- Ministry Section (hidden initially) -->
+<div id="ministry-section" style="display: none;">
   <h2 class="section-title">What We Think You'll Fit</h2>
   <div id="suggested" class="ministry-grid"></div>
 
   <h2 class="section-title">Other Suggestions</h2>
   <div id="others" class="ministry-grid"></div>
+</div>
+
 
   <div id="modalOverlay" class="modal-overlay">
     <div class="modal">
@@ -165,7 +172,7 @@
   </div>
 
   <script>
-    const baseurl = "https://your-script-url";
+    const baseurl = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
 
     const selectedTalents = new Set();
 
@@ -228,10 +235,16 @@
     }
 
     function submitTalents() {
-      const chosen = Array.from(selectedTalents);
-      alert("Selected Talents:\n" + chosen.join(", "));
-      // You can replace this alert with a POST to Apps Script if needed
-    }
+  const chosen = Array.from(selectedTalents);
+  if (chosen.length === 0) {
+    alert("Silakan pilih minimal satu talenta terlebih dahulu.");
+    return;
+  }
+
+    document.getElementById('talent-section').style.display = 'none';
+    document.getElementById('ministry-section').style.display = 'block';
+}
+
 
     // Initial load
     fetchTalents();
