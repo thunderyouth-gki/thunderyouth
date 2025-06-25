@@ -252,17 +252,6 @@ function submitTalents() {
       return text.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
     }
 
-    function submitTalents() {
-  const chosen = Array.from(selectedTalents);
-  if (chosen.length === 0) {
-    alert("Silakan pilih minimal satu talenta terlebih dahulu.");
-    return;
-  }
-
-    document.getElementById('talent-section').style.display = 'none';
-    document.getElementById('ministry-section').style.display = 'block';
-}
-
 
     // Initial load
     fetchTalents();
