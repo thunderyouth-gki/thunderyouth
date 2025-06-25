@@ -708,28 +708,32 @@
       .catch(err => console.error("Fetch failed", err));
 
     // Expand/collapse sunday-service events
-    document.addEventListener("DOMContentLoaded", () => {
-      const events = document.querySelectorAll('.event-sunday-service');
-      events.forEach(event => {
-        const summary = event.querySelector('.summary-sunday-service');
-        const content = event.querySelector('.content-sunday-service');
-        const arrow = event.querySelector('.arrow-sunday-service');
+document.addEventListener("DOMContentLoaded", () => {
+  const events = document.querySelectorAll('.event-sunday-service');
 
-        summary.addEventListener('click', () => {
-          const isOpen = content.classList.contains('open');
-          events.forEach(ev => {
-            ev.querySelector('.content-sunday-service').classList.remove('open');
-            ev.querySelector('.content-sunday-service').style.maxHeight = null;
-            ev.querySelector('.arrow-sunday-service').classList.remove('rotated');
-          });
-          if (!isOpen) {
-            content.classList.add('open');
-            content.style.maxHeight = content.scrollHeight + 'px';
-            arrow.classList.add('rotated');
-          }
-        });
+  events.forEach(event => {
+    const content = event.querySelector('.content-sunday-service');
+    const arrow = event.querySelector('.arrow-sunday-service');
+
+    event.addEventListener('click', () => {
+      const isOpen = content.classList.contains('open');
+
+      // Close all other open items
+      events.forEach(ev => {
+        ev.querySelector('.content-sunday-service').classList.remove('open');
+        ev.querySelector('.content-sunday-service').style.maxHeight = null;
+        ev.querySelector('.arrow-sunday-service').classList.remove('rotated');
       });
+
+      // Open the clicked item if it wasn't already open
+      if (!isOpen) {
+        content.classList.add('open');
+        content.style.maxHeight = content.scrollHeight + 'px';
+        arrow.classList.add('rotated');
+      }
     });
+  });
+});
 
 let currentIndex = 0;
 const arcStart = 200;
