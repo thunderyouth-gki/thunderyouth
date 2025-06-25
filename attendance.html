@@ -436,7 +436,7 @@
         pointer-events: none;
       }
       
-      .popup {
+.popup {
   position: fixed;
   top: 0;
   left: 0;
@@ -655,11 +655,16 @@
     </div>
   </section>
   
-  <div id="profile-popup" class="popup hidden">
+<div id="profile-popup" class="popup hidden">
   <div class="popup-content">
     <span class="close-btn" onclick="document.getElementById('profile-popup').classList.add('hidden')">×</span>
-    <p>Lengkapi data dirimu dulu yuk!</p>
-    <a href="https://thunderyouth.gkiguntur.com/profile?redirect=warta" target="_blank">Complete Profile</a>
+    <br> <p>Yuk lengkapi profilmu dulu!</p>
+<button 
+  onclick="redirectToProfile()" 
+  style="background-color: #4D0FB1; color: #F8F8F8; border: 2px solid #4D0FB1; padding: 10px 16px; border-radius: 10px; font-weight: bold; cursor: pointer;">
+  Complete Profile
+</button>
+
   </div>
 </div>
 
@@ -737,6 +742,10 @@ function showCompleteProfilePopup() {
   document.getElementById('profile-popup').classList.remove('hidden');
 }
 
+function redirectToProfile() {
+  window.location.href = "https://thunderyouth.gkiguntur.com/profile?redirect=warta";
+}
+
   function toggleIcon(selectedElement) {
     document.querySelectorAll('.footer-item').forEach(item => {
       item.classList.remove('active');
@@ -765,7 +774,7 @@ function showCompleteProfilePopup() {
   });
 
 
-  function fetchProfile(email) {
+function fetchProfile(email) {
   return fetch(`${scriptBaseUrl}?page=GetProfile&email=${email}`)
     .then(res => res.json())
     .then(profile => {
@@ -776,7 +785,8 @@ function showCompleteProfilePopup() {
       }
     })
     .catch(err => console.error("Error fetching profile:", err));
-  }
+    }
+
 
 
 
