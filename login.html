@@ -110,10 +110,16 @@
 
   <script>
     function getRedirectPage() {
-      const params = new URLSearchParams(window.location.search);
-      const redirectParam = params.get("redirect");
-      return redirectParam ? decodeURIComponent(redirectParam) : "profile";
-    }
+  const params = new URLSearchParams(window.location.search);
+  const redirectParam = params.get("redirect");
+
+  if (redirectParam === "pelayanan") {
+    return "https://thunderyouth.gkiguntur.com/profile?redirect=pelayanan";
+  }
+
+  return redirectParam ? decodeURIComponent(redirectParam) : "profile";
+}
+
 
 
     
