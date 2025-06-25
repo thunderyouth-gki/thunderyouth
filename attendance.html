@@ -673,7 +673,7 @@
 <div id="profile-popup" class="popup hidden">
   <div class="popup-content">
     <span class="close-btn" onclick="document.getElementById('profile-popup').classList.add('hidden')">×</span>
-    <br> <p>Yuk lengkapi profilmu dulu!</p>
+    <p>Yuk lengkapi profilmu dulu!</p>
 <button class="popup-button" onclick="redirectToProfile()">Lengkapi Profil</button>
 
 
@@ -792,7 +792,7 @@ function fetchProfile(email) {
     .then(profile => {
       document.querySelector(".attendance-static-text").innerText = `Hi ${profile[1]}!`;
 
-      if (profile[0] === "-") {
+      if (profile[4] === "-") {
         showCompleteProfilePopup();
       }
     })
