@@ -471,19 +471,20 @@
   font-size: 24px;
 }
 
-        .popup-content button {
-  background-color: #4D0FB1;
-  color: #F8F8F8;
+.popup-content .popup-button {
+  background-color: #FD0FB1 !important;
+  color: #F8F8F8 !important;
   border: none;
   padding: 10px 20px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 16px;
-  margin-top: 20px;
+  margin: 20px auto 0 auto;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  width: fit-content;
+  text-align: center;
 }
+
 
 
       @media (orientation: landscape) {
@@ -673,10 +674,8 @@
   <div class="popup-content">
     <span class="close-btn" onclick="document.getElementById('profile-popup').classList.add('hidden')">×</span>
     <br> <p>Yuk lengkapi profilmu dulu!</p>
-<button 
-  onclick="redirectToProfile()" >
-  Lengkapi Profile
-</button>
+<button class="popup-button" onclick="redirectToProfile()">Lengkapi Profil</button>
+
 
   </div>
 </div>
