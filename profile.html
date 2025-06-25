@@ -587,10 +587,19 @@ function updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKe
     .then(data => {
       document.getElementById("loading-spinner").style.display = "none"; // Hide spinner
       if (data.success) {
-        toggleEdit(false);
-      } else {
-        alert("Gagal menyimpan data.");
-      }
+  // Get URL parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  const redirectPage = urlParams.get("redirect");
+
+  if (redirectPage === "warta") {
+    window.location.href = "https://thunderyouth.gkiguntur.com/warta";
+  } else {
+    window.location.href = "https://thunderyouth.gkiguntur.com/profile";
+  }
+} else {
+  alert("Gagal menyimpan data.");
+}
+
     })
     .catch(err => {
       console.error("Failed to save profile:", err);
