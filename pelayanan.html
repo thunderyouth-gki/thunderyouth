@@ -180,15 +180,18 @@
 
     const selectedTalents = new Set();
 
+let allTalents = [];
+
 function fetchTalents() {
   fetch(`${baseurl}?page=GetTalenta`)
     .then(res => res.json())
     .then(data => {
+      allTalents = data; // Store all talents
       const container = document.getElementById('talents');
       data.forEach(talent => {
         const btn = document.createElement('button');
         btn.className = 'talent-button';
-        btn.innerText = capitalize(talent.nama); // Use `nama` from object
+        btn.innerText = capitalize(talent.nama);
 
         btn.onclick = () => {
           btn.classList.toggle('selected');
@@ -204,24 +207,33 @@ function fetchTalents() {
       });
     });
 }
-    function fetchMinistries(code, targetId) {
-      fetch(`${baseurl}?page=GetPelayanan&code=${code}`)
-        .then(res => res.json())
-        .then(data => {
-          const container = document.getElementById(targetId);
-          data.forEach(min => {
-            const card = document.createElement('div');
-            card.className = 'ministry-card';
-            card.innerHTML = `
-              <img src="${min.iconUrl}" alt="${min.name}" />
-              <div>${min.name}</div>
-            `;
-            card.onclick = () => showModal(min);
-            container.appendChild(card);
-          });
-        });
-    }
+function submitTalents() {
+  const chosen = Array.from(selectedTalents);
 
+  if (chosen.length === 0) {
+    alert("Silakan pilih minimal satu talenta terlebih dahulu.");
+    return;
+  }
+
+  // UI toggle
+  document.getElementById('talent-section').style.display = 'none';
+  document.getElementById('ministry-section').style.display = 'block';
+
+  // Get selected and unselected talent IDs
+  const selectedIds = chosen.map(t => t.id);
+  const unselectedIds = allTalents
+    .filter(t => !selectedIds.includes(t.id))
+    .map(t => t.id);
+
+  // Fetch ministries based on selected and unselected talents
+  if (selectedIds.length > 0) {
+    fetchMinistries(selectedIds.join(','), 'suggested');
+  }
+
+  if (unselectedIds.length > 0) {
+    fetchMinistries(unselectedIds.join(','), 'others');
+  }
+}
     function showModal(min) {
       document.getElementById('modalIcon').src = min.iconUrl;
       document.getElementById('modalTitle').innerText = min.name;
@@ -254,8 +266,7 @@ function fetchTalents() {
 
     // Initial load
     fetchTalents();
-    fetchMinistries("1245", "suggested");
-    fetchMinistries("6789", "others");
+    
   </script>
 </body>
 </html>
