@@ -435,6 +435,42 @@
       .event-card-wrapper.disabled {
         pointer-events: none;
       }
+      
+      .popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.popup.hidden {
+  display: none;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.popup-content .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  cursor: pointer;
+  font-size: 24px;
+}
+
 
       @media (orientation: landscape) {
         .header {
@@ -618,6 +654,15 @@
       <img src="https://lh3.googleusercontent.com/d/1AEO_fiy7DittttDd1r9TQWE31Xm8FrcQ" alt="Illustration">
     </div>
   </section>
+  
+  <div id="profile-popup" class="popup hidden">
+  <div class="popup-content">
+    <span class="close-btn" onclick="document.getElementById('profile-popup').classList.add('hidden')">×</span>
+    <p>Lengkapi data dirimu dulu yuk!</p>
+    <a href="https://thunderyouth.gkiguntur.com/profile?redirect=warta" target="_blank">Complete Profile</a>
+  </div>
+</div>
+
 
 <section class="event-container" id="upcoming-events">
   <div class="upcoming-events-title">Upcoming Events</div>
@@ -688,6 +733,9 @@
   const urlParams = new URLSearchParams(window.location.search);
   const eventParam = urlParams.get("event") || "Sunday Service";
 
+function showCompleteProfilePopup() {
+  document.getElementById('profile-popup').classList.remove('hidden');
+}
 
   function toggleIcon(selectedElement) {
     document.querySelectorAll('.footer-item').forEach(item => {
@@ -718,13 +766,18 @@
 
 
   function fetchProfile(email) {
-   return fetch(`${scriptBaseUrl}?page=GetProfile&email=${email}`)
-      .then(res => res.json())
-      .then(profile => {
-        document.querySelector(".attendance-static-text").innerText = `Hi ${profile[1]}!`;
-      })
-      .catch(err => console.error("Error fetching profile:", err));
+  return fetch(`${scriptBaseUrl}?page=GetProfile&email=${email}`)
+    .then(res => res.json())
+    .then(profile => {
+      document.querySelector(".attendance-static-text").innerText = `Hi ${profile[1]}!`;
+
+      if (profile[0] === "-") {
+        showCompleteProfilePopup();
+      }
+    })
+    .catch(err => console.error("Error fetching profile:", err));
   }
+
 
 
   function fetchEvents() {
