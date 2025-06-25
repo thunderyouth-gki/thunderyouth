@@ -253,27 +253,57 @@ function submitTalents() {
     return;
   }
 
-  // UI toggle
-  document.getElementById('talent-section').style.display = 'none';
-  document.getElementById('ministry-section').style.display = 'block';
+  const email = localStorage.getItem("email") || "";
+  const code = chosen.map(t => t.id).join(',');
 
-  // Get selected and unselected talent IDs
-  const selectedIds = chosen.map(t => t.id);
-  const unselectedIds = allTalents
-    .filter(t => !selectedIds.includes(t.id))
-    .map(t => t.id);
+  // Encode parameters
+  const params = new URLSearchParams({
+    page: 'saveTalenta',
+    email: email,
+    code: code
+  });
 
-  // Fetch ministries based on selected and unselected talents
-  if (selectedIds.length > 0) {
-    const selectedParam = encodeURIComponent(selectedIds.join(','));
-    fetchMinistries(selectedParam, 'suggested');
-  }
+  // Build full URL
+  const url = `${baseurl}?${params.toString()}`;
 
-  if (unselectedIds.length > 0) {
-    const unselectedParam = encodeURIComponent(unselectedIds.join(','));
-    fetchMinistries(unselectedParam, 'others');
-  }
+  // Send GET request
+  fetch(url)
+    .then(res => {
+      if (!res.ok) throw new Error('Network response was not ok');
+      return res.json();
+    })
+    .then(data => {
+      console.log('Save response:', data);
+
+      // UI toggle
+      document.getElementById('talent-section').style.display = 'none';
+      document.getElementById('ministry-section').style.display = 'block';
+
+      // Get selected and unselected talent IDs
+      const selectedIds = chosen.map(t => t.id);
+      const unselectedIds = allTalents
+        .filter(t => !selectedIds.includes(t.id))
+        .map(t => t.id);
+
+      // Fetch ministries based on selected talents
+      if (selectedIds.length > 0) {
+        const selectedParam = encodeURIComponent(selectedIds.join(','));
+        fetchMinistries(selectedParam, 'suggested');
+      }
+
+      // Fetch ministries based on unselected talents
+      if (unselectedIds.length > 0) {
+        const unselectedParam = encodeURIComponent(unselectedIds.join(','));
+        fetchMinistries(unselectedParam, 'others');
+      }
+    })
+    .catch(err => {
+      console.error('Failed to save talents:', err);
+      alert('Gagal menyimpan talenta. Silakan coba lagi.');
+    });
 }
+
+    
     function showModal(min) {
       document.getElementById('modalIcon').src = min.iconUrl;
       document.getElementById('modalTitle').innerText = min.name;
