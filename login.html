@@ -160,10 +160,12 @@
 window.onload = async function () {
   const savedEmail = localStorage.getItem("email");
   if (savedEmail) {
-    const redirect = await getRedirectPage();  // ✅ await this
+    const redirect = await getRedirectPage();
+    console.log("Redirecting to:", redirect);  // For debugging
     window.location.href = redirect;
   }
 };
+
 
   </script>
 </body>
