@@ -177,7 +177,7 @@
     const selectedTalents = new Set();
 
 function fetchTalents() {
-  fetch(`${baseurl}?page=GetTalents`)
+  fetch(`${baseurl}?page=GetTalenta`)
     .then(res => res.json())
     .then(data => {
       const container = document.getElementById('talents');
