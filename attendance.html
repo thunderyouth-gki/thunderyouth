@@ -471,6 +471,20 @@
   font-size: 24px;
 }
 
+        .popup-content button {
+  background-color: #4D0FB1;
+  color: #F8F8F8;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 
       @media (orientation: landscape) {
         .header {
@@ -660,9 +674,8 @@
     <span class="close-btn" onclick="document.getElementById('profile-popup').classList.add('hidden')">×</span>
     <br> <p>Yuk lengkapi profilmu dulu!</p>
 <button 
-  onclick="redirectToProfile()" 
-  style="background-color: #4D0FB1; color: #F8F8F8; border: 2px solid #4D0FB1; padding: 10px 16px; border-radius: 10px; font-weight: bold; cursor: pointer;">
-  Complete Profile
+  onclick="redirectToProfile()" >
+  Lengkapi Profile
 </button>
 
   </div>
@@ -688,8 +701,8 @@
   <section class="doa-syafaat-container">
     <div class="doa-syafaat-title">Prayer Tree</div>
     <form id="textForm">
-      <label for="longText" class=form-description>We invite you to write down your prayer requests—whether it's for yourself, your loved ones, or anything that weighs on your heart. Your prayer will be lifted up together during the intercessory prayer in our Sunday service. Let us stand with you in prayer.</label><br>
-      <textarea id="longText" name="longText" placeholder="Type your prayer here..."></textarea>
+      <label for="longText" class=form-description>Punya pergumulan atau harapan yang ingin didoakan? Tulis aja di sini! Entah itu untuk dirimu sendiri, orang tersayang, atau hal-hal yang lagi bikin hati berat. Doa-doa kamu bakal dibawa dalam doa syafaat di kebaktian hari Minggu. Yuk, kita saling menguatkan dalam doa—karena perjalanan iman nggak harus dilalui sendirian.</label><br>
+      <textarea id="longText" name="longText" placeholder="Tulis doamu di sini..."></textarea>
         <button type="submit">Submit</button>
       </form>
   </section>
