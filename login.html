@@ -142,33 +142,29 @@
     window.location.href = `https://thunderyouth.gkiguntur.com/${destination}`;
   }
 }
-
-
-
-
     
-    function saveEmail() {
-      const input = document.getElementById("emailInput");
-      const email = input.value.trim();
+   async function saveEmail() {
+  const input = document.getElementById("emailInput");
+  const email = input.value.trim();
 
-      if (email && email.includes("@")) {
-        localStorage.setItem("email", email);
+  if (email && email.includes("@")) {
+    localStorage.setItem("email", email);
 
-        const redirect = getRedirectPage();
-        window.location.href = redirect;
-      } else {
-        alert("Please enter a valid email address.");
-      }
-    }
+    const redirect = await getRedirectPage();  // ✅ await this
+    window.location.href = redirect;
+  } else {
+    alert("Please enter a valid email address.");
+  }
+}
 
-    window.onload = function () {
-      const savedEmail = localStorage.getItem("email");
-      if (savedEmail) {
-        
-        const redirect = getRedirectPage();
-        window.location.href = redirect;
-      }
-    };
+window.onload = async function () {
+  const savedEmail = localStorage.getItem("email");
+  if (savedEmail) {
+    const redirect = await getRedirectPage();  // ✅ await this
+    window.location.href = redirect;
+  }
+};
+
   </script>
 </body>
 </html>
