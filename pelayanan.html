@@ -252,7 +252,6 @@ function hideSpinner() {
 
 
 function fetchTalents() {
-  showSpinner();
   fetch(`${baseurl}?page=GetTalenta`)
     .then(res => res.json())
     .then(data => {
@@ -276,7 +275,6 @@ function fetchTalents() {
         container.appendChild(btn);
       });
     });
-  .finally(hideSpinner);
 }
 
     function fetchMinistries(code, targetId) {
@@ -284,7 +282,6 @@ function fetchTalents() {
   
   const container = document.getElementById(targetId);
   container.innerHTML = ""; // Clear previous results first
-    showSpinner();
   fetch(`${baseurl}?page=GetPelayanan&code=${code}`)
     .then(res => {
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -313,7 +310,6 @@ function fetchTalents() {
       console.error("Fetch error:", err);
       container.innerHTML = "<p>Error loading ministries.</p>";
     });
-      .finally(hideSpinner);
 }
 
     
@@ -394,7 +390,6 @@ function showModal(min) {
     });
 
     const url = `${baseurl}?${params.toString()}`;
-    showSpinner();
     
     // Send GET request to enroll the user
     fetch(url)
@@ -418,7 +413,6 @@ function showModal(min) {
         console.error("Failed to submit pelayanan:", err);
         alert("Gagal mendaftar pelayanan. Silakan coba lagi.");
       });
-    .finally(hideSpinner);
   };
 
   // Show modal
