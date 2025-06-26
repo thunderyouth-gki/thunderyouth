@@ -168,6 +168,28 @@
       border-radius: 25px;
       cursor: pointer;
     }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #4D0FB1;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+    }
+
+    #loading-spinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
   </style>
 </head>
 <body>
@@ -176,6 +198,11 @@
     <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
   </div>
 
+<div id="loading-spinner" style="display: none;">
+  <div class="spinner"></div>
+</div>
+
+  
   <!-- Talent Section -->
 <div id="talent-section">
   <h1>Kamu merasa memiliki talenta apa?</h1>
@@ -213,9 +240,19 @@
 
     const selectedTalents = new Set();
 
-let allTalents = [];
+    let allTalents = [];
+
+    function showSpinner() {
+  document.getElementById('loading-spinner').style.display = 'block';
+}
+
+function hideSpinner() {
+  document.getElementById('loading-spinner').style.display = 'none';
+}
+
 
 function fetchTalents() {
+  showSpinner();
   fetch(`${baseurl}?page=GetTalenta`)
     .then(res => res.json())
     .then(data => {
@@ -239,6 +276,7 @@ function fetchTalents() {
         container.appendChild(btn);
       });
     });
+  .finally(hideSpinner);
 }
 
     function fetchMinistries(code, targetId) {
@@ -246,7 +284,7 @@ function fetchTalents() {
   
   const container = document.getElementById(targetId);
   container.innerHTML = ""; // Clear previous results first
-
+    showSpinner();
   fetch(`${baseurl}?page=GetPelayanan&code=${code}`)
     .then(res => {
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -275,6 +313,7 @@ function fetchTalents() {
       console.error("Fetch error:", err);
       container.innerHTML = "<p>Error loading ministries.</p>";
     });
+      .finally(hideSpinner);
 }
 
     
@@ -355,7 +394,8 @@ function showModal(min) {
     });
 
     const url = `${baseurl}?${params.toString()}`;
-
+    showSpinner();
+    
     // Send GET request to enroll the user
     fetch(url)
       .then(res => {
@@ -378,6 +418,7 @@ function showModal(min) {
         console.error("Failed to submit pelayanan:", err);
         alert("Gagal mendaftar pelayanan. Silakan coba lagi.");
       });
+    .finally(hideSpinner);
   };
 
   // Show modal
