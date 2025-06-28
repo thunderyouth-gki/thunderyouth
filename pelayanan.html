@@ -315,7 +315,6 @@ function fetchTalents() {
       }
 
       hideSpinner();
-      document.getElementById('editTalentsBtn').style.display = 'block';
     })
     .catch(err => {
       console.error("Failed to fetch talents:", err);
@@ -417,6 +416,7 @@ function submitTalents() {
     })
     .then(() => {
       hideSpinner();
+      document.getElementById('editTalentsBtn').style.display = 'block';
     })
     .catch(err => {
       console.error('Failed to save talents or fetch ministries:', err);
