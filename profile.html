@@ -515,6 +515,32 @@ function fetchProfile(email) {
     .catch(err => console.error("Failed to fetch profile:", err));
 }
 
+async function sendBase64InChunks(email, base64String) {
+  const chunkSize = 1900; // safe to keep params under 2000 chars (URL limit varies)
+  const totalChunks = Math.ceil(base64String.length / chunkSize);
+
+  for (let i = 0; i < totalChunks; i++) {
+    const chunkData = base64String.slice(i * chunkSize, (i + 1) * chunkSize);
+    
+    const url = `${API_BASE}?page=UploadFileChunk` +
+      `&email=${encodeURIComponent(email)}` +
+      `&chunkIndex=${i}` +
+      `&totalChunks=${totalChunks}` +
+      `&chunkData=${encodeURIComponent(chunkData)}`;
+      
+    const response = await fetch(url);
+    const result = await response.json();
+    if (!result.success) {
+      console.error(`Chunk ${i} failed to upload`);
+      alert("Upload failed. Please try again.");
+      return false;
+    }
+  }
+  alert("Upload complete!");
+  return true;
+}
+
+  
 function saveProfileChanges() {
   const email = localStorage.getItem("email");
   if (!email) return alert("Email belum ditemukan.");
@@ -527,49 +553,18 @@ function saveProfileChanges() {
   const statusKeanggotaan = document.getElementById("edit-statusKeanggotaan").value;
   const tanggalLahir = document.getElementById("edit-tanggalLahir").value;
 
-  if (base64Image) {
-    const fileInput = document.getElementById("profile-pic-upload");
-    const file = fileInput.files[0];
+if (base64Image) {
+    // Replace old form/iframe code with this:
+    const success = await sendBase64InChunks(email, base64Image);
+    if (!success) {
+      document.getElementById("loading-spinner").style.display = "none";
+      return; // stop if upload failed
+    }
+    base64Image = ""; // clear after success
+  }
 
-const form = document.createElement("form");
-form.method = "GET";
-form.action = API_BASE;
-form.target = "uploadIframe";
-
-const params = {
-  page: "UploadFile",
-  email: email,
-  filename: file.name,
-  mimeType: file.type,
-  base64Data: base64Image  // ✅ use directly without resize
-};
-
-for (const key in params) {
-  const input = document.createElement("input");
-  input.type = "hidden";
-  input.name = key;
-  input.value = params[key];
-  form.appendChild(input);
-}
-
-let iframe = document.getElementById("uploadIframe");
-if (!iframe) {
-  iframe = document.createElement("iframe");
-  iframe.name = "uploadIframe";
-  iframe.id = "uploadIframe";
-  iframe.style.display = "none";
-  document.body.appendChild(iframe);
-}
-
-iframe.onload = function () {
-  base64Image = "";
   updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
-};
-
-document.body.appendChild(form);
-form.submit();
-form.remove();
-  } else {
+} else {
     updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
   }
 }
