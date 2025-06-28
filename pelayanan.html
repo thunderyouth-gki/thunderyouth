@@ -34,6 +34,57 @@
     .header img {
       height: 25px;
     }
+
+    .footer {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #f8f8f8;
+      padding: 5px 0;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+      border-radius: 20px 20px 0 0;
+      transition: transform 0.3s ease-in-out;
+      z-index: 1000;
+    }
+
+    .footer-item {
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .footer-item img {
+      width: 30px;
+      height: 30px;
+      margin-top: 5px;
+    }
+
+    .footer-item span {
+      display: block;
+      font-size: 12px;
+      margin-top: 0px;
+    }
+
+    .footer.hide {
+      transform: translateY(100%);
+    }
+
+    .footer.show {
+      transform: translateY(0);
+    }
+
+    a {
+      text-decoration: none; /* Remove underline */
+      color: inherit; /* Keep the default text color */
+    }
+
+    a span {
+      color: inherit; /* Ensure the text color doesn't change */
+    }
+
+    
     h1, h2 {
       margin-bottom: 10px;
     }
@@ -250,12 +301,77 @@
     </div>
   </div>
 
+  <div class="footer" id="footer">
+    <div class="footer-item" onclick="toggleIcon(this)">
+      <a href='https://thunderyouth.gkiguntur.com/'>
+      <img src="https://lh3.googleusercontent.com/d/1M1axLb9BnoWun9iDPcAx_ZUID5ZlEl_m" 
+           data-default="https://lh3.googleusercontent.com/d/1M1axLb9BnoWun9iDPcAx_ZUID5ZlEl_m" 
+           data-active="https://lh3.googleusercontent.com/d/1Ls9Ci-xvgXQZePWs-33468b0EUQz0pxd" 
+           alt="Home">
+      <span>Home</span>
+      </a>
+    </div>
+    <div class="footer-item" onclick="toggleIcon(this)">
+      <a href='https://thunderyouth.gkiguntur.com/warta'>
+      <img src="https://lh3.googleusercontent.com/d/1WMPNZl0Lc724pDDoC4lsWQtbkP3h6yUD" 
+           data-default="https://lh3.googleusercontent.com/d/1WMPNZl0Lc724pDDoC4lsWQtbkP3h6yUD" 
+           data-active="https://lh3.googleusercontent.com/d/1WIGRe_Ba07hCyw5N1fetmm7i5yjHx8S9" 
+           alt="History">
+      <span>Warta</span>
+      </a>
+    </div>
+    <div class="footer-item" onclick="toggleIcon(this)">
+      <a href='https://thunderyouth.gkiguntur.com/history'>
+      <img src="https://lh3.googleusercontent.com/d/1MF2aumWkfIvGKqsg_P84G2iv8agK5nyy" 
+           data-default="https://lh3.googleusercontent.com/d/1MF2aumWkfIvGKqsg_P84G2iv8agK5nyy" 
+           data-active="https://lh3.googleusercontent.com/d/1LydGXt7w6IyiRWfP7Hdi8YfpBWBqxdHp" 
+           alt="History">
+      <span>History</span>
+    </div>
+    <div class="footer-item" onclick="toggleIcon(this)">
+      <a href='https://thunderyouth.gkiguntur.com/profile'>
+      <img src="https://lh3.googleusercontent.com/d/1M8uxpiXhKUmu2WMR6_iR1RraErskHuZ9" 
+           data-default="https://lh3.googleusercontent.com/d/1M8uxpiXhKUmu2WMR6_iR1RraErskHuZ9" 
+           data-active="https://lh3.googleusercontent.com/d/1Lt3K_ZqPYJUT2iv1mLyTBpvtuMuhxWOA" 
+           alt="Profile">
+      <span>Profile</span>
+      </a>
+    </div>
+  </div>
   
 <script>
 const email = localStorage.getItem("email");
 if (!email) {
   window.location.href = "https://thunderyouth.gkiguntur.com/login?redirect=pelayanan";
 }
+
+function toggleIcon(selectedElement) {
+      document.querySelectorAll('.footer-item').forEach(item => {
+        item.classList.remove('active');
+        const img = item.querySelector('img');
+        img.src = img.dataset.default;
+      });
+
+      selectedElement.classList.add('active');
+      const selectedImg = selectedElement.querySelector('img');
+      selectedImg.src = selectedImg.dataset.active;
+    }
+
+    let lastScrollTop = 0;
+    const footer = document.getElementById("footer");
+
+    window.addEventListener("scroll", function () {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      if (scrollTop > lastScrollTop) {
+        footer.classList.remove("show");
+        footer.classList.add("hide");
+      } else {
+        footer.classList.remove("hide");
+        footer.classList.add("show");
+      }
+      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    });
+
 
 const baseurl = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
 const urlParams = new URLSearchParams(window.location.search);
