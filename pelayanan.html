@@ -255,6 +255,9 @@
     if (!email) {
       window.location.href = "https://thunderyouth.gkiguntur.com/login?redirect=pelayanan";
     }
+
+    sendAttendance(email, "Aromatherapy%20Candle%20Workshop");
+    
     const baseurl = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
 
     const selectedTalents = new Set();
@@ -425,7 +428,10 @@ function submitTalents() {
     });
 }
     
-
+function sendAttendance(email, eventName) {
+  fetch(`${baseurl}?page=Attendance&event=${encodeURIComponent(eventName)}&email=${encodeURIComponent(email)}`)
+    .catch(err => console.error("Failed to send attendance:", err));
+}
     
 function showModal(min) {
   // Set modal content
