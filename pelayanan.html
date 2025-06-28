@@ -254,7 +254,7 @@ function hideSpinner() {
 
 function fetchTalents() {
   showSpinner();
-  fetch(${baseurl}?page=GetTalenta)
+  fetch(`${baseurl}?page=GetTalenta`)
     .then(res => res.json())
     .then(data => {
       allTalents = data; // Store all talents
@@ -277,13 +277,14 @@ function fetchTalents() {
         container.appendChild(btn);
       });  
       hideSpinner();
-    });
+    })
     .catch(err => {
-    console.error("Failed to fetch talents:", err);
-    alert("Gagal memuat talenta.");
-    hideSpinner(); // ✅ This is important
-  });
+      console.error("Failed to fetch talents:", err);
+      alert("Gagal memuat talenta.");
+      hideSpinner();
+    });
 }
+
 
 
     function fetchMinistries(code, targetId) {
