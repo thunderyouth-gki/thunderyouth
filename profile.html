@@ -678,6 +678,12 @@ window.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const redirectPage = urlParams.get("redirect");
+  if (redirectPage === "pelayanan") {
+    alert("Silakan isi data diri sebelum melanjutkan");
+  }
+
   let fetchDone = false;
   let delayDone = false;
 
