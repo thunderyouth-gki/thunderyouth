@@ -623,7 +623,7 @@ function handleClick(type, url) {
     .then(res => res.json())
     .then(data => {
       if (data.success) {
-        window.open(url, "_blank");
+        window.location.href(url, "_blank");
       } else {
         alert("Gagal mengirim data.");
       }
