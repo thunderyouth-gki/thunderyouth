@@ -577,7 +577,7 @@ async function sendBase64InChunks(email, base64String) {
 }
 
   
-function saveProfileChanges() {
+async function saveProfileChanges() {
   const email = localStorage.getItem("email");
   if (!email) return alert("Email belum ditemukan.");
 
