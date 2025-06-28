@@ -270,6 +270,7 @@ function hideSpinner() {
 }
 
 function fetchTalents() {
+   document.getElementById('editTalentsBtn').style.display = 'none';
   showSpinner();
   fetch(`${baseurl}?page=GetTalenta`)
     .then(res => res.json())
@@ -314,6 +315,7 @@ function fetchTalents() {
       }
 
       hideSpinner();
+      document.getElementById('editTalentsBtn').style.display = 'block';
     })
     .catch(err => {
       console.error("Failed to fetch talents:", err);
