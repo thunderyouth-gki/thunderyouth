@@ -243,6 +243,8 @@
 
     let allTalents = [];
 
+    localStorage.setItem('talentCode', code); //
+
     function showSpinner() {
   document.getElementById('loading-spinner').style.display = 'block';
 }
@@ -256,13 +258,13 @@ function fetchTalents() {
   fetch(`${baseurl}?page=GetTalenta`)
     .then(res => res.json())
     .then(data => {
-      allTalents = data; // Store all talents
+      allTalents = data;
       const container = document.getElementById('talents');
+
       data.forEach(talent => {
         const btn = document.createElement('button');
         btn.className = 'talent-button';
         btn.innerText = capitalize(talent.nama);
-
         btn.onclick = () => {
           btn.classList.toggle('selected');
           const exists = Array.from(selectedTalents).find(t => t.id === talent.id);
@@ -272,9 +274,29 @@ function fetchTalents() {
             selectedTalents.add(talent);
           }
         };
-
         container.appendChild(btn);
-      });  
+      });
+
+      // 👇 Check if saved code exists after talents loaded
+      const savedCode = localStorage.getItem('talentCode');
+      if (savedCode) {
+        document.getElementById('talent-section').style.display = 'none';
+        document.getElementById('ministry-section').style.display = 'block';
+
+        const selectedParam = encodeURIComponent(savedCode);
+        fetchMinistries(selectedParam, 'suggested');
+
+        const selectedIds = savedCode.split(',');
+        const unselectedIds = allTalents
+          .filter(t => !selectedIds.includes(t.id))
+          .map(t => t.id);
+
+        if (unselectedIds.length > 0) {
+          const unselectedParam = encodeURIComponent(unselectedIds.join(','));
+          fetchMinistries(unselectedParam, 'others');
+        }
+      }
+
       hideSpinner();
     })
     .catch(err => {
@@ -284,12 +306,9 @@ function fetchTalents() {
     });
 }
 
-
-
-
-    function fetchMinistries(code, targetId) {
-      showSpinner();
-  console.log(`Fetching ministries for code(s): ${code} into container: ${targetId}`);
+  function fetchMinistries(code, targetId) {
+    showSpinner();
+    console.log(`Fetching ministries for code(s): ${code} into container: ${targetId}`);
   
   const container = document.getElementById(targetId);
   container.innerHTML = ""; // Clear previous results first
