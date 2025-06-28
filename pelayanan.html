@@ -346,7 +346,7 @@ function fetchMinistries(code, targetId) {
     const container = document.getElementById(targetId);
     container.innerHTML = "";
 
-    fetch(`${baseurl}?page=GetPelayanan&code=${code}`)
+    fetch(`${baseurl}?page=GetPelayanan&code=${encodeURIComponent(code)}`)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
