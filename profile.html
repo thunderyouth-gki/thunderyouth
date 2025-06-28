@@ -516,27 +516,63 @@ function fetchProfile(email) {
 }
 
 async function sendBase64InChunks(email, base64String) {
-  const chunkSize = 1900; // safe to keep params under 2000 chars (URL limit varies)
+  const chunkSize = 1900; // keep params under 2000 chars
   const totalChunks = Math.ceil(base64String.length / chunkSize);
 
   for (let i = 0; i < totalChunks; i++) {
     const chunkData = base64String.slice(i * chunkSize, (i + 1) * chunkSize);
-    
+
     const url = `${API_BASE}?page=UploadFileChunk` +
       `&email=${encodeURIComponent(email)}` +
       `&chunkIndex=${i}` +
       `&totalChunks=${totalChunks}` +
       `&chunkData=${encodeURIComponent(chunkData)}`;
-      
-    const response = await fetch(url);
-    const result = await response.json();
-    if (!result.success) {
-      console.error(`Chunk ${i} failed to upload`);
-      alert("Upload failed. Please try again.");
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        console.error(`Network error on chunk ${i}: ${response.statusText}`);
+        alert("Network error during upload. Please try again.");
+        return false;
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        console.error(`Chunk ${i} failed to upload:`, result);
+        alert("Upload failed on chunk " + i + ". Please try again.");
+        return false;
+      }
+    } catch (error) {
+      console.error(`Exception uploading chunk ${i}:`, error);
+      alert("Unexpected error during upload. Please try again.");
       return false;
     }
+
+    await new Promise(resolve => setTimeout(resolve, 100));
   }
-  alert("Upload complete!");
+
+  // After all chunks uploaded, call merge and upload endpoint
+  try {
+    const mergeUrl = `${API_BASE}?page=MergeAndUpload&email=${encodeURIComponent(email)}`;
+    const mergeResponse = await fetch(mergeUrl);
+    if (!mergeResponse.ok) {
+      console.error("Network error during merge:", mergeResponse.statusText);
+      alert("Network error during merge. Please try again.");
+      return false;
+    }
+    const mergeResult = await mergeResponse.json();
+    if (!mergeResult.success) {
+      console.error("Merge failed:", mergeResult);
+      alert("Failed to merge and upload the image. Please try again.");
+      return false;
+    }
+  } catch (error) {
+    console.error("Exception during merge:", error);
+    alert("Unexpected error during merge. Please try again.");
+    return false;
+  }
+
+  alert("Upload and merge complete!");
   return true;
 }
 
@@ -553,8 +589,7 @@ function saveProfileChanges() {
   const statusKeanggotaan = document.getElementById("edit-statusKeanggotaan").value;
   const tanggalLahir = document.getElementById("edit-tanggalLahir").value;
 
-if (base64Image) {
-    // Replace old form/iframe code with this:
+  if (base64Image) {
     const success = await sendBase64InChunks(email, base64Image);
     if (!success) {
       document.getElementById("loading-spinner").style.display = "none";
