@@ -281,6 +281,7 @@ function fetchTalents() {
 }
 
     function fetchMinistries(code, targetId) {
+      showSpinner();
   console.log(`Fetching ministries for code(s): ${code} into container: ${targetId}`);
   
   const container = document.getElementById(targetId);
@@ -308,10 +309,12 @@ function fetchTalents() {
         card.onclick = () => showModal(min);
         container.appendChild(card);
       });
+      hideSpinner();
     })
     .catch(err => {
       console.error("Fetch error:", err);
       container.innerHTML = "<p>Error loading ministries.</p>";
+      hideSpinner();
     });
 }
 
@@ -323,6 +326,8 @@ function submitTalents() {
     alert("Silakan pilih minimal satu talenta terlebih dahulu.");
     return;
   }
+
+  showSpinner();
 
   const email = localStorage.getItem("email") || "";
   const code = chosen.map(t => t.id).join(',');
@@ -367,10 +372,12 @@ function submitTalents() {
         const unselectedParam = encodeURIComponent(unselectedIds.join(','));
         fetchMinistries(unselectedParam, 'others');
       }
+      hideSpinner();
     })
     .catch(err => {
       console.error('Failed to save talents:', err);
       alert('Gagal menyimpan talenta. Silakan coba lagi.');
+      hideSpinner();
     });
 }
 
