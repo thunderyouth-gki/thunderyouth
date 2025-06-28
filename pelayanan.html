@@ -250,30 +250,137 @@
     </div>
   </div>
 
-  <script>
-    const email = localStorage.getItem("email");
-    if (!email) {
-      window.location.href = "https://thunderyouth.gkiguntur.com/login?redirect=pelayanan";
-    }
+  
+<script>
+const email = localStorage.getItem("email");
+if (!email) {
+  window.location.href = "https://thunderyouth.gkiguntur.com/login?redirect=pelayanan";
+}
 
-    const baseurl = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
-    const urlParams = new URLSearchParams(window.location.search);
-    const eventName = urlParams.get('event') || 'Sunday Service';
-    sendAttendance(email, eventName);
-    
-    const selectedTalents = new Set();
+const baseurl = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
+const urlParams = new URLSearchParams(window.location.search);
+const eventName = urlParams.get('event') || 'Sunday Service';
+sendAttendance(email, eventName);
 
-    let allTalents = [];
+const selectedTalents = new Set();
+let allTalents = [];
+const shownMinistries = new Set();
 
-    const shownMinistries = new Set();
-
-
-    function showSpinner() {
+function showSpinner() {
   document.getElementById('loading-spinner').style.display = 'block';
 }
 
 function hideSpinner() {
   document.getElementById('loading-spinner').style.display = 'none';
+}
+
+function capitalize(text) {
+  return text.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').style.display = 'none';
+}
+
+function editTalents() {
+  localStorage.removeItem('talentCode');
+  document.getElementById('ministry-section').style.display = 'none';
+  document.getElementById('editTalentsBtn').style.display = 'none';
+  document.getElementById('talent-section').style.display = 'block';
+  document.querySelectorAll('.talent-button.selected').forEach(btn => {
+    btn.classList.remove('selected');
+  });
+  selectedTalents.clear();
+}
+
+function sendAttendance(email, eventName) {
+  fetch(`${baseurl}?page=Attendance&event=${encodeURIComponent(eventName)}&email=${encodeURIComponent(email)}`)
+    .catch(err => console.error("Failed to send attendance:", err));
+}
+
+function showModal(min) {
+  document.getElementById('modalIcon').src = min.iconUrl;
+  document.getElementById('modalTitle').innerText = min.name;
+  document.getElementById('modalDesc').innerText = min.description;
+
+  document.getElementById('enrollBtn').onclick = () => {
+    showSpinner();
+    const email = localStorage.getItem("email") || "";
+    const nama = min.name;
+
+    const params = new URLSearchParams({
+      page: "SubmitPelayanan",
+      email: email,
+      nama: nama
+    });
+
+    const url = `${baseurl}?${params.toString()}`;
+    fetch(url)
+      .then(res => {
+        if (!res.ok) throw new Error('Network response was not ok');
+        return res.json();
+      })
+      .then(data => {
+        hideSpinner();
+        document.getElementById('modalOverlay').style.display = 'none';
+        const confirmConnect = confirm("Kamu sudah terdaftar di pelayanan ini.\nMau langsung terhubung sekarang?");
+        if (confirmConnect) {
+            window.location.href = min.link;
+        } else {
+          alert("Kamu bisa terhubung kapan saja lewat halaman ini.");
+        }
+      })
+      .catch(err => {
+        console.error("Failed to submit pelayanan:", err);
+        alert("Gagal mendaftar pelayanan. Silakan coba lagi.");
+        hideSpinner();
+      });
+  };
+
+  document.getElementById('modalOverlay').style.display = 'flex';
+}
+
+function fetchMinistries(code, targetId) {
+  return new Promise((resolve, reject) => {
+    showSpinner();
+    const container = document.getElementById(targetId);
+    container.innerHTML = "";
+
+    fetch(`${baseurl}?page=GetPelayanan&code=${code}`)
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        if (!Array.isArray(data) || data.length === 0) {
+          container.innerHTML = "<p>No ministries found.</p>";
+          resolve();
+          return;
+        }
+
+        data.forEach(min => {
+          const uniqueKey = `${min.name}-${min.iconUrl}`;
+          if (shownMinistries.has(uniqueKey)) return;
+          shownMinistries.add(uniqueKey);
+
+          const card = document.createElement('div');
+          card.className = 'ministry-card';
+          card.innerHTML = `
+            <img src="${min.iconUrl}" alt="${min.name}" />
+            <div>${min.name}</div>
+          `;
+          card.onclick = () => showModal(min);
+          container.appendChild(card);
+        });
+
+        resolve();
+      })
+      .catch(err => {
+        console.error("Fetch error:", err);
+        container.innerHTML = "<p>Error loading ministries.</p>";
+        reject(err);
+      });
+  });
 }
 
 function fetchTalents() {
@@ -283,6 +390,7 @@ function fetchTalents() {
     .then(data => {
       allTalents = data;
       const container = document.getElementById('talents');
+      container.innerHTML = "";
 
       data.forEach(talent => {
         const btn = document.createElement('button');
@@ -306,76 +414,38 @@ function fetchTalents() {
         document.getElementById('ministry-section').style.display = 'block';
         document.getElementById('editTalentsBtn').style.display = 'block';
 
-        const selectedParam = encodeURIComponent(savedCode);
+        const selectedIds = savedCode.split(',');
+        const unselectedIds = allTalents
+          .filter(t => !selectedIds.includes(t.id))
+          .map(t => t.id);
 
         shownMinistries.clear();
 
-const selectedIds = savedCode.split(',');
-const unselectedIds = allTalents
-  .filter(t => !selectedIds.includes(t.id))
-  .map(t => t.id);
+        const fetchPromises = [];
 
-fetchMinistries(selectedParam, 'suggested')
-  .then(() => {
-    if (unselectedIds.length > 0) {
-      const unselectedParam = encodeURIComponent(unselectedIds.join(','));
-      return fetchMinistries(unselectedParam, 'others');
-    }
-  })
-  .then(() => {
-    hideSpinner(); // ✅ Only after both are done
-  })
-  .catch(err => {
-    console.error("Error during ministry fetch chain:", err);
-    hideSpinner(); // ✅ Also hide spinner if any step fails
-  });
-
-
-
-  function fetchMinistries(code, targetId) {
-  return new Promise((resolve, reject) => {
-    showSpinner();
-    const container = document.getElementById(targetId);
-    container.innerHTML = "";
-
-    fetch(`${baseurl}?page=GetPelayanan&code=${code}`)
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.json();
-      })
-      .then(data => {
-        if (!Array.isArray(data) || data.length === 0) {
-          container.innerHTML = "<p>No ministries found.</p>";
-          resolve();
-          return;
+        if (selectedIds.length > 0) {
+          const selectedParam = encodeURIComponent(selectedIds.join(','));
+          fetchPromises.push(fetchMinistries(selectedParam, 'suggested'));
         }
 
-        data.forEach(min => {
-          const uniqueKey = min.name + min.iconUrl;
-          if (targetId === 'others' && shownMinistries.has(uniqueKey)) return;
-          if (targetId === 'suggested') shownMinistries.add(uniqueKey);
+        if (unselectedIds.length > 0) {
+          const unselectedParam = encodeURIComponent(unselectedIds.join(','));
+          fetchPromises.push(fetchMinistries(unselectedParam, 'others'));
+        }
 
-          const card = document.createElement('div');
-          card.className = 'ministry-card';
-          card.innerHTML = `
-            <img src="${min.iconUrl}" alt="${min.name}" />
-            <div>${min.name}</div>
-          `;
-          card.onclick = () => showModal(min);
-          container.appendChild(card);
+        Promise.all(fetchPromises).then(hideSpinner).catch(err => {
+          console.error("Ministry fetch error:", err);
+          hideSpinner();
         });
-
-        resolve();
-      })
-      .catch(err => {
-        console.error("Fetch error:", err);
-        container.innerHTML = "<p>Error loading ministries.</p>";
-        reject(err);
-      });
-  });
+      } else {
+        hideSpinner();
+      }
+    })
+    .catch(err => {
+      console.error("Failed to load talents:", err);
+      hideSpinner();
+    });
 }
-
-
 
 function submitTalents() {
   const chosen = Array.from(selectedTalents);
@@ -390,7 +460,7 @@ function submitTalents() {
   const email = localStorage.getItem("email") || "";
   const code = chosen.map(t => t.id).join(',');
 
-  localStorage.setItem('talentCode', code); //
+  localStorage.setItem('talentCode', code);
 
   const params = new URLSearchParams({
     page: 'SubmitTalenta',
@@ -407,8 +477,6 @@ function submitTalents() {
     })
     .then(data => {
       console.log('Save response:', data);
-
-      // Switch UI section
       document.getElementById('talent-section').style.display = 'none';
       document.getElementById('ministry-section').style.display = 'block';
       document.getElementById('editTalentsBtn').style.display = 'block';
@@ -417,6 +485,8 @@ function submitTalents() {
       const unselectedIds = allTalents
         .filter(t => !selectedIds.includes(t.id))
         .map(t => t.id);
+
+      shownMinistries.clear();
 
       const fetchPromises = [];
 
@@ -430,104 +500,20 @@ function submitTalents() {
         fetchPromises.push(fetchMinistries(unselectedParam, 'others'));
       }
 
-      // Wait for all fetchMinistries calls to complete before hiding spinner
       return Promise.all(fetchPromises);
     })
-    .then(() => {
-      hideSpinner();
-    })
+    .then(hideSpinner)
     .catch(err => {
       console.error('Failed to save talents or fetch ministries:', err);
       alert('Gagal menyimpan talenta atau memuat pelayanan. Silakan coba lagi.');
       hideSpinner();
     });
 }
-    
-function sendAttendance(email, eventName) {
-  fetch(`${baseurl}?page=Attendance&event=${encodeURIComponent(eventName)}&email=${encodeURIComponent(email)}`)
-    .catch(err => console.error("Failed to send attendance:", err));
-}
-    
-function showModal(min) {
-  // Set modal content
-  document.getElementById('modalIcon').src = min.iconUrl;
-  document.getElementById('modalTitle').innerText = min.name;
-  document.getElementById('modalDesc').innerText = min.description;
 
-  // Set enroll button behavior
-  document.getElementById('enrollBtn').onclick = () => {
-    showSpinner();
-    const email = localStorage.getItem("email") || "";
-    const nama = min.name;
-
-    const params = new URLSearchParams({
-      page: "SubmitPelayanan",
-      email: email,
-      nama: nama
-    });
-
-    const url = `${baseurl}?${params.toString()}`;
-    
-    // Send GET request to enroll the user
-    fetch(url)
-      .then(res => {
-        if (!res.ok) throw new Error('Network response was not ok');
-        return res.json();
-      })
-      .then(data => {
-        hideSpinner();
-        // Hide modal
-        document.getElementById('modalOverlay').style.display = 'none';
-
-        // Ask user if they want to connect now
-        const confirmConnect = confirm("Kamu sudah terdaftar di pelayanan ini.\nMau langsung terhubung sekarang?");
-        if (confirmConnect) {
-            window.location.href = min.link; // Redirect to WhatsApp or other link
-        } else {
-          alert("Kamu bisa terhubung kapan saja lewat halaman ini.");
-        }
-      })
-      .catch(err => {
-        console.error("Failed to submit pelayanan:", err);
-        alert("Gagal mendaftar pelayanan. Silakan coba lagi.");
-        hideSpinner()
-      });
-  };
-
-  // Show modal
-  document.getElementById('modalOverlay').style.display = 'flex';
-}
+// Initialize
+fetchTalents();
+</script>
 
 
-    function closeModal() {
-      document.getElementById('modalOverlay').style.display = 'none';
-    }
-
-    function capitalize(text) {
-      return text.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-    }
-
-    function editTalents() {
-  // Clear previously saved talents if needed
-  localStorage.removeItem('talentCode');
-
-  // Reset UI
-  document.getElementById('ministry-section').style.display = 'none';
-  document.getElementById('editTalentsBtn').style.display = 'none';
-  document.getElementById('talent-section').style.display = 'block';
-
-  // Optional: unselect any previously selected buttons
-  document.querySelectorAll('.talent-button.selected').forEach(btn => {
-    btn.classList.remove('selected');
-  });
-
-  selectedTalents.clear();
-}
-
-
-    // Initial load
-    fetchTalents();
-    
-  </script>
 </body>
 </html>
