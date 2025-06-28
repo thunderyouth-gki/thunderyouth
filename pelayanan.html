@@ -180,11 +180,11 @@
     }
 
     #loading-spinner {
-      position: absolute;
+      position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 10;
+      z-index: 10001;
     }
     @keyframes spin {
       0% { transform: rotate(0deg); }
@@ -207,7 +207,7 @@
   <!-- Talent Section -->
 <div id="talent-section">
   <h1>Kamu merasa memiliki talenta apa?</h1>
-  <p class="subtitle">Karena kamu diciptakan Tuhan dengan banyak talenta, kamu boleh pilih lebih dari satu ya! Kamu juga boleh pilih skill yang pengen kamu kembangin.</p>
+  <p class="subtitle">Karena Tuhan menciptakan kamu dengan banyak talenta, kamu boleh pilih lebih dari satu ya! Kamu juga boleh pilih skill yang pengen kamu kembangin.</p>
   <div id="talents" class="talent-container"></div>
   <button class="submit-button" onclick="submitTalents()">Submit</button>
 </div>
@@ -252,33 +252,36 @@ function hideSpinner() {
 }
 
 
-function fetchTalents() {
-  showSpinner();
-  fetch(`${baseurl}?page=GetTalenta`)
-    .then(res => res.json())
-    .then(data => {
-      allTalents = data; // Store all talents
-      const container = document.getElementById('talents');
-      data.forEach(talent => {
-        const btn = document.createElement('button');
-        btn.className = 'talent-button';
-        btn.innerText = capitalize(talent.nama);
+fetch(`${baseurl}?page=GetTalenta`)
+  .then(res => res.json())
+  .then(data => {
+    allTalents = data; // Store all talents
+    const container = document.getElementById('talents');
+    data.forEach(talent => {
+      const btn = document.createElement('button');
+      btn.className = 'talent-button';
+      btn.innerText = capitalize(talent.nama);
 
-        btn.onclick = () => {
-          btn.classList.toggle('selected');
-          const exists = Array.from(selectedTalents).find(t => t.id === talent.id);
-          if (exists) {
-            selectedTalents.delete(exists);
-          } else {
-            selectedTalents.add(talent);
-          }
-        };
+      btn.onclick = () => {
+        btn.classList.toggle('selected');
+        const exists = Array.from(selectedTalents).find(t => t.id === talent.id);
+        if (exists) {
+          selectedTalents.delete(exists);
+        } else {
+          selectedTalents.add(talent);
+        }
+      };
 
-        container.appendChild(btn);
-      });  
-      hideSpinner();
-    });
-}
+      container.appendChild(btn);
+    });  
+    hideSpinner();
+  })
+  .catch(err => {
+    console.error("Failed to fetch talents:", err);
+    alert("Gagal memuat talenta.");
+    hideSpinner(); // ✅ This is important
+  });
+
 
     function fetchMinistries(code, targetId) {
       showSpinner();
@@ -390,6 +393,7 @@ function showModal(min) {
 
   // Set enroll button behavior
   document.getElementById('enrollBtn').onclick = () => {
+    showSpinner();
     const email = localStorage.getItem("email") || "";
     const nama = min.name;
 
@@ -408,6 +412,7 @@ function showModal(min) {
         return res.json();
       })
       .then(data => {
+        hideSpinner();
         // Hide modal
         document.getElementById('modalOverlay').style.display = 'none';
 
@@ -422,6 +427,7 @@ function showModal(min) {
       .catch(err => {
         console.error("Failed to submit pelayanan:", err);
         alert("Gagal mendaftar pelayanan. Silakan coba lagi.");
+        hideSpinner()
       });
   };
 
