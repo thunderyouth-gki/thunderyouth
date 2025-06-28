@@ -256,10 +256,11 @@
       window.location.href = "https://thunderyouth.gkiguntur.com/login?redirect=pelayanan";
     }
 
-    sendAttendance(email, "Aromatherapy%20Candle%20Workshop");
-    
     const baseurl = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
-
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventName = urlParams.get('event') || 'Sunday Service';
+    sendAttendance(email, eventName);
+    
     const selectedTalents = new Set();
 
     let allTalents = [];
