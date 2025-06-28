@@ -265,6 +265,9 @@
 
     let allTalents = [];
 
+    const shownMinistries = new Set();
+
+
     function showSpinner() {
   document.getElementById('loading-spinner').style.display = 'block';
 }
@@ -328,18 +331,19 @@ function fetchTalents() {
 }
 
   function fetchMinistries(code, targetId) {
-    showSpinner();
-    console.log(`Fetching ministries for code(s): ${code} into container: ${targetId}`);
+  showSpinner();
+  console.log(`Fetching ministries for code(s): ${code} into container: ${targetId}`);
   
   const container = document.getElementById(targetId);
-  container.innerHTML = ""; // Clear previous results first
+  container.innerHTML = ""; // Clear previous results
+
   fetch(`${baseurl}?page=GetPelayanan&code=${code}`)
     .then(res => {
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       return res.json();
     })
     .then(data => {
-      console.log('Received ministries:', data);
+      console.log(`Received ministries for ${targetId}:`, data);
 
       if (!Array.isArray(data) || data.length === 0) {
         container.innerHTML = "<p>No ministries found.</p>";
@@ -347,6 +351,19 @@ function fetchTalents() {
       }
 
       data.forEach(min => {
+        // 👇 Use a unique key, or use min.id if available
+        const uniqueKey = min.name + min.iconUrl;
+
+        // 👇 If rendering "others", skip duplicates already shown
+        if (targetId === 'others' && shownMinistries.has(uniqueKey)) {
+          return;
+        }
+
+        // 👇 If rendering "suggested", remember what we showed
+        if (targetId === 'suggested') {
+          shownMinistries.add(uniqueKey);
+        }
+
         const card = document.createElement('div');
         card.className = 'ministry-card';
         card.innerHTML = `
@@ -362,6 +379,7 @@ function fetchTalents() {
       container.innerHTML = "<p>Error loading ministries.</p>";
     });
 }
+
 
 function submitTalents() {
   const chosen = Array.from(selectedTalents);
