@@ -308,81 +308,73 @@ function fetchTalents() {
 
         const selectedParam = encodeURIComponent(savedCode);
 
-        // ✅ Clear duplicates before fresh render
         shownMinistries.clear();
 
-        fetchMinistries(selectedParam, 'suggested');
+const selectedIds = savedCode.split(',');
+const unselectedIds = allTalents
+  .filter(t => !selectedIds.includes(t.id))
+  .map(t => t.id);
 
-        const selectedIds = savedCode.split(',');
-        const unselectedIds = allTalents
-          .filter(t => !selectedIds.includes(t.id))
-          .map(t => t.id);
+fetchMinistries(selectedParam, 'suggested')
+  .then(() => {
+    if (unselectedIds.length > 0) {
+      const unselectedParam = encodeURIComponent(unselectedIds.join(','));
+      return fetchMinistries(unselectedParam, 'others');
+    }
+  })
+  .then(() => {
+    hideSpinner(); // ✅ Only after both are done
+  })
+  .catch(err => {
+    console.error("Error during ministry fetch chain:", err);
+    hideSpinner(); // ✅ Also hide spinner if any step fails
+  });
 
-        if (unselectedIds.length > 0) {
-          const unselectedParam = encodeURIComponent(unselectedIds.join(','));
-          fetchMinistries(unselectedParam, 'others');
-        }
-      }
-
-      hideSpinner();
-    })
-    .catch(err => {
-      console.error("Failed to fetch talents:", err);
-      alert("Gagal memuat talenta.");
-      hideSpinner();
-    });
-}
 
 
   function fetchMinistries(code, targetId) {
-  showSpinner();
-  console.log(`Fetching ministries for code(s): ${code} into container: ${targetId}`);
-  
-  const container = document.getElementById(targetId);
-  container.innerHTML = ""; // Clear previous results
+  return new Promise((resolve, reject) => {
+    showSpinner();
+    const container = document.getElementById(targetId);
+    container.innerHTML = "";
 
-  fetch(`${baseurl}?page=GetPelayanan&code=${code}`)
-    .then(res => {
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      return res.json();
-    })
-    .then(data => {
-      console.log(`Received ministries for ${targetId}:`, data);
-
-      if (!Array.isArray(data) || data.length === 0) {
-        container.innerHTML = "<p>No ministries found.</p>";
-        return;
-      }
-
-      data.forEach(min => {
-        // 👇 Use a unique key, or use min.id if available
-        const uniqueKey = min.name + min.iconUrl;
-
-        // 👇 If rendering "others", skip duplicates already shown
-        if (targetId === 'others' && shownMinistries.has(uniqueKey)) {
+    fetch(`${baseurl}?page=GetPelayanan&code=${code}`)
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        if (!Array.isArray(data) || data.length === 0) {
+          container.innerHTML = "<p>No ministries found.</p>";
+          resolve();
           return;
         }
 
-        // 👇 If rendering "suggested", remember what we showed
-        if (targetId === 'suggested') {
-          shownMinistries.add(uniqueKey);
-        }
+        data.forEach(min => {
+          const uniqueKey = min.name + min.iconUrl;
+          if (targetId === 'others' && shownMinistries.has(uniqueKey)) return;
+          if (targetId === 'suggested') shownMinistries.add(uniqueKey);
 
-        const card = document.createElement('div');
-        card.className = 'ministry-card';
-        card.innerHTML = `
-          <img src="${min.iconUrl}" alt="${min.name}" />
-          <div>${min.name}</div>
-        `;
-        card.onclick = () => showModal(min);
-        container.appendChild(card);
+          const card = document.createElement('div');
+          card.className = 'ministry-card';
+          card.innerHTML = `
+            <img src="${min.iconUrl}" alt="${min.name}" />
+            <div>${min.name}</div>
+          `;
+          card.onclick = () => showModal(min);
+          container.appendChild(card);
+        });
+
+        resolve();
+      })
+      .catch(err => {
+        console.error("Fetch error:", err);
+        container.innerHTML = "<p>Error loading ministries.</p>";
+        reject(err);
       });
-    })
-    .catch(err => {
-      console.error("Fetch error:", err);
-      container.innerHTML = "<p>Error loading ministries.</p>";
-    });
+  });
 }
+
 
 
 function submitTalents() {
