@@ -300,7 +300,6 @@ function fetchTalents() {
         container.appendChild(btn);
       });
 
-      // 👇 Check if saved code exists after talents loaded
       const savedCode = localStorage.getItem('talentCode');
       if (savedCode) {
         document.getElementById('talent-section').style.display = 'none';
@@ -308,6 +307,10 @@ function fetchTalents() {
         document.getElementById('editTalentsBtn').style.display = 'block';
 
         const selectedParam = encodeURIComponent(savedCode);
+
+        // ✅ Clear duplicates before fresh render
+        shownMinistries.clear();
+
         fetchMinistries(selectedParam, 'suggested');
 
         const selectedIds = savedCode.split(',');
@@ -329,6 +332,7 @@ function fetchTalents() {
       hideSpinner();
     });
 }
+
 
   function fetchMinistries(code, targetId) {
   showSpinner();
