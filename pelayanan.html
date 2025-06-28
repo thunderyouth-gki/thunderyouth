@@ -275,9 +275,9 @@ function fetchTalents() {
         };
 
         container.appendChild(btn);
-      });
+      });  
+      .finally(() => hideSpinner());
     });
-  .finally(() => hideSpinner());
 }
 
     function fetchMinistries(code, targetId) {
