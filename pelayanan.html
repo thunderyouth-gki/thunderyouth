@@ -422,7 +422,7 @@ function showModal(min) {
         // Ask user if they want to connect now
         const confirmConnect = confirm("Kamu sudah terdaftar di pelayanan ini.\nMau langsung terhubung sekarang?");
         if (confirmConnect) {
-            window.open(min.link, '_blank'); // Redirect to WhatsApp or other link
+            window.location.href = min.link; // Redirect to WhatsApp or other link
         } else {
           alert("Kamu bisa terhubung kapan saja lewat halaman ini.");
         }
