@@ -243,8 +243,6 @@
 
     let allTalents = [];
 
-    localStorage.setItem('talentCode', code); //
-
     function showSpinner() {
   document.getElementById('loading-spinner').style.display = 'block';
 }
@@ -354,6 +352,8 @@ function submitTalents() {
 
   const email = localStorage.getItem("email") || "";
   const code = chosen.map(t => t.id).join(',');
+
+  localStorage.setItem('talentCode', code); //
 
   const params = new URLSearchParams({
     page: 'SubmitTalenta',
