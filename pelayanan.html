@@ -253,6 +253,7 @@ function hideSpinner() {
 
 
 function fetchTalents() {
+  showSpinner();
   fetch(`${baseurl}?page=GetTalenta`)
     .then(res => res.json())
     .then(data => {
@@ -276,6 +277,7 @@ function fetchTalents() {
         container.appendChild(btn);
       });
     });
+  .finally(() => hideSpinner());
 }
 
     function fetchMinistries(code, targetId) {
