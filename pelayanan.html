@@ -487,11 +487,22 @@ function showModal(min) {
     }
 
     function editTalents() {
+  // Clear previously saved talents if needed
   localStorage.removeItem('talentCode');
+
+  // Reset UI
   document.getElementById('ministry-section').style.display = 'none';
-  document.getElementById('talent-section').style.display = 'block';
   document.getElementById('editTalentsBtn').style.display = 'none';
+  document.getElementById('talent-section').style.display = 'block';
+
+  // Optional: unselect any previously selected buttons
+  document.querySelectorAll('.talent-button.selected').forEach(btn => {
+    btn.classList.remove('selected');
+  });
+
+  selectedTalents.clear();
 }
+
 
     // Initial load
     fetchTalents();
