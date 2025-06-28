@@ -190,6 +190,22 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    #editTalentsBtn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+  padding: 10px 18px;
+  background-color: #4D0FB1;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
     
   </style>
 </head>
@@ -199,6 +215,9 @@
     <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
   </div>
 
+  <button id="editTalentsBtn" onclick="editTalents()">Ubah Talenta</button>
+
+  
 <div id="loading-spinner" style="display: none;">
   <div class="spinner"></div>
 </div>
@@ -220,11 +239,6 @@
   <h2 class="section-title">New Things to Try</h2>
   <div id="others" class="ministry-grid"></div>
 </div>
-  
-<div style="text-align:center; margin-top: 30px;">
-  <button onclick="resetTalents()" class="submit-button" style="background-color:#aaa;">Ubah Talenta</button>
-</div>
-
 
   <div id="modalOverlay" class="modal-overlay">
     <div class="modal">
@@ -470,7 +484,7 @@ function showModal(min) {
       return text.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
     }
 
-    function resetTalents() {
+    function editTalents() {
   localStorage.removeItem('talentCode');
   document.getElementById('ministry-section').style.display = 'none';
   document.getElementById('talent-section').style.display = 'block';
