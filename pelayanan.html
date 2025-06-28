@@ -252,35 +252,65 @@ function hideSpinner() {
 }
 
 
-function fetchTalents() {
+function submitTalents() {
+  const chosen = Array.from(selectedTalents);
+
+  if (chosen.length === 0) {
+    alert("Silakan pilih minimal satu talenta terlebih dahulu.");
+    return;
+  }
+
   showSpinner();
-  fetch(`${baseurl}?page=GetTalenta`)
-    .then(res => res.json())
+
+  const email = localStorage.getItem("email") || "";
+  const code = chosen.map(t => t.id).join(',');
+
+  const params = new URLSearchParams({
+    page: 'SubmitTalenta',
+    email: email,
+    code: code
+  });
+
+  const url = `${baseurl}?${params.toString()}`;
+
+  fetch(url)
+    .then(res => {
+      if (!res.ok) throw new Error('Network response was not ok');
+      return res.json();
+    })
     .then(data => {
-      allTalents = data; // Store all talents
-      const container = document.getElementById('talents');
-      data.forEach(talent => {
-        const btn = document.createElement('button');
-        btn.className = 'talent-button';
-        btn.innerText = capitalize(talent.nama);
+      console.log('Save response:', data);
 
-        btn.onclick = () => {
-          btn.classList.toggle('selected');
-          const exists = Array.from(selectedTalents).find(t => t.id === talent.id);
-          if (exists) {
-            selectedTalents.delete(exists);
-          } else {
-            selectedTalents.add(talent);
-          }
-        };
+      // Switch UI section
+      document.getElementById('talent-section').style.display = 'none';
+      document.getElementById('ministry-section').style.display = 'block';
 
-        container.appendChild(btn);
-      });  
+      const selectedIds = chosen.map(t => t.id);
+      const unselectedIds = allTalents
+        .filter(t => !selectedIds.includes(t.id))
+        .map(t => t.id);
+
+      const fetchPromises = [];
+
+      if (selectedIds.length > 0) {
+        const selectedParam = encodeURIComponent(selectedIds.join(','));
+        fetchPromises.push(fetchMinistries(selectedParam, 'suggested'));
+      }
+
+      if (unselectedIds.length > 0) {
+        const unselectedParam = encodeURIComponent(unselectedIds.join(','));
+        fetchPromises.push(fetchMinistries(unselectedParam, 'others'));
+      }
+
+      // Wait for all fetchMinistries calls to complete before hiding spinner
+      return Promise.all(fetchPromises);
+    })
+    .then(() => {
       hideSpinner();
     })
     .catch(err => {
-      console.error("Failed to fetch talents:", err);
-      alert("Gagal memuat talenta.");
+      console.error('Failed to save talents or fetch ministries:', err);
+      alert('Gagal menyimpan talenta atau memuat pelayanan. Silakan coba lagi.');
       hideSpinner();
     });
 }
@@ -316,12 +346,10 @@ function fetchTalents() {
         card.onclick = () => showModal(min);
         container.appendChild(card);
       });
-      hideSpinner();
     })
     .catch(err => {
       console.error("Fetch error:", err);
       container.innerHTML = "<p>Error loading ministries.</p>";
-      hideSpinner();
     });
 }
 
