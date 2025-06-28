@@ -220,6 +220,10 @@
   <h2 class="section-title">New Things to Try</h2>
   <div id="others" class="ministry-grid"></div>
 </div>
+  
+<div style="text-align:center; margin-top: 30px;">
+  <button onclick="resetTalents()" class="submit-button" style="background-color:#aaa;">Ubah Talenta</button>
+</div>
 
 
   <div id="modalOverlay" class="modal-overlay">
@@ -466,6 +470,11 @@ function showModal(min) {
       return text.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
     }
 
+    function resetTalents() {
+  localStorage.removeItem('talentCode');
+  document.getElementById('ministry-section').style.display = 'none';
+  document.getElementById('talent-section').style.display = 'block';
+}
 
     // Initial load
     fetchTalents();
