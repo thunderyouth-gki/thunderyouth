@@ -464,7 +464,7 @@ function showModal(min) {
 }
 
 function fetchWAURL(email) {
-          return fetch(`${scriptBaseUrl}?page=GetProfile&email=${email}`)
+          return fetch(`${baseurl}?page=GetProfile&email=${email}`)
           .then(res => res.json())
           .then(profile => {
           const namaPIC = min.namaPIC;
