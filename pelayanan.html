@@ -448,8 +448,22 @@ function showModal(min) {
           //const encodedMessage = encodeURIComponent(message);  
           //const fullURL = `${min.link}?text=${encodedMessage}`;
         //  window.location.href = fullURL;
+          fetchWAURL(email);
+        } else {
+          alert("Kamu bisa terhubung kapan saja lewat halaman ini.");
+        }
+      })
+      .catch(err => {
+        console.error("Failed to submit pelayanan:", err);
+        alert("Gagal mendaftar pelayanan. Silakan coba lagi.");
+        hideSpinner();
+      });
+  };
 
-          function fetchProfile(email) {
+  document.getElementById('modalOverlay').style.display = 'flex';
+}
+
+function fetchWAURL(email) {
           return fetch(`${scriptBaseUrl}?page=GetProfile&email=${email}`)
           .then(res => res.json())
           .then(profile => {
@@ -465,20 +479,7 @@ function showModal(min) {
         })
           .catch(err => console.error("Error fetching profile:", err));
         }
-        } else {
-          alert("Kamu bisa terhubung kapan saja lewat halaman ini.");
-        }
-      })
-      .catch(err => {
-        console.error("Failed to submit pelayanan:", err);
-        alert("Gagal mendaftar pelayanan. Silakan coba lagi.");
-        hideSpinner();
-      });
-  };
-
-  document.getElementById('modalOverlay').style.display = 'flex';
-}
-
+  
 function fetchMinistries(code, targetId) {
   return new Promise((resolve, reject) => {
     showSpinner();
