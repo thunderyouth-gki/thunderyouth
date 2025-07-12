@@ -443,11 +443,28 @@ function showModal(min) {
         document.getElementById('modalOverlay').style.display = 'none';
         const confirmConnect = confirm("Kamu sudah terdaftar di pelayanan ini.\nMau langsung terhubung sekarang?");
         if (confirmConnect) {
+          //const namaPIC = min.namaPIC;
+          //const message = `Halo ${namaPIC}, aku ingin pengen tahu lebih lanjut tentang pelayanan (jenis pelayanannya), bimbing aku ya ☺️`;
+          //const encodedMessage = encodeURIComponent(message);  
+          //const fullURL = `${min.link}?text=${encodedMessage}`;
+        //  window.location.href = fullURL;
+
+          function fetchProfile(email) {
+          return fetch(`${scriptBaseUrl}?page=GetProfile&email=${email}`)
+          .then(res => res.json())
+          .then(profile => {
           const namaPIC = min.namaPIC;
-          const message = `Halo ${namaPIC}, aku ingin pengen tahu lebih lanjut tentang pelayanan (jenis pelayanannya), bimbing aku ya ☺️`;
-          const encodedMessage = encodeURIComponent(message);  
+          const profileText = profile[1];
+
+          const message = `Halo ${namaPIC}, aku ${profileText}, aku ingin pengen tahu lebih lanjut tentang pelayanan (jenis pelayanannya), bimbing aku ya ☺️`;
+          const encodedMessage = encodeURIComponent(message);
           const fullURL = `${min.link}?text=${encodedMessage}`;
+
+          // Redirect to WhatsApp
           window.location.href = fullURL;
+        })
+          .catch(err => console.error("Error fetching profile:", err));
+        }
         } else {
           alert("Kamu bisa terhubung kapan saja lewat halaman ini.");
         }
