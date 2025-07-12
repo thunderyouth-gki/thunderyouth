@@ -443,7 +443,11 @@ function showModal(min) {
         document.getElementById('modalOverlay').style.display = 'none';
         const confirmConnect = confirm("Kamu sudah terdaftar di pelayanan ini.\nMau langsung terhubung sekarang?");
         if (confirmConnect) {
-            window.location.href = min.link;
+          const namaPIC = min.namaPIC;
+          const message = `Halo ${namaPIC}, aku ingin pengen tahu lebih lanjut tentang pelayanan (jenis pelayanannya), bimbing aku ya ☺️`;
+          const encodedMessage = encodeURIComponent(message);  
+          const fullURL = `${min.link}?text=${encodedMessage}`;
+          window.location.href = fullURL;
         } else {
           alert("Kamu bisa terhubung kapan saja lewat halaman ini.");
         }
