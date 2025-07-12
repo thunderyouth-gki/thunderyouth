@@ -438,14 +438,14 @@ function showModal(min) {
         if (!res.ok) throw new Error('Network response was not ok');
         return res.json();
       })
-      .then(data => {
+      .then(async data => {
         hideSpinner();
         document.getElementById('modalOverlay').style.display = 'none';
         const confirmConnect = confirm("Kamu sudah terdaftar di pelayanan ini.\nMau langsung terhubung sekarang?");
         if (confirmConnect) {
           const namaPIC = min.namaPIC;
           const namaPelayanan = min.name;
-          const namaProfile = fetchNama(email);
+          const namaProfile = await fetchNama(email);
           const message = `Halo ${namaPIC}, aku ${namaProfile}, aku ingin pengen tahu lebih lanjut tentang pelayanan ${namaPelayanan}, bimbing aku ya ☺️`;
           const encodedMessage = encodeURIComponent(message);  
           const fullURL = `${min.link}?text=${encodedMessage}`;
