@@ -446,7 +446,7 @@ function showModal(min) {
           const namaPIC = min.namaPIC;
           const namaPelayanan = min.name;
           const namaProfile = await fetchNama(email);
-          const message = `Halo ${namaPIC}, aku ${namaProfile}, aku ingin pengen tahu lebih lanjut tentang pelayanan ${namaPelayanan}, bimbing aku ya ☺️`;
+          const message = `Halo ${namaPIC}, aku ${namaProfile}, aku pengen tahu lebih lanjut tentang ${namaPelayanan}, bimbing aku ya :)`;
           const encodedMessage = encodeURIComponent(message);  
           const fullURL = `${min.link}?text=${encodedMessage}`;
           window.location.href = fullURL;
