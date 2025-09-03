@@ -712,7 +712,10 @@ window.addEventListener("DOMContentLoaded", function () {
       document.getElementById("view-tanggalLahir").textContent = data[4] === "-" ? "-" : new Date(data[4]).toLocaleDateString('id-ID', options);
 
       document.getElementById("edit-namaLengkap").value = data[0];
-      document.getElementById("edit-namaPanggilan").value = data[1];
+      //document.getElementById("edit-namaPanggilan").value = data[1];
+      console.log("namaPanggilan raw value:", data[1]);
+      console.log(data[1] === "Thunders");
+      document.getElementById("edit-namaPanggilan").value = (data[1] === "Thunders") ? "" : data[1];
       document.getElementById("edit-jenisKelamin").value = data[2];
       document.getElementById("edit-statusKeanggotaan").value = data[3];
       const dateOnly = data[4] === "-" ? "" : new Date(data[4]).toISOString().split("T")[0];
