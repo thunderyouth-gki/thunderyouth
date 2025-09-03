@@ -507,7 +507,7 @@ function fetchProfile(email) {
       document.getElementById("edit-jenisKelamin").value = data[2];
       document.getElementById("edit-statusKeanggotaan").value = data[3];
       const dateOnly = data[4] === "-" ? "" : new Date(data[4]).toISOString().split("T")[0];
-      document.getElementById("edit-tanggalLahir").value = dateOnly;
+      document.getElementById("edit-tanggalLahir").value = data[4] === "-" ? "" : formatDateForInput(data[4]);
 
 
       if (data[3] !== "Simpatisan") {
@@ -716,7 +716,7 @@ window.addEventListener("DOMContentLoaded", function () {
       document.getElementById("edit-jenisKelamin").value = data[2];
       document.getElementById("edit-statusKeanggotaan").value = data[3];
       const dateOnly = data[4] === "-" ? "" : new Date(data[4]).toISOString().split("T")[0];
-      document.getElementById("edit-tanggalLahir").value = dateOnly;
+      document.getElementById("edit-tanggalLahir").value = data[4] === "-" ? "" : formatDateForInput(data[4]);;
 
       if (data[3] !== "Simpatisan") {
         document.getElementById("katekisasi-baptis").style.display = "none";
@@ -737,6 +737,18 @@ function logout() {
   localStorage.removeItem("email");
   window.location.href = "https://thunderyouth.gkiguntur.com/login?redirect=profile";
 }
+
+  function formatDateForInput(dateValue) {
+  const d = new Date(dateValue);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+// Example usage:
+document.getElementById("edit-tanggalLahir").value = formatDateForInput(data[4]);
+
 
 
   
