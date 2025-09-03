@@ -484,39 +484,6 @@ function toggleEdit(editing) {
   }
 }
 
-function fetchProfile(email) {
-  fetch(`${API_BASE}?page=GetProfile&email=${encodeURIComponent(email)}`)
-    .then(res => res.json())
-    .then(data => {
-      if (!Array.isArray(data)) return;
-
-      document.getElementById("profile-pic-display").src = data[5];
-      document.getElementById("edit-profile-pic-preview").src = data[5];
-
-      document.getElementById("view-namaLengkap").textContent = data[0];
-      document.getElementById("view-namaPanggilan").textContent = data[1];
-      document.getElementById("view-jenisKelamin").textContent = data[2];
-      document.getElementById("view-statusKeanggotaan").textContent = data[3];
-      const options = { day: 'numeric', month: 'long', year: 'numeric' };
-      document.getElementById("view-tanggalLahir").textContent = data[4] === "-" ? "-" : new Date(data[4]).toLocaleDateString('id-ID', options);
-
-      document.getElementById("edit-namaLengkap").value = data[0];
-      console.log("namaPanggilan raw value:", data[1]);
-      console.log(data[1] === "Thunders");
-      document.getElementById("edit-namaPanggilan").value = (data[1] === "Thunders") ? "" : data[1];
-      document.getElementById("edit-jenisKelamin").value = data[2];
-      document.getElementById("edit-statusKeanggotaan").value = data[3];
-      const dateOnly = data[4] === "-" ? "" : new Date(data[4]).toISOString().split("T")[0];
-      document.getElementById("edit-tanggalLahir").value = data[4] === "-" ? "" : formatDateForInput(data[4]);
-
-
-      if (data[3] !== "Simpatisan") {
-        document.getElementById("katekisasi-baptis").style.display = "none";
-      }
-    })
-    .catch(err => console.error("Failed to fetch profile:", err));
-}
-
 async function sendBase64InChunks(email, base64String) {
   const chunkSize = 1900; // keep params under 2000 chars
   const totalChunks = Math.ceil(base64String.length / chunkSize);
