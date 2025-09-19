@@ -630,11 +630,6 @@ window.addEventListener("DOMContentLoaded", function () {
   const savedEmail = localStorage.getItem("email");
   const overlay = document.getElementById("loadingOverlay");
 
-  const editParam = urlParams.get("edit");
-  if (editParam && editParam.toLowerCase() === "true") {
-    toggleEdit(true);
-  }
-
   // Show a random witty quote
   const wittyQuotes = [
     "Lagi loading... sabar ya kak, berkat Tuhan juga kadang turun pelan-pelan ☁️✨",
@@ -665,6 +660,11 @@ window.addEventListener("DOMContentLoaded", function () {
   setTimeout(() => {
     delayDone = true;
     if (fetchDone && overlay) overlay.style.display = "none";
+
+  const editParam = urlParams.get("edit");
+  if (editParam && editParam.toLowerCase() === "true") {
+    toggleEdit(true);
+  }
   }, 2000);
 
   // Modified fetchProfile to hook into this logic
