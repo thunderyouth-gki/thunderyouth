@@ -137,13 +137,13 @@ async function getRedirectPage() {
       const data = await res.json();
 
       if (data.length === 0 || data[0] === "-") {
-        return "https://thunderyouth.gkiguntur.com/profile?edit=true&redirect=attendance";
+        return `https://thunderyouth.gkiguntur.com/profile?edit=true&redirect=${redirectParam}`;
       } else {
-        return "https://thunderyouth.gkiguntur.com/pelayanan";
+        return `https://thunderyouth.gkiguntur.com/${decodeURIComponent(redirectParam)}`;
       }
     } catch (err) {
       console.error("Profile fetch error:", err);
-      return "https://thunderyouth.gkiguntur.com/profile?edit=true&redirect=attendance";
+      return `https://thunderyouth.gkiguntur.com/profile?edit=true&redirect=${redirectParam}`;
     }
   }
 
