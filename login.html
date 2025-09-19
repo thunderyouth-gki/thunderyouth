@@ -131,7 +131,7 @@ async function getRedirectPage() {
     }
   }
 
-  if (redirectParam === "attendance") {
+  if (redirectParam.includes("attendance")) {
     try {
       const res = await fetch(`${baseurl}?page=GetProfile&email=${encodeURIComponent(email)}`);
       const data = await res.json();
