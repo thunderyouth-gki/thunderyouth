@@ -121,13 +121,29 @@ async function getRedirectPage() {
       const data = await res.json();
 
       if (data.length === 0 || data[0] === "-") {
-        return "https://thunderyouth.gkiguntur.com/profile?redirect=pelayanan";
+        return "https://thunderyouth.gkiguntur.com/profile?edit=true&redirect=pelayanan";
       } else {
         return "https://thunderyouth.gkiguntur.com/pelayanan";
       }
     } catch (err) {
       console.error("Profile fetch error:", err);
-      return "https://thunderyouth.gkiguntur.com/profile?redirect=pelayanan";
+      return "https://thunderyouth.gkiguntur.com/profile?edit=true&redirect=pelayanan";
+    }
+  }
+
+  if (redirectParam === "attendance") {
+    try {
+      const res = await fetch(`${baseurl}?page=GetProfile&email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+
+      if (data.length === 0 || data[0] === "-") {
+        return "https://thunderyouth.gkiguntur.com/profile?edit=true&redirect=attendance";
+      } else {
+        return "https://thunderyouth.gkiguntur.com/pelayanan";
+      }
+    } catch (err) {
+      console.error("Profile fetch error:", err);
+      return "https://thunderyouth.gkiguntur.com/profile?edit=true&redirect=attendance";
     }
   }
 
