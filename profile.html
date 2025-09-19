@@ -660,6 +660,11 @@ window.addEventListener("DOMContentLoaded", function () {
   setTimeout(() => {
     delayDone = true;
     if (fetchDone && overlay) overlay.style.display = "none";
+
+    const editParam = urlParams.get("edit");
+    if (editParam && editParam.toLowerCase() === "true") {
+      toggleEdit(true);
+    }
   }, 2000);
 
   // Modified fetchProfile to hook into this logic
