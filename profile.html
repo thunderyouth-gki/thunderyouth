@@ -589,7 +589,7 @@ function updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKe
   const redirectPage = urlParams.get("redirect");
 
   if (redirectPage) {
-    const destination = decodeURIComponent(redirectParam);
+    const destination = decodeURIComponent(redirectPage);
     return `https://thunderyouth.gkiguntur.com/${destination}`;
   }
         
