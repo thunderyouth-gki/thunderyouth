@@ -588,13 +588,12 @@ function updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKe
   const urlParams = new URLSearchParams(window.location.search);
   const redirectPage = urlParams.get("redirect");
 
-  if (redirectPage === "warta") {
-    window.location.href = "https://thunderyouth.gkiguntur.com/warta";
-  } else if (redirectPage === "pelayanan") {
-    window.location.href = "https://thunderyouth.gkiguntur.com/pelayanan";
-  } else {
-    window.location.href = "https://thunderyouth.gkiguntur.com/profile";
+  if (redirectPage) {
+    const destination = decodeURIComponent(redirectParam);
+    return `https://thunderyouth.gkiguntur.com/${destination}`;
   }
+        
+  
 } else {
   alert("Gagal menyimpan data.");
 }
