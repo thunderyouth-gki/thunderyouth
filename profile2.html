@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="https://github.com/thunderyouth-gki/thunderyouth/blob/main/logo.png?raw=true">
+  <title>Profile | Thunder Youth</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <style>
+    * {
+          box-sizing: border-box;
+        }
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background-color: #f9f9f9;
+      min-height:120vh;
+      overflow-x: hidden;
+    }
+
+    .header {
+      position: sticky;
+      width: 100%;
+      height: 30px; /* Ensures a consistent height */
+      padding-top: 10px;
+      padding-bottom: 10px;
+      padding-left: 20px;
+      background-color: #f8f8f8;
+      display: flex;
+      align-items: center;
+      
+    }
+    .header img {
+      height: 25px;
+    }
+    .footer {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #f8f8f8;
+      padding: 5px 0;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+      border-radius: 20px 20px 0 0;
+      transition: transform 0.3s ease-in-out;
+      z-index: 1000;
+    }
+
+    .footer-item {
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .footer-item img {
+      width: 30px;
+      height: 30px;
+      margin-top: 5px;
+    }
+
+    .footer-item span {
+      display: block;
+      font-size: 12px;
+      margin-top: 0px;
+    }
+
+    .footer.hide {
+      transform: translateY(100%);
+    }
+
+    .footer.show {
+      transform: translateY(0);
+    }
+
+    a {
+      text-decoration: none; /* Remove underline */
+      color: inherit; /* Keep the default text color */
+    }
+
+    a span {
+      color: inherit; /* Ensure the text color doesn't change */
+    }
+
+    .profile-container {
+      width: 90%;
+      margin: auto;
+      background: #F8F8F8;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .profile-pic-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .profile-pic {
+      display: block;
+      margin: 0 auto 1rem;
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid #ddd;
+    }
+    .profile-field {
+      margin-bottom: 1rem;
+    }
+    .profile-label {
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .profile-value {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #222;
+    }
+    .edit-button {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      background-color: #4D0FB1;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    .edit-button:hover {
+      background-color: #A687D8;
+    }
+
+    .change-pic-button {
+      display: inline-block;
+      margin: 0 auto 1rem;
+      padding: 0.2rem 0.8rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #fff;
+      background-color: #4D0FB1;
+      border-radius: 15px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .change-pic-button:hover {
+      background-color: #A687D8;
+    }
+
+      input.profile-value,
+      select.profile-value {
+        width: 100%;
+        padding: 0.6rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #333;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-sizing: border-box;
+        margin-top: 5px;
+      }
+
+      input.profile-value:focus,
+      select.profile-value:focus {
+        border-color: #4D0FB1;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(77, 15, 177, 0.2);
+      }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #4D0FB1;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+    }
+
+    #loading-spinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .katekisasi-baptis-container {
+        width: 100%;
+        margin: 20px auto;
+        margin-top: 40px;
+        margin-bottom: 100px;
+      }
+
+    .katekisasi-baptis-title{
+      text-align: left;
+      font-size: 6vw;
+      font-weight: bold;
+      color: #4D0FB1;
+      padding-left: 20px;
+    }
+    .katekisasi-baptis-button-container {
+        display: flex;
+        width:95%;
+        flex-direction: row;
+        justify-content: space-around;
+        flex-wrap: wrap; /* Optional: keeps it responsive */
+        margin-left:10px;
+      }
+      .katekisasi-baptis-button {
+      display: block;
+      width: 45%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      background-color: #4D0FB1;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+
+    .logout-button {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  padding: 8px 14px;
+  background-color: #4D0FB1;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 1001;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.logout-button:hover {
+  background-color: #3a0e8e;
+}
+        #loadingOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: #DBCFEF;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    #loadingOverlay img {
+      width: 100px;
+      height: auto;
+    }
+
+    #loadingText {
+      margin-top: 16px;
+      font-family: 'Poppins', sans-serif;
+      color: #4D0FB1;
+      font-size: 12px;
+      text-align: center;
+      padding: 0 20px;
+      text-wrap: balance;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="https://lh3.googleusercontent.com/d/1VikC7CxegmubJZ1paeu4NXSS8W9Dgpf2" alt="Logo">
+  </div>
+
+    <div id=loadingOverlay>
+    <img src="https://github.com/thunderyouth-gki/thunderyouth/blob/main/sailing%20cross.gif?raw=true" alt="Loading..." style="width: 100px;">
+  <div id="loadingText"></div>
+</div>
+  
+  <button id="logoutBtn" class="logout-button" onclick="logout()">Logout</button>
+  
+<section class="profile-container" style="position: relative;">
+
+  <!-- VIEW MODE -->
+  <div id="profile-view">
+    <img src="" alt="Profile Picture" class="profile-pic" id="profile-pic-display">
+    <div class="profile-field">
+      <div class="profile-label">Nama Lengkap</div>
+      <div class="profile-value" id="view-namaLengkap"></div>
+    </div>
+    <div class="profile-field">
+      <div class="profile-label">Nama Panggilan</div>
+      <div class="profile-value" id="view-namaPanggilan"></div>
+    </div>
+    <div class="profile-field">
+      <div class="profile-label">Jenis Kelamin</div>
+      <div class="profile-value" id="view-jenisKelamin"></div>
+    </div>
+    <div class="profile-field">
+      <div class="profile-label">Status Keanggotaan Gereja</div>
+      <div class="profile-value" id="view-statusKeanggotaan"></div>
+    </div>
+    <div class="profile-field">
+      <div class="profile-label">Tanggal Ulang Tahun</div>
+      <div class="profile-value" id="view-tanggalLahir"></div>
+    </div>
+    <button class="edit-button" onclick="toggleEdit(true)">Edit Profile</button>
+  </div>
+
+  <!-- EDIT MODE -->
+  <div id="profile-edit" style="display: none;">
+    <img src="" alt="Profile Picture" class="profile-pic" id="edit-profile-pic-preview">
+    <div style="text-align: center;">
+      <input type="file" accept="image/*" id="profile-pic-upload" style="display: none;" />
+      <label for="profile-pic-upload" class="change-pic-button">Change Profile Picture</label>
+    </div>
+    <div class="profile-field">
+      <div class="profile-label">Nama Lengkap</div>
+      <input type="text" class="profile-value" id="edit-namaLengkap">
+    </div>
+    <div class="profile-field">
+      <div class="profile-label">Nama Panggilan</div>
+      <input type="text" class="profile-value" id="edit-namaPanggilan">
+    </div>
+    <div class="profile-field">
+      <div class="profile-label">Jenis Kelamin</div>
+      <select id="edit-jenisKelamin" class="profile-value">
+        <option value="Laki-laki">Laki-laki</option>
+        <option value="Perempuan">Perempuan</option>
+      </select>
+    </div>
+    <div class="profile-field">
+      <div class="profile-label">Status Keanggotaan Gereja</div>
+      <select id="edit-statusKeanggotaan" class="profile-value">
+        <option value="Jemaat">Jemaat</option>
+        <option value="Simpatisan">Simpatisan</option>
+      </select>    
+    </div>
+    <div class="profile-field">
+      <div class="profile-label">Tanggal Ulang Tahun</div>
+      <input type="date" class="profile-value" id="edit-tanggalLahir">
+    </div>
+    <button class="edit-button" onclick="saveProfileChanges()">Save</button>
+  </div>
+
+  <div id="loading-spinner" style="display: none;">
+    <div class="spinner"></div>
+  </div>
+</section>
+
+<section class="katekisasi-baptis-container" id="katekisasi-baptis">
+  <div class="katekisasi-baptis-title">Katekisasi dan Baptis</div>
+  <div style="font-size: 16px; padding: 0 20px; margin-top: 10px; text-align:justify;">
+    Kami mengundang simpatisan yang hendak bergabung menjadi jemaat di GKI Guntur untuk menjalani proses katekisasi dan/atau baptis dengan mengunduh dan mengisi formulir di bawah ini. Formulir wajib diisi dalam bentuk fisik dan diserahkan langsung kepada sekretariat GKI Guntur.
+    <label style="display: flex; align-items: flex-start; gap: 10px; margin-top: 10px;">
+      <input type="checkbox" id="consent-checkbox" style="margin-top: 5px;" />
+      <span style="font-size: 12px; color: #333; text-align:justify">
+        Dengan ini saya menyatakan bahwa saya ingin mengikuti proses katekisasi dan/atau baptis di GKI Guntur
+      </span>
+    </label>
+  </div>
+  <div class="katekisasi-baptis-button-container">
+    <button class="katekisasi-baptis-button" onclick="handleClick('Katekisasi', 'https://drive.google.com/uc?export=download&id=1GjkVkIoLC20Y1MW5lRG6RkZsOqFGPtU0')">
+      Katekisasi
+    </button>
+    <button class="katekisasi-baptis-button" onclick="handleClick('Baptis', 'https://drive.google.com/uc?export=download&id=1NmpJsFOdljyA0Yrqzc0ZVg6lwN9itHJ1')">
+      Baptis
+    </button>
+  </div>
+</section>
+
+<div class="footer" id="footer">
+  <div class="footer-item" onclick="toggleIcon(this)">
+    <a href='https://thunderyouth.gkiguntur.com/'>
+      <img src="https://lh3.googleusercontent.com/d/1M1axLb9BnoWun9iDPcAx_ZUID5ZlEl_m" 
+           data-default="https://lh3.googleusercontent.com/d/1M1axLb9BnoWun9iDPcAx_ZUID5ZlEl_m" 
+           data-active="https://lh3.googleusercontent.com/d/1Ls9Ci-xvgXQZePWs-33468b0EUQz0pxd" 
+           alt="Home">
+      <span>Home</span>
+    </a>
+  </div>
+  <div class="footer-item" onclick="toggleIcon(this)">
+    <a href='https://thunderyouth.gkiguntur.com/warta'>
+      <img src="https://lh3.googleusercontent.com/d/1WMPNZl0Lc724pDDoC4lsWQtbkP3h6yUD" 
+           data-default="https://lh3.googleusercontent.com/d/1WMPNZl0Lc724pDDoC4lsWQtbkP3h6yUD" 
+           data-active="https://lh3.googleusercontent.com/d/1WIGRe_Ba07hCyw5N1fetmm7i5yjHx8S9" 
+           alt="Warta">
+      <span>Warta</span>
+    </a>
+  </div>
+  <div class="footer-item" onclick="toggleIcon(this)">
+    <a href='https://thunderyouth.gkiguntur.com/history'>
+      <img src="https://lh3.googleusercontent.com/d/1MF2aumWkfIvGKqsg_P84G2iv8agK5nyy" 
+           data-default="https://lh3.googleusercontent.com/d/1MF2aumWkfIvGKqsg_P84G2iv8agK5nyy" 
+           data-active="https://lh3.googleusercontent.com/d/1LydGXt7w6IyiRWfP7Hdi8YfpBWBqxdHp" 
+           alt="History">
+      <span>History</span>
+    </a>
+  </div>
+  <div class="footer-item">
+    <img src="https://lh3.googleusercontent.com/d/1Lt3K_ZqPYJUT2iv1mLyTBpvtuMuhxWOA" 
+         data-default="https://lh3.googleusercontent.com/d/1M8uxpiXhKUmu2WMR6_iR1RraErskHuZ9" 
+         data-active="https://lh3.googleusercontent.com/d/1Lt3K_ZqPYJUT2iv1mLyTBpvtuMuhxWOA" 
+         alt="Profile">
+    <span>Profile</span>
+  </div>
+</div>
+  
+<script>
+const API_BASE = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
+let base64Image = "";
+let mimeType = "";
+let filename = "";
+
+let lastScrollTop = 0;
+const footer = document.getElementById("footer");
+
+window.addEventListener("scroll", function () {
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+  if (scrollTop > lastScrollTop) {
+    footer.classList.remove("show");
+    footer.classList.add("hide");
+  } else {
+    footer.classList.remove("hide");
+    footer.classList.add("show");
+  }
+
+  lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+});
+
+document.getElementById("profile-pic-upload").addEventListener("change", function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  filename = file.name;
+  mimeType = file.type;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    base64Image = e.target.result.split(',')[1]; // Strip prefix
+    document.getElementById("edit-profile-pic-preview").src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+function toggleIcon(selectedElement) {
+  document.querySelectorAll('.footer-item').forEach(item => {
+    item.classList.remove('active');
+    const img = item.querySelector('img');
+    img.src = img.dataset.default;
+  });
+
+  selectedElement.classList.add('active');
+  const selectedImg = selectedElement.querySelector('img');
+  selectedImg.src = selectedImg.dataset.active;
+}
+
+function toggleEdit(editing) {
+  const viewDiv = document.getElementById("profile-view");
+  const editDiv = document.getElementById("profile-edit");
+
+  if (editing) {
+    viewDiv.style.display = "none";
+    editDiv.style.display = "block";
+  } else {
+    viewDiv.style.display = "block";
+    editDiv.style.display = "none";
+
+    document.getElementById("view-namaLengkap").textContent = document.getElementById("edit-namaLengkap").value;
+    document.getElementById("view-namaPanggilan").textContent = document.getElementById("edit-namaPanggilan").value;
+    document.getElementById("view-jenisKelamin").textContent = document.getElementById("edit-jenisKelamin").value;
+    document.getElementById("view-statusKeanggotaan").textContent = document.getElementById("edit-statusKeanggotaan").value;
+    document.getElementById("view-tanggalLahir").textContent = document.getElementById("edit-tanggalLahir").value;
+  }
+}
+
+async function sendBase64InChunks(email, base64String) {
+  const chunkSize = 1900; // keep params under 2000 chars
+  const totalChunks = Math.ceil(base64String.length / chunkSize);
+
+  for (let i = 0; i < totalChunks; i++) {
+    const chunkData = base64String.slice(i * chunkSize, (i + 1) * chunkSize);
+
+    const url = `${API_BASE}?page=UploadFileChunk` +
+      `&email=${encodeURIComponent(email)}` +
+      `&chunkIndex=${i}` +
+      `&totalChunks=${totalChunks}` +
+      `&chunkData=${encodeURIComponent(chunkData)}`;
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        console.error(`Network error on chunk ${i}: ${response.statusText}`);
+        alert("Network error during upload. Please try again.");
+        return false;
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        console.error(`Chunk ${i} failed to upload:`, result);
+        alert("Upload failed on chunk " + i + ". Please try again.");
+        return false;
+      }
+    } catch (error) {
+      console.error(`Exception uploading chunk ${i}:`, error);
+      alert("Unexpected error during upload. Please try again.");
+      return false;
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  // After all chunks uploaded, call merge and upload endpoint
+  try {
+    const mergeUrl = `${API_BASE}?page=MergeAndUpload&email=${encodeURIComponent(email)}`;
+    const mergeResponse = await fetch(mergeUrl);
+    if (!mergeResponse.ok) {
+      console.error("Network error during merge:", mergeResponse.statusText);
+      alert("Network error during merge. Please try again.");
+      return false;
+    }
+    const mergeResult = await mergeResponse.json();
+    if (!mergeResult.success) {
+      console.error("Merge failed:", mergeResult);
+      alert("Failed to merge and upload the image. Please try again.");
+      return false;
+    }
+  } catch (error) {
+    console.error("Exception during merge:", error);
+    alert("Unexpected error during merge. Please try again.");
+    return false;
+  }
+
+  alert("Upload and merge complete!");
+  return true;
+}
+
+  
+async function saveProfileChanges() {
+  const email = localStorage.getItem("email");
+  if (!email) return alert("Email belum ditemukan.");
+
+  document.getElementById("loading-spinner").style.display = "block"; // Show spinner
+
+  const namaLengkap = document.getElementById("edit-namaLengkap").value;
+  const namaPanggilan = document.getElementById("edit-namaPanggilan").value;
+  const jenisKelamin = document.getElementById("edit-jenisKelamin").value;
+  const statusKeanggotaan = document.getElementById("edit-statusKeanggotaan").value;
+  const tanggalLahir = document.getElementById("edit-tanggalLahir").value;
+
+  if (base64Image) {
+    const success = await sendBase64InChunks(email, base64Image);
+    if (!success) {
+      document.getElementById("loading-spinner").style.display = "none";
+      return; // stop if upload failed
+    }
+    base64Image = ""; // clear after success
+  }
+
+  updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
+}
+
+function updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir) {
+  const url = `${API_BASE}?page=UpdateProfile` +
+    `&email=${encodeURIComponent(email)}` +
+    `&namaLengkap=${encodeURIComponent(namaLengkap)}` +
+    `&namaPanggilan=${encodeURIComponent(namaPanggilan)}` +
+    `&jenisKelamin=${encodeURIComponent(jenisKelamin)}` +
+    `&statusKeanggotaan=${encodeURIComponent(statusKeanggotaan)}` +
+    `&tanggalLahir=${encodeURIComponent(tanggalLahir)}`;
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("loading-spinner").style.display = "none"; // Hide spinner
+      if (data.success) {
+  // Get URL parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  const redirectPage = urlParams.get("redirect");
+
+  if (redirectPage === "warta") {
+    window.location.href = "https://thunderyouth.gkiguntur.com/warta";
+  } else if (redirectPage === "pelayanan") {
+    window.location.href = "https://thunderyouth.gkiguntur.com/pelayanan";
+  } else {
+    window.location.href = "https://thunderyouth.gkiguntur.com/profile";
+  }
+} else {
+  alert("Gagal menyimpan data.");
+}
+
+    })
+    .catch(err => {
+      console.error("Failed to save profile:", err);
+      document.getElementById("loading-spinner").style.display = "none"; // Hide spinner
+    });
+}
+
+function handleClick(type, url) {
+  const email = localStorage.getItem("email");
+  if (!email) return alert("Email belum ditemukan.");
+
+  if (!document.getElementById("consent-checkbox").checked) {
+    alert("Mohon beri persetujuan terlebih dahulu.");
+    return;
+  }
+
+  fetch(`${API_BASE}?page=SubmitKatekisasi&email=${encodeURIComponent(email)}&button=${encodeURIComponent(type)}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        window.location.href(url, "_blank");
+      } else {
+        alert("Gagal mengirim data.");
+      }
+    })
+    .catch(err => console.error("Error submitting:", err));
+}
+window.addEventListener("DOMContentLoaded", function () {
+  const savedEmail = localStorage.getItem("email");
+  const overlay = document.getElementById("loadingOverlay");
+
+  const editParam = urlParams.get("edit");
+  if (editParam && editParam.toLowerCase() === "true") {
+    toggleEdit(true);
+  }
+
+  // Show a random witty quote
+  const wittyQuotes = [
+    "Lagi loading... sabar ya kak, berkat Tuhan juga kadang turun pelan-pelan ☁️✨",
+    "Tenang, semua yang baik datang pada waktunya… termasuk halaman ini 🙌",
+    "Lagi diproses kak, kayak Tuhan lagi proses hati kita 😌✨",
+    "Mohon bersabar, ini bukan sekadar loading… ini latihan iman 💡"
+  ];
+  const loadingText = document.getElementById("loadingText");
+  if (loadingText) {
+    loadingText.textContent = wittyQuotes[Math.floor(Math.random() * wittyQuotes.length)];
+  }
+
+  if (!savedEmail) {
+    window.location.href = "https://thunderyouth.gkiguntur.com/login?redirect=profile";
+    return;
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const redirectPage = urlParams.get("redirect");
+  if (redirectPage === "pelayanan") {
+    alert("Silakan isi data diri sebelum melanjutkan");
+  }
+
+  let fetchDone = false;
+  let delayDone = false;
+
+  // Delayed removal of overlay
+  setTimeout(() => {
+    delayDone = true;
+    if (fetchDone && overlay) overlay.style.display = "none";
+  }, 2000);
+
+  // Modified fetchProfile to hook into this logic
+  fetch(`${API_BASE}?page=GetProfile&email=${encodeURIComponent(savedEmail)}`)
+    .then(res => res.json())
+    .then(data => {
+      if (!Array.isArray(data)) return;
+
+      document.getElementById("profile-pic-display").src = data[5];
+      document.getElementById("edit-profile-pic-preview").src = data[5];
+
+      document.getElementById("view-namaLengkap").textContent = data[0];
+      document.getElementById("view-namaPanggilan").textContent = data[1];
+      document.getElementById("view-jenisKelamin").textContent = data[2];
+      document.getElementById("view-statusKeanggotaan").textContent = data[3];
+      const options = { day: 'numeric', month: 'long', year: 'numeric' };
+      document.getElementById("view-tanggalLahir").textContent = data[4] === "-" ? "-" : new Date(data[4]).toLocaleDateString('id-ID', options);
+
+      document.getElementById("edit-namaLengkap").value = (data[0] === "-") ? "" : data[0];
+      document.getElementById("edit-namaPanggilan").value = (data[1] === "Thunders") ? "" : data[1];
+      document.getElementById("edit-jenisKelamin").value = data[2];
+      document.getElementById("edit-statusKeanggotaan").value = data[3];
+      const dateOnly = data[4] === "-" ? "" : new Date(data[4]).toISOString().split("T")[0];
+      document.getElementById("edit-tanggalLahir").value = data[4] === "-" ? "" : formatDateForInput(data[4]);;
+
+      if (data[3] !== "Simpatisan") {
+        document.getElementById("katekisasi-baptis").style.display = "none";
+      }
+
+      fetchDone = true;
+      if (delayDone && overlay) overlay.style.display = "none";
+    })
+    .catch(err => {
+      console.error("Failed to fetch profile:", err);
+      fetchDone = true;
+      if (delayDone && overlay) overlay.style.display = "none";
+    });
+});
+
+// Updated logout function
+function logout() {
+  localStorage.removeItem("email");
+  window.location.href = "https://thunderyouth.gkiguntur.com/login?redirect=profile";
+}
+
+  function formatDateForInput(dateValue) {
+  const d = new Date(dateValue);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+
+  
+</script>
+
+</body>
+</html>
