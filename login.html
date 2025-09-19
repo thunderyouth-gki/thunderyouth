@@ -131,6 +131,7 @@ async function getRedirectPage() {
     }
   }
 
+  
   if (redirectParam.includes("attendance")) {
     try {
       const res = await fetch(`${baseurl}?page=GetProfile&email=${encodeURIComponent(email)}`);
@@ -146,6 +147,20 @@ async function getRedirectPage() {
       return `https://thunderyouth.gkiguntur.com/profile?edit=true&redirect=${redirectParam}`;
     }
   }
+
+  try {
+      const res = await fetch(`${baseurl}?page=GetProfile&email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+
+      if (data.length === 0 || data[0] === "-") {
+        return `https://thunderyouth.gkiguntur.com/profile?edit=true&redirect=${redirectParam}`;
+      } else {
+        return `https://thunderyouth.gkiguntur.com/${encodeURIComponent(redirectParam)}`;
+      }
+    } catch (err) {
+      console.error("Profile fetch error:", err);
+      return `https://thunderyouth.gkiguntur.com/profile?edit=true&redirect=${redirectParam}`;
+    }
 
   // ✅ Handle all other cases properly
   if (redirectParam) {
