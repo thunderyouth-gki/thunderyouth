@@ -1,46 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
-  <title>Pokemon Magazine</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TurnJS Flipbook</title>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Turn.js (working CDN mirror) -->
+<script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
+
+<style>
+  body {
+    margin: 0;
+    background: #222;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  #flipbook {
+    width: 800px;
+    height: 500px;
+  }
+
+  #flipbook .page {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+  }
+</style>
 </head>
-
 <body>
-  <div class="flipbook">
-    <div class="hard">My Pokemon Gallery <small>~ HankTheTank</small></div>
-    <div class="hard"></div>
-    <div>
-      <small>Lets Look At Some Amazing Pokemon ❤️</small>
-      <small>Gotta Catch 'Em All</small>
-    </div>
-    <div>
-      <img src="https://lh3.googleusercontent.com/d/1qTGyMnPWnp8nQo5CLRg6tFu0YfJ5qzOQ" alt="" />
-      <small> Charmandar </small>
-    </div>
-    <div>
-      <img src="https://lh3.googleusercontent.com/d/1Hbt6_PmeBtZViQaBUCZ-wsHQDiHpuiph" alt="" />
-      <small> Arbok </small>
-    </div>
-    <div>
-      <img src="https://lh3.googleusercontent.com/d/1aAZU0MWp1I8zMDrbfJ6hqhUOq4ZNJazc" alt="" />
-      <small> Pikachu </small>
-    </div>
-    <div>
-      <img src="https://lh3.googleusercontent.com/d/15lWj1rgA6TeeXh1NdoDgSVJPuzXcxEoe" alt="" />
-      <small> Darkrai </small>
-    </div>
-    <div class="hard"></div>
-    <div class="hard">Thank You <small>~ HankTheTank</small></div>
-  </div>
 
-  <script src="jquery.js"></script>
-  <script src="turn.js"></script>
-  <script>
-    $(".flipbook").turn();
-  </script>
+<div id="flipbook">
+  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/1qTGyMnPWnp8nQo5CLRg6tFu0YfJ5qzOQ')"></div>
+  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/1Hbt6_PmeBtZViQaBUCZ-wsHQDiHpuiph')"></div>
+  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/1aAZU0MWp1I8zMDrbfJ6hqhUOq4ZNJazc')"></div>
+  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/15lWj1rgA6TeeXh1NdoDgSVJPuzXcxEoe')"></div>
+</div>
+
+<script>
+$(function(){
+  $("#flipbook").turn({
+    width: 800,
+    height: 500,
+    autoCenter: true,
+    gradients: true,
+    acceleration: true,
+    elevation: 50,        // page bending effect
+    duration: 700         // animation smoothness
+  });
+});
+</script>
+
 </body>
-
 </html>
