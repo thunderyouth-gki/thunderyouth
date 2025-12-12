@@ -2,28 +2,33 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>TurnJS Flipbook</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>TurnJS Flipbook - A4 Single Page Mobile</title>
 
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Turn.js (working CDN mirror) -->
+<!-- Turn.js -->
 <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
 
 <style>
   body {
     margin: 0;
-    background: #222;
+    background: #111;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    overflow: hidden;
   }
 
+  /* RESPONSIVE A4 RATIO (LANDSCAPE: 1.414 ratio) */
   #flipbook {
-    width: 800px;
-    height: 500px;
+    width: 90vw;
+    height: calc(90vw / 1.414);
+    max-width: 1000px;
+    max-height: 707px;
+    touch-action: pan-y;
   }
 
   #flipbook .page {
@@ -31,9 +36,45 @@
     height: 100%;
     background-size: cover;
     background-position: center;
+    background-color: #ffffff; /* solid white back page */
   }
 </style>
 </head>
+<body>
+
+<div id="flipbook">
+  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/1qTGyMnPWnp8nQo5CLRg6tFu0YfJ5qzOQ')"></div>
+  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/1Hbt6_PmeBtZViQaBUCZ-wsHQDiHpuiph')"></div>
+  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/1aAZU0MWp1I8zMDrbfJ6hqhUOq4ZNJazc')"></div>
+  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/15lWj1rgA6TeeXh1NdoDgSVJPuzXcxEoe')"></div>
+</div>
+
+<script>
+$(function(){
+  const w = $("#flipbook").width();
+  const h = $("#flipbook").height();
+
+  $("#flipbook").turn({
+    width: w,
+    height: h,
+    display: 'single',      // only one page
+    autoCenter: true,
+    acceleration: true,
+    gradients: true,
+    duration: 700,
+  });
+
+  // Resize on rotation/orientation change
+  $(window).on("resize orientationchange", function() {
+    const newW = $("#flipbook").parent().width() * 0.9;
+    const newH = newW / 1.414;
+    $("#flipbook").turn("size", newW, newH);
+  });
+});
+</script>
+
+</body>
+</html>
 <body>
 
 <div id="flipbook">
