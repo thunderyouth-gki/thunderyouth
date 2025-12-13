@@ -1,103 +1,95 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-<base target="_top">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TurnJS Flipbook - A4 Single Page Mobile</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flipbook (jQuery 1.7 + Turn.js)</title>
 
-<!-- jQuery -->
-<script src="jquery.js"></script>
+  <!-- jQuery 1.7 -->
+  <script src="https://code.jquery.com/jquery-1.7.2.min.js"></script>
 
-<!-- Turn.js -->
-<script src="turn.js"></script>
+  <!-- Turn.js (classic build compatible with jQuery 1.x) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
 
-<style>
-  body {
-    margin: 0;
-    background: #111;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    overflow: hidden;
-  }
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f2f2f2;
+      font-family: Arial, sans-serif;
+    }
 
-  /* RESPONSIVE A4 RATIO (LANDSCAPE: 1.414 ratio) */
-  #flipbook {
-    width: 90vw;
-    height: calc(90vw / 1.414);
-    max-width: 1000px;
-    max-height: 707px;
-    touch-action: pan-y;
-  }
+    .container {
+      position: relative;
+    }
 
-  #flipbook .page {
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    background-color: #ffffff; /* solid white back page */
-  }
-</style>
+    #flipbook {
+      width: 600px;
+      height: 400px;
+    }
+
+    #flipbook .page {
+      background: white;
+      border: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+
+    .nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 60px;
+      cursor: pointer;
+      font-size: 24px;
+    }
+
+    .prev { left: -50px; }
+    .next { right: -50px; }
+  </style>
 </head>
 <body>
 
-<div id="flipbook">
-  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/1qTGyMnPWnp8nQo5CLRg6tFu0YfJ5qzOQ')"></div>
-  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/1Hbt6_PmeBtZViQaBUCZ-wsHQDiHpuiph')"></div>
-  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/1aAZU0MWp1I8zMDrbfJ6hqhUOq4ZNJazc')"></div>
-  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/15lWj1rgA6TeeXh1NdoDgSVJPuzXcxEoe')"></div>
-</div>
+  <div class="container">
+    <button class="nav prev">‹</button>
 
-<script>
-$(function(){
-  const w = $("#flipbook").width();
-  const h = $("#flipbook").height();
+    <div id="flipbook">
+      <div class="page">Cover</div>
+      <div class="page">Page 1</div>
+      <div class="page">Page 2</div>
+      <div class="page">Page 3</div>
+      <div class="page">Back</div>
+    </div>
 
-  $("#flipbook").turn({
-    width: w,
-    height: h,
-    display: 'single',      // only one page
-    autoCenter: true,
-    acceleration: true,
-    gradients: true,
-    duration: 700,
-  });
+    <button class="nav next">›</button>
+  </div>
 
-  // Resize on rotation/orientation change
-  $(window).on("resize orientationchange", function() {
-    const newW = $("#flipbook").parent().width() * 0.9;
-    const newH = newW / 1.414;
-    $("#flipbook").turn("size", newW, newH);
-  });
-});
-</script>
+  <script>
+    $(function () {
+      $('#flipbook').turn({
+        width: 600,
+        height: 400,
+        autoCenter: true
+      });
 
-</body>
-</html>
-<body>
+      $('.next').click(function () {
+        $('#flipbook').turn('next');
+      });
 
-<div id="flipbook">
-  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/1qTGyMnPWnp8nQo5CLRg6tFu0YfJ5qzOQ')"></div>
-  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/1Hbt6_PmeBtZViQaBUCZ-wsHQDiHpuiph')"></div>
-  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/1aAZU0MWp1I8zMDrbfJ6hqhUOq4ZNJazc')"></div>
-  <div class="page" style="background-image:url('https://lh3.googleusercontent.com/d/15lWj1rgA6TeeXh1NdoDgSVJPuzXcxEoe')"></div>
-</div>
-
-<script>
-$(function(){
-  $("#flipbook").turn({
-    width: 800,
-    height: 500,
-    autoCenter: true,
-    gradients: true,
-    acceleration: true,
-    elevation: 50,        // page bending effect
-    duration: 700         // animation smoothness
-  });
-});
-</script>
+      $('.prev').click(function () {
+        $('#flipbook').turn('previous');
+      });
+    });
+  </script>
 
 </body>
 </html>
