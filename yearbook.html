@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flipbook (jQuery 1.7 + Turn.js)</title>
+
+  <!-- jQuery 1.7 -->
+  <script src="https://code.jquery.com/jquery-1.7.2.min.js"></script>
+
+  <!-- Turn.js (classic build compatible with jQuery 1.x) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      background: #f2f2f2;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden; /* hide left page */
+    }
+
+    #flipbook {
+      position: absolute;
+      top: 50%;
+      right: 50%; /* center RIGHT page */
+      transform: translateY(-50%);
+    }
+
+    #flipbook .page {
+      background: white;
+      border: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+
+    .nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 60px;
+      cursor: pointer;
+      font-size: 24px;
+      z-index: 10;
+    }
+
+    .prev { left: 10px; }
+    .next { right: 10px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="nav prev">‹</button>
+
+    <div id="flipbook">
+      <div class="page">Cover</div>
+      <div class="page">Page 1</div>
+      <div class="page">Page 2</div>
+      <div class="page">Page 3</div>
+      <div class="page">Back</div>
+    </div>
+
+    <button class="nav next">›</button>
+  </div>
+
+  <script>
+    $(function () {
+      // A4 landscape ratio (width / height)
+      var A4_RATIO = 707 / 500; // ≈ 1.414
+
+      function resizeA4() {
+        var screenW = $(window).width();
+        var screenH = $(window).height();
+
+        // Fit page to screen while keeping A4 ratio
+        var pageHeight = screenH;
+        var pageWidth = pageHeight * A4_RATIO;
+
+        if (pageWidth > screenW) {
+          pageWidth = screenW;
+          pageHeight = pageWidth / A4_RATIO;
+        }
+
+        $('#flipbook').turn('size', pageWidth * 2, pageHeight);
+      }
+
+      $('#flipbook').turn({
+        width: 1414,
+        height: 500,
+        autoCenter: false
+      });
+
+      resizeA4();
+      $(window).on('resize', resizeA4);
+
+      $('.next').on('click', function () {
+        $('#flipbook').turn('next');
+      });
+
+      $('.prev').on('click', function () {
+        $('#flipbook').turn('previous');
+      });
+    });
+  </script>
+
+</body>
+</html>
