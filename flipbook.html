@@ -62,7 +62,12 @@
       }
     }
 
-
+    @media (orientation: portrait) {
+      .container {
+        width: 120vw;
+        height: 120vh;
+      }
+    }
 
     .nav {
       position: fixed;
@@ -119,8 +124,8 @@
       });
 
       function resizeFlipbook() {
-        var w = $(window).width();
-        var h = $(window).height();
+        var w = $('.container').width();
+        var h = $('.container').height();
         var isPortrait = h > w; // orientation check
 
         var pageHeight = h;
