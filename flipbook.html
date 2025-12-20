@@ -21,7 +21,6 @@ html, body {
   width: 100vw;
   height: 100vh;
   background: #F8F7F3;
-  align-items: center;
 }
 
 /* ===== FLIPBOOK ===== */
@@ -29,7 +28,7 @@ html, body {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-75%, -50%); /* 👈 show RIGHT page only */
+  transform: translate(-75%, -50%); /* show RIGHT page only */
 }
 
 #flipbook .page {
@@ -38,14 +37,12 @@ html, body {
   overflow: hidden;
 }
 
-/* Front pages */
 .page.front img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
-/* Back pages (blank but needed structurally) */
 .page.back {
   background: transparent;
 }
@@ -66,30 +63,43 @@ html, body {
 }
 .prev { left: 10px; }
 .next { right: 10px; }
+
+/* ===== FULLSCREEN BUTTON ===== */
+.fullscreen-btn {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.65);
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 20;
+}
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="container" id="app">
 
   <button class="nav prev">‹</button>
 
   <div id="flipbook">
 
-    <!-- PAGE 1 -->
     <div class="page front">
       <img src="https://lh3.googleusercontent.com/d/1kT142XCT5ajPqqUwbuSjJ2ScUKgGi2Ze">
     </div>
     <div class="page back"></div>
 
-    <!-- PAGE 2 -->
     <div class="page front">
       <img src="https://lh3.googleusercontent.com/d/190dWKa7vP0RImxAWDUO4wqZGOtJa2Aqc">
     </div>
     <div class="page back"></div>
 
-    <!-- PAGE 3 -->
     <div class="page front">
       <img src="https://lh3.googleusercontent.com/d/1MgBRikoNd8j-qHjJkpsK9EIHfjxfHDOb">
     </div>
@@ -98,6 +108,8 @@ html, body {
   </div>
 
   <button class="nav next">›</button>
+
+  <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
 
 </div>
 
@@ -123,7 +135,6 @@ $(function () {
       pageHeight = pageWidth / A4_RATIO;
     }
 
-    // 👇 DOUBLE width, SINGLE visual
     $('#flipbook').turn('size', pageWidth * 2, pageHeight);
   }
 
@@ -132,6 +143,22 @@ $(function () {
 
   $('.next').click(() => $('#flipbook').turn('next'));
   $('.prev').click(() => $('#flipbook').turn('previous'));
+
+  /* ===== FULLSCREEN LOGIC ===== */
+  const elem = document.getElementById('app');
+
+  $('#fullscreenBtn').on('click', function () {
+    if (!document.fullscreenElement) {
+      if (elem.requestFullscreen) elem.requestFullscreen();
+      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    }
+  });
+
+  document.addEventListener('fullscreenchange', resizeFlipbook);
+  document.addEventListener('webkitfullscreenchange', resizeFlipbook);
 
 });
 </script>
