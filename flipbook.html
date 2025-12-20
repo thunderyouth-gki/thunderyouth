@@ -28,12 +28,7 @@ html, body {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-75%, -50%);
-}
-
-/* compensate browser UI height when NOT fullscreen */
-body:not(:fullscreen) #flipbook {
-  top: calc(50% + env(safe-area-inset-top) / 2);
+  transform: translate(-75%, -50%); /* show RIGHT page only */
 }
 
 #flipbook .page {
