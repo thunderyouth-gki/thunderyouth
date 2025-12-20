@@ -1,253 +1,361 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flipbook – Portrait & Landscape Safe</title>
 
-  <!-- jQuery 1.7 -->
-  <script src="https://code.jquery.com/jquery-1.7.2.min.js"></script>
+<meta charset="UTF-8" />
 
-  <!-- Turn.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <style>
-    html, body {
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #f2f2f2;
-      font-family: Arial, sans-serif;
-    }
+<title>Flipbook – Double Display, Right Page Only</title>
 
-    .container {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      background-color: #F8F7F3;
-      align-items: center;
-    }
 
-    /* ===== OVERLAY ===== */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      cursor: pointer;
+<script src="https://code.jquery.com/jquery-1.7.2.min.js"></script>
 
-      /* 🔁 Replace this with an image if you want */
-      background: url("https://lh3.googleusercontent.com/d/16NvS_32w4JaZazzhiaRpHJVe1TF71JY2") center/cover no-repeat;
+<script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
 
-    .overlay.hidden {
-      display: none;
-    }
+<style>
 
-    /* ===== FLIPBOOK ===== */
-    #flipbook {
-      position: fixed;
-      top: 50%;
-      left: 5%;
-      transform: translate(-50%, -50%);
-    }
+html, body {
 
-    #flipbook .page {
-      background: white;
-      border: 1px solid #ddd;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+  margin: 0;
 
-    #flipbook .page img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-    }
+  width: 100%;
 
-    @media (orientation: landscape) {
-      .container {
-        width: 100vw;
-        height: 100vh;
-      }
-      
-      #flipbook {
-        left: auto;
-        right: 50%;
-        top: 50%;
-        transform: translateY(-50%);
-      }
-    }
+  height: 100%;
 
-    @media (orientation: portrait) {
-      .container {
-        width: 170vw;
-        height: 100vh;
-      }
-    }
+  overflow: hidden;
 
-    /* ===== NAV ===== */
-    .nav {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0,0,0,0.6);
-      color: white;
-      border: none;
-      width: 40px;
-      height: 60px;
-      cursor: pointer;
-      font-size: 24px;
-      z-index: 10;
-    }
+  background: #f2f2f2;
 
-    .prev { left: 10px; }
-    .next { right: 10px; }
+}
 
-    /* ===== FULLSCREEN BUTTON ===== */
-    .fullscreen-btn {
-      position: fixed;
-      bottom: 15px;
-      right: 15px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(0,0,0,0.65);
-      color: #fff;
-      font-size: 20px;
-      border: none;
-      cursor: pointer;
-      z-index: 20;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  </style>
+
+.container {
+
+  width: 100vw;
+
+  height: 100svh;
+
+  background: #F8F7F3;
+
+  display: flex;
+
+  align-items: center;   /* vertical center */
+
+  justify-content: center;
+
+}
+
+
+/* ===== FLIPBOOK ===== */
+
+#flipbook {
+
+  position: relative;
+
+  transform: translateX(-25%,); /* show RIGHT page only */
+
+}
+
+
+#flipbook .page {
+
+  background: white;
+
+  border: 1px solid #ddd;
+
+  overflow: hidden;
+
+}
+
+
+.page.front img {
+
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: contain;
+
+}
+
+
+.page.back {
+
+  background: transparent;
+
+}
+
+
+/* ===== NAV ===== */
+
+.nav {
+
+  position: fixed;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  background: rgba(0,0,0,0.6);
+
+  color: #fff;
+
+  border: none;
+
+  width: 40px;
+
+  height: 60px;
+
+  font-size: 24px;
+
+  cursor: pointer;
+
+  z-index: 10;
+
+}
+
+.prev { left: 10px; }
+
+.next { right: 10px; }
+
+
+/* ===== FULLSCREEN BUTTON ===== */
+
+.fullscreen-btn {
+
+  position: fixed;
+
+  right: 12px;
+
+  bottom: 12px;
+
+  width: 44px;
+
+  height: 44px;
+
+  border-radius: 50%;
+
+  border: none;
+
+  background: rgba(0,0,0,0.65);
+
+  color: white;
+
+  font-size: 20px;
+
+  cursor: pointer;
+
+  z-index: 20;
+
+}
+
+/* ===== OVERLAY ===== */
+
+.overlay {
+
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(0,0,0,0.85);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  z-index: 30;
+
+  cursor: pointer;
+
+}
+
+
+.overlay img {
+
+  max-width: 100%;
+
+  max-height: 100%;
+
+  object-fit: contain;
+
+}
+
+</style>
+
 </head>
+
+
 <body>
 
-  <!-- OVERLAY -->
-  <div class="overlay" id="overlay"></div>
 
-  <div class="container">
+<div class="container" id="app">
 
-    <button class="nav prev">‹</button>
 
-    <div id="flipbook">
-      <div class="page">
-        <img src="https://lh3.googleusercontent.com/d/1kT142XCT5ajPqqUwbuSjJ2ScUKgGi2Ze" />
-      </div>
-      <div class="page"></div>
+  <!-- OVERLAY -->
 
-      <div class="page">
-        <img src="https://lh3.googleusercontent.com/d/190dWKa7vP0RImxAWDUO4wqZGOtJa2Aqc" />
-      </div>
-      <div class="page"></div>
+  <div class="overlay" id="overlay">
 
-      <div class="page">
-        <img src="https://lh3.googleusercontent.com/d/1MgBRikoNd8j-qHjJkpsK9EIHfjxfHDOb" />
-      </div>
-    </div>
+    <img src="https://lh3.googleusercontent.com/d/16NvS_32w4JaZazzhiaRpHJVe1TF71JY2" alt="Tap to start" />
 
-    <button class="nav next">›</button>
+  </div>
 
-    <!-- FULLSCREEN TOGGLE -->
-    <button class="fullscreen-btn" id="fsBtn">⛶</button>
 
-  </div>
+  <button class="nav prev">‹</button>
 
-  <script>
-    $(function () {
 
-      var A4_RATIO = 707 / 500;
+  <div id="flipbook">
 
-      $('#flipbook').turn({
-        autoCenter: false,
-        display: 'double'
-      });
 
-      function resizeFlipbook() {
-        var w = $('.container').width();
-        var h = $('.container').height();
-        var isPortrait = h > w;
+    <div class="page front">
 
-        var pageHeight = h;
-        var pageWidth = pageHeight * A4_RATIO;
+      <img src="https://lh3.googleusercontent.com/d/1kT142XCT5ajPqqUwbuSjJ2ScUKgGi2Ze">
 
-        if (pageWidth > w) {
-          pageWidth = w;
-          pageHeight = pageWidth / A4_RATIO;
-        }
+    </div>
 
-        if (isPortrait) {
-          var spreadWidth = pageWidth * 2;
-          var scale = Math.min(w / spreadWidth, h / pageHeight);
+    <div class="page back"></div>
 
-          $('#flipbook').turn(
-            'size',
-            spreadWidth * scale,
-            pageHeight * scale
-          );
-        } else {
-          $('#flipbook').turn('size', pageWidth * 2, pageHeight);
-        }
-      }
 
-      resizeFlipbook();
-      $(window).on('resize orientationchange', resizeFlipbook);
+    <div class="page front">
 
-      $('.next').on('click', function () {
-        $('#flipbook').turn('next');
-      });
+      <img src="https://lh3.googleusercontent.com/d/190dWKa7vP0RImxAWDUO4wqZGOtJa2Aqc">
 
-      $('.prev').on('click', function () {
-        $('#flipbook').turn('previous');
-      });
+    </div>
 
-      /* ===== FULLSCREEN API ===== */
-      function enterFullscreen() {
-        var el = document.documentElement;
-        if (el.requestFullscreen) el.requestFullscreen();
-        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-      }
+    <div class="page back"></div>
 
-      function exitFullscreen() {
-        if (document.exitFullscreen) document.exitFullscreen();
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-      }
 
-      function isFullscreen() {
-        return document.fullscreenElement || document.webkitFullscreenElement;
-      }
+    <div class="page front">
 
-      $('#fsBtn').on('click', function () {
-        if (isFullscreen()) exitFullscreen();
-        else enterFullscreen();
-      });
+      <img src="https://lh3.googleusercontent.com/d/1MgBRikoNd8j-qHjJkpsK9EIHfjxfHDOb">
 
-      document.addEventListener('fullscreenchange', updateFsIcon);
-      document.addEventListener('webkitfullscreenchange', updateFsIcon);
+    </div>
 
-      function updateFsIcon() {
-        $('#fsBtn').text(isFullscreen() ? '✕' : '⛶');
-      }
+    <div class="page back"></div>
 
-      /* ===== OVERLAY TAP ===== */
-      $('#overlay').on('click', function () {
-        enterFullscreen();
-        $(this).addClass('hidden');
-      });
 
-    });
-  </script>
+  </div>
+
+
+  <button class="nav next">›</button>
+
+
+  <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
+
+
+</div>
+
+
+<script>
+
+$(function () {
+
+
+  const A4_RATIO = 707 / 500;
+
+
+  $('#flipbook').turn({
+
+    display: 'double',
+
+    autoCenter: false
+
+  });
+
+
+  function resizeFlipbook() {
+
+    const w = window.innerWidth;
+
+    const h = window.innerHeight;
+
+
+    let pageHeight = h * 0.95;
+
+    let pageWidth = pageHeight * A4_RATIO;
+
+
+    if (pageWidth > w * 0.9) {
+
+      pageWidth = w * 0.9;
+
+      pageHeight = pageWidth / A4_RATIO;
+
+    }
+
+
+    $('#flipbook').turn('size', pageWidth * 2, pageHeight);
+
+  }
+
+
+  resizeFlipbook();
+
+  $(window).on('resize orientationchange', resizeFlipbook);
+
+
+  $('.next').click(() => $('#flipbook').turn('next'));
+
+  $('.prev').click(() => $('#flipbook').turn('previous'));
+
+
+  /* ===== FULLSCREEN LOGIC ===== */
+
+  const elem = document.getElementById('app');
+
+
+  $('#fullscreenBtn').on('click', function () {
+
+    if (!document.fullscreenElement) {
+
+      if (elem.requestFullscreen) elem.requestFullscreen();
+
+      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+
+    } else {
+
+      if (document.exitFullscreen) document.exitFullscreen();
+
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+
+    }
+
+  });
+
+
+  document.addEventListener('fullscreenchange', resizeFlipbook);
+
+  document.addEventListener('webkitfullscreenchange', resizeFlipbook);
+
+
+  /* ===== OVERLAY TAP TO FULLSCREEN ===== */
+
+  $('#overlay').on('click', function () {
+
+    $(this).fadeOut(200);
+
+
+    if (!document.fullscreenElement) {
+
+      if (elem.requestFullscreen) elem.requestFullscreen();
+
+      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+
+    }
+
+  });
+
+
+});
+
+</script>
+
 
 </body>
+
 </html>
