@@ -113,6 +113,12 @@ html, body {
 </div>
 
 <script>
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  if (isIOS) {
+    $('#fullscreenBtn').hide();
+  }
+  
 $(function () {
 
   const A4_RATIO = 707 / 500;
