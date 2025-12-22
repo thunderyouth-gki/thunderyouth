@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Flipbook – Camera Page</title>
+<title>Flipbook – Double Display, Right Page Only</title>
 
 <script src="https://code.jquery.com/jquery-1.7.2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
@@ -27,14 +27,13 @@ html, body {
 #flipbook {
   position: fixed;
   left: 50%;
-  transform: translateX(-75%);
+  transform: translateX(-75%); /* show RIGHT page only */
 }
 
 #flipbook .page {
   background: white;
   border: 1px solid #ddd;
   overflow: hidden;
-  position: relative;
 }
 
 .page.front img {
@@ -45,48 +44,6 @@ html, body {
 
 .page.back {
   background: transparent;
-}
-
-/* ===== CAMERA OVERLAY ===== */
-.camera-layer {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.camera-box {
-  width: 70%;
-  aspect-ratio: 3 / 4;
-  background: black;
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
-  pointer-events: auto;
-}
-
-.camera-box video,
-.camera-box img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.camera-btn {
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,0.7);
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 14px;
 }
 
 /* ===== NAV ===== */
@@ -106,7 +63,7 @@ html, body {
 .prev { left: 10px; }
 .next { right: 10px; }
 
-/* ===== FULLSCREEN ===== */
+/* ===== FULLSCREEN BUTTON ===== */
 .fullscreen-btn {
   position: fixed;
   right: 12px;
@@ -128,45 +85,40 @@ html, body {
 
 <div class="container" id="app">
 
-<button class="nav prev">‹</button>
+  <button class="nav prev">‹</button>
 
-<div id="flipbook">
+  <div id="flipbook">
 
-  <div class="page front">
-    <img src="https://lh3.googleusercontent.com/d/1kT142XCT5ajPqqUwbuSjJ2ScUKgGi2Ze">
-  </div>
-  <div class="page back"></div>
-
-  <div class="page front">
-    <img src="https://lh3.googleusercontent.com/d/190dWKa7vP0RImxAWDUO4wqZGOtJa2Aqc">
-  </div>
-  <div class="page back"></div>
-
-  <!-- ===== PAGE 5 : CAMERA PAGE ===== -->
-  <div class="page front" id="cameraPage">
-    <img src="https://lh3.googleusercontent.com/d/1MgBRikoNd8j-qHjJkpsK9EIHfjxfHDOb">
-
-    <div class="camera-layer">
-      <div class="camera-box">
-        <video id="camera" autoplay playsinline></video>
-        <img id="photo" style="display:none">
-        <button class="camera-btn" id="snapBtn">Take Photo</button>
-      </div>
+    <div class="page front">
+      <img src="https://lh3.googleusercontent.com/d/1kT142XCT5ajPqqUwbuSjJ2ScUKgGi2Ze">
     </div>
+    <div class="page back"></div>
+
+    <div class="page front">
+      <img src="https://lh3.googleusercontent.com/d/190dWKa7vP0RImxAWDUO4wqZGOtJa2Aqc">
+    </div>
+    <div class="page back"></div>
+
+    <div class="page front">
+      <img src="https://lh3.googleusercontent.com/d/1MgBRikoNd8j-qHjJkpsK9EIHfjxfHDOb">
+    </div>
+    <div class="page back"></div>
+
   </div>
-  <div class="page back"></div>
 
-</div>
+  <button class="nav next">›</button>
 
-<button class="nav next">›</button>
-<button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
+  <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
 
 </div>
 
 <script>
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-if (isIOS) $('#fullscreenBtn').hide();
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
+  if (isIOS) {
+    $('#fullscreenBtn').hide();
+  }
+  
 $(function () {
 
   const A4_RATIO = 707 / 500;
@@ -189,7 +141,12 @@ $(function () {
     }
 
     $('#flipbook').turn('size', pageWidth * 2, pageHeight);
-    $('#flipbook').css('top', (h - pageHeight) / 2 + 'px');
+  
+    // 🔑 REAL vertical centering
+    const bookHeight = $('#flipbook').height();
+    const top = (h - bookHeight) / 2;
+
+    $('#flipbook').css('top', `${top}px`);
   }
 
   resizeFlipbook();
@@ -198,5 +155,24 @@ $(function () {
   $('.next').click(() => $('#flipbook').turn('next'));
   $('.prev').click(() => $('#flipbook').turn('previous'));
 
-  /* ===== CAMERA LOGIC ===== */
-  const video = document
+  /* ===== FULLSCREEN LOGIC ===== */
+  const elem = document.getElementById('app');
+
+  $('#fullscreenBtn').on('click', function () {
+    if (!document.fullscreenElement) {
+      if (elem.requestFullscreen) elem.requestFullscreen();
+      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    }
+  });
+
+  document.addEventListener('fullscreenchange', resizeFlipbook);
+  document.addEventListener('webkitfullscreenchange', resizeFlipbook);
+
+});
+</script>
+
+</body>
+</html>
