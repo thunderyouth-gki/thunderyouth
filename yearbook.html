@@ -79,34 +79,12 @@ html, body {
   cursor: pointer;
   z-index: 20;
 }
-/* ===== OVERLAY ===== */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 30;
-  cursor: pointer;
-}
-
-.overlay img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
 </style>
 </head>
 
 <body>
 
 <div class="container" id="app">
-
-  <!-- OVERLAY -->
-  <div class="overlay" id="overlay">
-    <img src="https://lh3.googleusercontent.com/d/16NvS_32w4JaZazzhiaRpHJVe1TF71JY2" alt="Tap to start" />
-  </div>
 
   <button class="nav prev">‹</button>
 
@@ -187,16 +165,6 @@ $(function () {
 
   document.addEventListener('fullscreenchange', resizeFlipbook);
   document.addEventListener('webkitfullscreenchange', resizeFlipbook);
-
-  /* ===== OVERLAY TAP TO FULLSCREEN ===== */
-  $('#overlay').on('click', function () {
-    $(this).fadeOut(200);
-
-    if (!document.fullscreenElement) {
-      if (elem.requestFullscreen) elem.requestFullscreen();
-      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-    }
-  });
 
 });
 </script>
