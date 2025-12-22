@@ -78,11 +78,36 @@ html, body {
   cursor: pointer;
   z-index: 20;
 }
+
+  #cameraOverlay {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-25%, -50%); /* align to RIGHT page */
+  z-index: 15;
+  display: none;
+}
+
+
+#cameraBtn {
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 20px;
+  border: none;
+  background: black;
+  color: white;
+  cursor: pointer;
+}
+
 </style>
 </head>
 
 <body>
 
+<div id="cameraOverlay">
+  <button id="cameraBtn">📷 Open Camera</button>
+</div>
+  
 <div class="container" id="app">
 
   <button class="nav prev">‹</button>
@@ -124,10 +149,19 @@ $(function () {
   const A4_RATIO = 707 / 500;
 
   $('#flipbook').turn({
-    display: 'double',
-    autoCenter: false
-  });
-
+  display: 'double',
+  autoCenter: false,
+  when: {
+    turned: function (e, page) {
+      if (page === 5) {
+        $('#cameraOverlay').fadeIn(150);
+      } else {
+        $('#cameraOverlay').fadeOut(150);
+      }
+    }
+  }
+});
+  
   function resizeFlipbook() {
     const w = window.innerWidth;
     const h = window.innerHeight;
