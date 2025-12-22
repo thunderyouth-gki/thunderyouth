@@ -26,11 +26,9 @@ html, body {
 /* ===== FLIPBOOK ===== */
 #flipbook {
   position: fixed;
-  inset: 0;
-  margin: auto;
-  top: 25%;
+  top: 50%;
   left: 50%;
-  transform: translateX(-75%); /* show RIGHT page only */
+  transform: translate(-75%, -50%); /* show RIGHT page only */
 }
 
 #flipbook .page {
@@ -160,6 +158,12 @@ $(function () {
     }
 
     $('#flipbook').turn('size', pageWidth * 2, pageHeight);
+  
+    // 🔑 REAL vertical centering
+    const bookHeight = $('#flipbook').height();
+    const top = (h - bookHeight) / 2;
+
+    $('#flipbook').css('top', `${top}px`);
   }
 
   resizeFlipbook();
