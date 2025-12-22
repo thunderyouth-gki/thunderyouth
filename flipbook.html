@@ -79,15 +79,14 @@ html, body {
   z-index: 20;
 }
 
-  #cameraOverlay {
+#cameraOverlay {
   position: fixed;
   left: 50%;
   top: 50%;
   transform: translate(-25%, -50%); /* align to RIGHT page */
   z-index: 15;
-  display: none;
+  display: none;
 }
-
 
 #cameraBtn {
   padding: 10px 16px;
@@ -148,19 +147,20 @@ $(function () {
 
   const A4_RATIO = 707 / 500;
 
+
   $('#flipbook').turn({
-  display: 'double',
-  autoCenter: false,
-  when: {
-    turned: function (e, page) {
-      if (page === 5) {
-        $('#cameraOverlay').fadeIn(150);
-      } else {
-        $('#cameraOverlay').fadeOut(150);
-      }
-    }
-  }
-});
+    display: 'double',
+    autoCenter: false,
+    when: {
+      turned: function (e, page) {
+        if (page === 5) {
+          $('#cameraOverlay').fadeIn(150);
+        } else {
+          $('#cameraOverlay').fadeOut(150);
+        }
+      }
+    }
+  });
   
   function resizeFlipbook() {
     const w = window.innerWidth;
