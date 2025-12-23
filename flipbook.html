@@ -80,23 +80,24 @@ html, body {
 }
 
 #cameraOverlay {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-25%, -50%); /* align to RIGHT page */
-  z-index: 15;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-25%, -50%); /* align to RIGHT page */
+  z-index: 15;
   display: none;
 }
 
 #cameraBtn {
-  padding: 10px 16px;
-  font-size: 14px;
-  border-radius: 20px;
-  border: none;
-  background: black;
-  color: white;
-  cursor: pointer;
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 20px;
+  border: none;
+  background: black;
+  color: white;
+  cursor: pointer;
 }
+
 
 </style>
 </head>
@@ -153,10 +154,13 @@ $(function () {
     autoCenter: false,
     when: {
       turned: function (e, page) {
-        if (page === 3) {
+        const book = $(this);
+        const view = book.turn('view'); // [leftPage, rightPage]
+
+        if (view && view.includes(5)) {
           $('#cameraOverlay').fadeIn(150);
         } else {
-          $('#cameraOverlay').fadeOut(150);
+         $('#cameraOverlay').fadeOut(150);
         }
       }
     }
