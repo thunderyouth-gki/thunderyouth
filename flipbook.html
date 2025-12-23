@@ -80,13 +80,13 @@ html, body {
 }
 
 #cameraOverlay {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-75%, -50%); /* align to RIGHT page */
+  position: absolute;
+  inset: 0;
   z-index: 15;
-  display: none;
   background: #c26525;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
   #preview {
