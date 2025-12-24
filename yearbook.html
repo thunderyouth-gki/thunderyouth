@@ -270,7 +270,7 @@ document.getElementById("cameraInput").addEventListener("change", function (even
 });
 
 
-async function sendBase64InChunks(email, base64String) {
+async function sendBase64(email, base64String) {
   const chunkSize = 1900; // keep params under 2000 chars
   const totalChunks = Math.ceil(base64String.length / chunkSize);
 
