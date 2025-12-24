@@ -78,11 +78,42 @@ html, body {
   cursor: pointer;
   z-index: 20;
 }
+
+#cameraOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+  #preview {
+    width: 27%;
+    aspect-ratio: 1/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transform: translateY(100%);
+  }
+
+  #preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  input {
+    display: none; /* hide the camera input field */
+  }
+
+
 </style>
 </head>
 
 <body>
-
+  
 <div class="container" id="app">
 
   <button class="nav prev">‹</button>
@@ -100,7 +131,15 @@ html, body {
     <div class="page back"></div>
 
     <div class="page front">
-      <img src="https://lh3.googleusercontent.com/d/1MgBRikoNd8j-qHjJkpsK9EIHfjxfHDOb">
+      <img src="https://lh3.googleusercontent.com/d/1lRkTUFsTYdXqAM3xj8g6eFzTbi7o0NoA">
+    
+      <div id="cameraOverlay" onclick="openCamera()">
+<div id="preview"></div>
+<!-- Hidden camera input -->
+<input id="cameraInput" type="file" accept="image/*" capture="environment">
+<!-- Button that triggers camera -->
+      </div>
+    
     </div>
     <div class="page back"></div>
 
@@ -123,11 +162,24 @@ $(function () {
 
   const A4_RATIO = 707 / 500;
 
+
   $('#flipbook').turn({
     display: 'double',
-    autoCenter: false
-  });
+    autoCenter: false,
+    when: {
+      turned: function (e, page) {
+        const book = $(this);
+        const view = book.turn('view'); // [leftPage, rightPage]
 
+        if (view && view.includes(5)) {
+          $('#cameraOverlay').fadeIn(150);
+        } else {
+         $('#cameraOverlay').fadeOut(0);
+        }
+      }
+    }
+  });
+  
   function resizeFlipbook() {
     const w = window.innerWidth;
     const h = window.innerHeight;
@@ -172,6 +224,24 @@ $(function () {
   document.addEventListener('webkitfullscreenchange', resizeFlipbook);
 
 });
+
+function openCamera() {
+    document.getElementById("cameraInput").click();
+}
+
+// After taking a photo
+document.getElementById("cameraInput").addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+
+    const preview = document.getElementById("preview");
+    preview.innerHTML = "";
+    preview.appendChild(img);
+});
+  
 </script>
 
 </body>
