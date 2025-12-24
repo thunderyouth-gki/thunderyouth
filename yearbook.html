@@ -105,6 +105,10 @@ html, body {
   }
 
   input {
+    type="file"
+    id="cameraInput"
+    accept="image/*"
+    capture="environment"
     display: none; /* hide the camera input field */
   }
 
@@ -152,6 +156,12 @@ html, body {
 </div>
 
 <script>
+
+const API_BASE = "https://script.google.com/macros/s/AKfycbzHmd3sJot3kGYUEqA01vzyxKkXZweRX1cL3pVRhhoGot_inetZLQemJtFHlSDeBLAXWg/exec";
+let base64Image = "";
+let mimeType = "";
+let filename = "";
+  
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
   if (isIOS) {
@@ -230,17 +240,100 @@ function openCamera() {
 }
 
 // After taking a photo
-document.getElementById("cameraInput").addEventListener("change", function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+document.getElementById("cameraInput").addEventListener("change", function (event) {
+  const file = event.target.files[0];
+  if (!file) return;
 
-    const img = document.createElement("img");
-    img.src = URL.createObjectURL(file);
+  // Save metadata
+  mimeType = file.type;
+  filename = file.name;
 
-    const preview = document.getElementById("preview");
-    preview.innerHTML = "";
-    preview.appendChild(img);
+  // Preview image
+  const img = document.createElement("img");
+  img.src = URL.createObjectURL(file);
+
+  const preview = document.getElementById("preview");
+  preview.innerHTML = "";
+  preview.appendChild(img);
+
+  // Convert to Base64
+  const reader = new FileReader();
+  reader.onload = async function () {
+    // result looks like: data:image/jpeg;base64,XXXX
+    const dataUrl = reader.result;
+
+    // Extract only base64 part
+    base64Image = dataUrl.split(",")[1];
+
+    // CALL YOUR UPLOAD FUNCTION HERE
+    const email = "user@email.com"; // ← replace with real email
+    await sendBase64(email, base64Image);
+  };
+
+  reader.readAsDataURL(file);
 });
+
+
+async function sendBase64InChunks(email, base64String) {
+  const chunkSize = 1900; // keep params under 2000 chars
+  const totalChunks = Math.ceil(base64String.length / chunkSize);
+
+  for (let i = 0; i < totalChunks; i++) {
+    const chunkData = base64String.slice(i * chunkSize, (i + 1) * chunkSize);
+
+    const url = `${API_BASE}?page=UploadFileChunk` +
+      `&email=${encodeURIComponent(email)}` +
+      `&chunkIndex=${i}` +
+      `&totalChunks=${totalChunks}` +
+      `&chunkData=${encodeURIComponent(chunkData)}`;
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        console.error(`Network error on chunk ${i}: ${response.statusText}`);
+        alert("Network error during upload. Please try again.");
+        return false;
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        console.error(`Chunk ${i} failed to upload:`, result);
+        alert("Upload failed on chunk " + i + ". Please try again.");
+        return false;
+      }
+    } catch (error) {
+      console.error(`Exception uploading chunk ${i}:`, error);
+      alert("Unexpected error during upload. Please try again.");
+      return false;
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  // After all chunks uploaded, call merge and upload endpoint
+  try {
+    const mergeUrl = `${API_BASE}?page=MergeAndUpload&email=${encodeURIComponent(email)}`;
+    const mergeResponse = await fetch(mergeUrl);
+    if (!mergeResponse.ok) {
+      console.error("Network error during merge:", mergeResponse.statusText);
+      alert("Network error during merge. Please try again.");
+      return false;
+    }
+    const mergeResult = await mergeResponse.json();
+    if (!mergeResult.success) {
+      console.error("Merge failed:", mergeResult);
+      alert("Failed to merge and upload the image. Please try again.");
+      return false;
+    }
+  } catch (error) {
+    console.error("Exception during merge:", error);
+    alert("Unexpected error during merge. Please try again.");
+    return false;
+  }
+
+  alert("Upload and merge complete!");
+  return true;
+}
   
 </script>
 
