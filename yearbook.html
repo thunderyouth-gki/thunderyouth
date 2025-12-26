@@ -261,7 +261,7 @@ html, body {
       <img src="https://lh3.googleusercontent.com/d/1lRkTUFsTYdXqAM3xj8g6eFzTbi7o0NoA">
     
       <div id="cameraOverlay" onclick="openCamera()">
-<div id="preview">Tap to Capture your Moment!</div>
+<div id="preview"></div>
 <!-- Hidden camera input -->
 <input id="cameraInput" type="file" accept="image/*" capture="environment">
 <!-- Button that triggers camera -->
@@ -369,9 +369,6 @@ document.getElementById("cameraInput").addEventListener("change", function (even
   // Save metadata
   mimeType = file.type;
   filename = file.name;
-
-  const preview = document.getElementById("preview");
-  preview.textContent = "";
   
   // Preview image
   const img = document.createElement("img");
