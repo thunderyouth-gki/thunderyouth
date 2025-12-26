@@ -236,7 +236,6 @@ html, body {
 </div>
 
 <script>
-  
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
   if (isIOS) {
@@ -255,6 +254,12 @@ $(function () {
       turned: function (e, page) {
         const book = $(this);
         const view = book.turn('view'); // [leftPage, rightPage]
+
+        if (view && view.includes(50)) {
+          $('#cameraOverlay').fadeIn(150);
+        } else {
+         $('#cameraOverlay').fadeOut(0);
+        }
       }
     }
   });
@@ -303,7 +308,6 @@ $(function () {
   document.addEventListener('webkitfullscreenchange', resizeFlipbook);
 
 });
-
 </script>
 
 </body>
