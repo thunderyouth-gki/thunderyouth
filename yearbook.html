@@ -289,40 +289,21 @@ $(function () {
   /* ===== FULLSCREEN LOGIC ===== */
   const elem = document.getElementById('app');
 
-const fullscreenBtn = $('#fullscreenBtn');
-
-fullscreenBtn.on('click', function () {
-  if (!document.fullscreenElement) {
-    if (elem.requestFullscreen) elem.requestFullscreen();
-    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-  } else {
-    if (document.exitFullscreen) document.exitFullscreen();
-    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-  }
-});
-
-// Listen for fullscreen changes
-document.addEventListener('fullscreenchange', () => {
-  if (document.fullscreenElement) {
-    fullscreenBtn.text('✕'); // show “exit” icon
-  } else {
-    fullscreenBtn.text('⛶'); // show “enter” icon
-  }
-});
-
-document.addEventListener('webkitfullscreenchange', () => {
-  if (document.webkitFullscreenElement) {
-    fullscreenBtn.text('✕');
-  } else {
-    fullscreenBtn.text('⛶');
-  }
-});
-
+  $('#fullscreenBtn').on('click', function () {
+    if (!document.fullscreenElement) {
+      if (elem.requestFullscreen) elem.requestFullscreen();
+      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    }
+  });
 
   document.addEventListener('fullscreenchange', resizeFlipbook);
   document.addEventListener('webkitfullscreenchange', resizeFlipbook);
 
 });
+
 </script>
 
 </body>
