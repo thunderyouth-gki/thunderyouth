@@ -391,68 +391,71 @@ document.getElementById("cameraInput").addEventListener("change", function (even
   reader.readAsDataURL(file);
 });
 
-
 async function sendBase64(email, base64String) {
-  const chunkSize = 1000; // keep params under 2000 chars
-  const totalChunks = Math.ceil(base64String.length / chunkSize);
+  const chunkSize = 1900; // keep params under 2000 chars
+  const totalChunks = Math.ceil(base64String.length / chunkSize);
 
-  for (let i = 0; i < totalChunks; i++) {
-    const chunkData = base64String.slice(i * chunkSize, (i + 1) * chunkSize);
+  for (let i = 0; i < totalChunks; i++) {
+    const chunkData = base64String.slice(
+      i * chunkSize,
+      (i + 1) * chunkSize
+    );
 
-    const url = `${API_BASE}?page=UploadFileChunk` +
-      `&email=${encodeURIComponent(email)}` +
-      `&chunkIndex=${i}` +
-      `&totalChunks=${totalChunks}` +
-      `&chunkData=${encodeURIComponent(chunkData)}`;
+    const url =
+      API_BASE +
+      "?page=UploadFileChunk" +
+      "&email=" + encodeURIComponent(email) +
+      "&chunkIndex=" + i +
+      "&totalChunks=" + totalChunks +
+      "&chunkData=" + encodeURIComponent(chunkData);
 
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        console.error(`Network error on chunk ${i}: ${response.statusText}`);
-        alert("Network error during upload. Please try again.");
-        return false;
-      }
+    try {
+      const response = await fetch(url);
 
-      const result = await response.json();
-      if (!result.success) {
-        console.error(`Chunk ${i} failed to upload:`, result);
-        alert("Upload failed on chunk " + i + ". Please try again.");
-        return false;
-      }
-    } catch (error) {
-      console.error(`Exception uploading chunk ${i}:`, error);
-      alert("Unexpected error during upload. Please try again.");
-      return false;
-    }
+      if (!response.ok) {
+        console.error("Network error on chunk", i);
+        alert("Network error on chunk " + i);
+        return false;
+      }
 
-    await new Promise(resolve => setTimeout(resolve, 100));
-  }
+      const text = await response.text();
+      const result = JSON.parse(text);
 
-  // After all chunks uploaded, call merge and upload endpoint
-  try {
-    const mergeUrl = `${API_BASE}?page=MergeAndUpload&email=${encodeURIComponent(email)}`;
-    const mergeResponse = await fetch(mergeUrl);
-    if (!mergeResponse.ok) {
-      console.error("Network error during merge:", mergeResponse.statusText);
-      alert("Network error during merge. Please try again.");
-      return false;
-    }
-    const mergeResult = await mergeResponse.json();
-    if (!mergeResult.success) {
-      console.error("Merge failed:", mergeResult);
-      alert("Failed to merge and upload the image. Please try again.");
-      return false;
-    }
-  } catch (error) {
-    console.error("Exception during merge:", error);
-    alert("Unexpected error during merge. Please try again.");
-    return false;
-  }
+      if (!result.success) {
+        console.error("Chunk failed", result);
+        alert("Upload failed on chunk " + i);
+        return false;
+      }
+    } catch (err) {
+      console.error("Exception on chunk", i, err);
+      alert("Error on chunk " + i);
+      return false;
+    }
 
-  alert("Upload and merge complete!");
-  return true;
+    await new Promise(r => setTimeout(r, 100));
+  }
+
+  // merge
+  const mergeUrl =
+    API_BASE +
+    "?page=MergeAndUpload" +
+    "&email=" + encodeURIComponent(email);
+
+  const mergeResp = await fetch(mergeUrl);
+  const mergeText = await mergeResp.text();
+  const mergeResult = JSON.parse(mergeText);
+
+  if (!mergeResult.success) {
+    alert("Merge failed");
+    return false;
+  }
+
+  alert("Upload and merge complete!");
+  return true;
 }
-  
+
+
+
 </script>
 
 </body>
