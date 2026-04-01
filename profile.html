@@ -580,6 +580,7 @@ async function saveProfileChanges() {
 }
 
 function updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir) {
+function updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir) {
   const url = `${API_BASE}?page=UpdateProfile` +
     `&email=${encodeURIComponent(email)}` +
     `&namaLengkap=${encodeURIComponent(namaLengkap)}` +
@@ -591,28 +592,34 @@ function updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKe
   fetch(url)
     .then(res => res.json())
     .then(data => {
-      document.getElementById("loading-spinner").style.display = "none"; // Hide spinner
+      document.getElementById("loading-spinner").style.display = "none";
       if (data.success) {
-  // Get URL parameter
-  const urlParams = new URLSearchParams(window.location.search);
-  const redirectPage = urlParams.get("redirect");
+        // 1. Switch back to view mode immediately
+        toggleEdit(false); 
 
-  if (redirectPage) {
-    const destination = decodeURIComponent(redirectPage);
-    window.location.href = `https://thunderyouth.gkiguntur.com/${destination}`;
-  }
+        // 2. Handle redirection if necessary
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectPage = urlParams.get("redirect");
+
+        if (redirectPage) {
+          const destination = decodeURIComponent(redirectPage);
+          window.location.href = `https://thunderyouth.gkiguntur.com/${destination}`;
+        }
         
-  
-} else {
-  alert("Gagal menyimpan data.");
-}
+        // Optional: Update the actual profile picture display if it was changed
+        const newSrc = document.getElementById("edit-profile-pic-preview").src;
+        document.getElementById("profile-pic-display").src = newSrc;
 
+      } else {
+        alert("Gagal menyimpan data.");
+      }
     })
     .catch(err => {
       console.error("Failed to save profile:", err);
-      document.getElementById("loading-spinner").style.display = "none"; // Hide spinner
+      document.getElementById("loading-spinner").style.display = "none";
     });
 }
+
 
 function handleClick(type, url) {
   const email = localStorage.getItem("email");
