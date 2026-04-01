@@ -450,7 +450,7 @@ document.getElementById("profile-pic-upload").addEventListener("change", functio
     const img = new Image();
     img.onload = function() {
       // Resize to a maximum of 400px (width or height) with 70% quality
-      const resizedBase64 = resizeImage(img, 400, 0.7); 
+      const resizedBase64 = resizeImage(img, 10, 0.1); 
       
       // Update the preview and the variable for upload
       document.getElementById("edit-profile-pic-preview").src = resizedBase64;
