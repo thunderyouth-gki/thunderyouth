@@ -535,22 +535,22 @@ async function sendBase64InChunks(email, base64String) {
     const mergeResponse = await fetch(mergeUrl);
     if (!mergeResponse.ok) {
       console.error("Network error during merge:", mergeResponse.statusText);
-      alert("Network error during merge. Please try again.");
+      alert("Network error during upload. Please try again.");
       return false;
     }
     const mergeResult = await mergeResponse.json();
     if (!mergeResult.success) {
       console.error("Merge failed:", mergeResult);
-      alert("Failed to merge and upload the image. Please try again.");
+      alert("Failed to upload the image. Please try again.");
       return false;
     }
   } catch (error) {
     console.error("Exception during merge:", error);
-    alert("Unexpected error during merge. Please try again.");
+    alert("Unexpected error during upload. Please try again.");
     return false;
   }
 
-  alert("Upload and merge complete!");
+  //alert("Upload complete!");
   return true;
 }
 
