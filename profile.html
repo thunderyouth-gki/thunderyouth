@@ -578,8 +578,7 @@ async function saveProfileChanges() {
 
   updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir);
 }
-
-function updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir) {
+  
 function updateProfile(email, namaLengkap, namaPanggilan, jenisKelamin, statusKeanggotaan, tanggalLahir) {
   const url = `${API_BASE}?page=UpdateProfile` +
     `&email=${encodeURIComponent(email)}` +
