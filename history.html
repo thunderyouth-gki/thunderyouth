@@ -207,7 +207,7 @@
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    const API_BASE = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
+    const API_BASE = "/.netlify/functions/getData";
 
     function toggleIcon(selectedElement) {
       document.querySelectorAll('.footer-item').forEach(item => {
