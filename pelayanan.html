@@ -375,7 +375,7 @@ function toggleIcon(selectedElement) {
     });
 
 
-const baseurl = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
+const baseurl = "/.netlify/functions/getData";
 const urlParams = new URLSearchParams(window.location.search);
 const eventName = urlParams.get('event') || 'Sunday Service';
 sendAttendance(email, eventName);
