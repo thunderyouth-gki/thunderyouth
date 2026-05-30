@@ -1,11 +1,14 @@
 exports.handler = async (event) => {
   try {
 
-    const page =
-      event.queryStringParameters.page || "";
+    const params = new URLSearchParams(
+      event.queryStringParameters || {}
+    );
+
+    params.set("secret", process.env.API_SECRET);
 
     const url =
-      `${process.env.GAS_URL}?secret=${process.env.API_SECRET}&page=${page}`;
+      `${process.env.GAS_URL}?${params.toString()}`;
 
     const response = await fetch(url);
 
