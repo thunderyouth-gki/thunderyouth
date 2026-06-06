@@ -112,7 +112,7 @@
 async function getRedirectPage() {
   const params = new URLSearchParams(window.location.search);
   const redirectParam = params.get("redirect");
-  const baseurl = "/.netlify/functions/getData";
+  const baseurl = "https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec";
   const email = localStorage.getItem("email");
 
   if (redirectParam === "pelayanan") {
